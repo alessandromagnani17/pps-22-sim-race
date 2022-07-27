@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+    
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+          os: [ macos-latest, windows-latest, ubuntu-18.04 ]
+          java: [ adopt@1.11, adopt@1.16 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v13
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build and Test
+        run: sbt -v -Dfile.encoding=UTF-8 +test
+        shell: bash
