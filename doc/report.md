@@ -46,6 +46,29 @@ Di seguito sono riportati i requisiti visti nell'ottica di cosa può fare l'uten
 - L'utente potrà modificare la velocità della simulazione.
 
 ### Requisiti Funzionali
+Di seguito sono riportati i requisiti individuati durante lo studio del dominio e le regole scelte per la sua rappresentazione.
+
+
+- Il numero di vetture è fissato a 4 (`nCars`);
+- Il numero di circuiti è fissato a 1 (`nCircuits`);
+- Il numero di giri è impostabile nella schermata iniziale (`nLaps`);
+- Ogni vettura sarà caratterizzata da: 
+    - Gomme (`carTyres`), suddivise in:
+        - Tipologia gomme (`carTyres.type`);
+        - Usura delle gomme durante la gara (`carTyres.usury`);
+    - Velocità della vettura (`carVelocity`), suddivisa in:
+        - Velocità massima (`carVelocity.max`)
+        - Velocità corrente (`carVelocity.current`)
+    - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`), suddivisa in:
+        - Abilita di attacco (`carDriverSkill.attack`);
+        - Abilita di difesa (`carDriverSkill.defense`);
+- L'usura delle gomme di ogni vettura aumenterà di giro in giro considerando la tipologia di gomma usata
+- La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima e l'usura delle gomme 
+- Ogni qualvolta che, in prossimità di una curva, due vetture si trovino ad una distanza minore o uguale a *X-da definire* metri, verrà eseguito l'algoritmo relativo al sorpasso per decretare quale vettura sarà davanti all'uscita dalla curva. Nello specifico, l'algoritmo relativo ai sorpassi valuterà i seguenti parametri:
+    - Attacco e difesa dei due piloti
+    - Velocità corrente delle due vetture
+    - Velocità massima delle due vetture
+
 
 ### Requisiti non Funzionali
 Di seguito sono descritti i requisiti non funzionali dell'applicativo:
