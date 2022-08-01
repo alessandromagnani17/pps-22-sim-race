@@ -34,5 +34,5 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
 
 object Prova extends App:
-  new Gui(400, 200, null)
+  new Gui(1000, 800, null)
 
