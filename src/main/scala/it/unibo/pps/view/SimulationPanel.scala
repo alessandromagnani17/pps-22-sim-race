@@ -2,7 +2,7 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{BorderLayout, Component, Dimension, Graphics}
+import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
 import javax.swing.{JButton, JComponent, JPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
@@ -32,16 +32,17 @@ object SimulationPanel:
     self.setLayout(new BorderLayout())
     private val canvas = createCanvas()
     canvas.foreach(c => self.add(c, BorderLayout.NORTH))
-    private val startBtn = createButton("Start", e => println("button start pressed"))
-    private val stopBtn = createButton("Stop", e => println("button stop pressed"))
-    private val incVelBtn = createButton("+ Vel", e => println("button incVel pressed"))
-    private val decVelBtn = createButton("- Vel", e => println("button decVel pressed"))
     private val btnPanel = new JPanel()
     Task
-      .sequence(startBtn :: stopBtn :: incVelBtn :: decVelBtn :: Nil)
+      .sequence(
+        createButton("Start", e => println("button start pressed")) ::
+        createButton("Stop", e => println("button stop pressed")) ::
+        createButton("+ Vel", e => println("button incVel pressed")) ::
+        createButton("- Vel", e => println("button decVel pressed")) ::
+        Nil)
       .foreach(btns => btns.foreach(b => btnPanel.add(b)))
     self.add(btnPanel, BorderLayout.SOUTH)
-
+    btnPanel.setBackground(Color.CYAN)
     override def render(): Unit = ???
 
     private def createCanvas(): Task[Enviroment] =
@@ -62,23 +63,8 @@ object SimulationPanel:
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
       override def getPreferredSize: Dimension = new Dimension(w, h)
-      override def paintComponent(g: Graphics): Unit = g.drawArc(1, 100, 50, 50, 0, 180)
+      override def paintComponent(g: Graphics): Unit =
+        g.drawRect(20, 20, 100, 100)
 
 
-/*for
-    _ <- Task("Inizio del for yield")
-    canvas <- createCanvas()
-    startBtn <- createButton("Start", e => println("button start pressed"))
-    stopBtn <- createButton("Stop", e => println("button stop pressed"))
-    incVelBtn <- createButton("+ Vel", e => println("button incVel pressed"))
-    decVelBtn <- createButton("- Vel", e => println("button decVel pressed"))
-    _ <- self.setLayout(new BorderLayout())
-    _ <- self.add(canvas, BorderLayout.NORTH)
-    btnPanel <- new JPanel()
-    _ <- btnPanel.add(startBtn)
-    _ <- btnPanel.add(stopBtn)
-    _ <- btnPanel.add(incVelBtn)
-    _ <- btnPanel.add(decVelBtn)
-    _ <- Task("Fine del for yield")
-    _ <- self.add(btnPanel, BorderLayout.SOUTH)
-  yield ()*/
+
