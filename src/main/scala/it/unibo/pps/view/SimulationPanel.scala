@@ -30,22 +30,24 @@ object SimulationPanel:
   private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends SimulationPanel:
     self =>
-    self.setLayout(new BorderLayout())
-    private val canvas = createCanvas()
-    private val btnPanel = new JPanel()
-    private val scrollPanel = createChartsPanel()
-    Task
-      .sequence(
-        createButton("Start", e => println("button start pressed")) ::
-          createButton("Stop", e => println("button stop pressed")) ::
-          createButton("+ Vel", e => println("button incVel pressed")) ::
-          createButton("- Vel", e => println("button decVel pressed")) ::
-          Nil
-      )
-      .foreach(buttons => buttons.foreach(b => btnPanel.add(b)))
-    canvas.foreach(c => self.add(c, BorderLayout.WEST))
-    self.add(btnPanel, BorderLayout.SOUTH)
-    scrollPanel.foreach(sp => self.add(sp, BorderLayout.EAST))
+    val p = for
+      _ <- self.setLayout(new BorderLayout())
+      canvas <- createCanvas()
+      scrollPanel <- createChartsPanel()
+      startButton <- createButton("Start", e => println("button start pressed"))
+      stopButton <- createButton("Stop", e => println("button stop pressed"))
+      incVelocityButton <- createButton("+ Velocity", e => println("button incVel pressed"))
+      decVelocityButton <- createButton("- Velocity", e => println("button decVel pressed"))
+      buttonsPanel = new JPanel()
+      _ <- buttonsPanel.add(startButton)
+      _ <- buttonsPanel.add(stopButton)
+      _ <- buttonsPanel.add(incVelocityButton)
+      _ <- buttonsPanel.add(decVelocityButton)
+      _ <- self.add(scrollPanel, BorderLayout.EAST)
+      _ <- self.add(buttonsPanel, BorderLayout.SOUTH)
+      _ <- self.add(canvas, BorderLayout.WEST)
+    yield ()
+    p.runAsyncAndForget
 
     override def render(): Unit = ???
 
