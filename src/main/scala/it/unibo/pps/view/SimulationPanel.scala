@@ -3,7 +3,7 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{JButton, JComponent, JPanel}
+import javax.swing.{JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
@@ -31,8 +31,13 @@ object SimulationPanel:
     self =>
     self.setLayout(new BorderLayout())
     private val canvas = createCanvas()
-    canvas.foreach(c => self.add(c, BorderLayout.NORTH))
+    canvas.foreach(c => self.add(c, BorderLayout.WEST))
     private val btnPanel = new JPanel()
+    val pn = new JPanel()
+    private val scrollPane = new JScrollPane(pn)
+    scrollPane.setVerticalScrollBarPolicy(22)
+    val wc =(width*0.4).toInt
+    val hc = (height*0.7).toInt
     Task
       .sequence(
         createButton("Start", e => println("button start pressed")) ::
@@ -41,13 +46,18 @@ object SimulationPanel:
         createButton("- Vel", e => println("button decVel pressed")) ::
         Nil)
       .foreach(btns => btns.foreach(b => btnPanel.add(b)))
+
     self.add(btnPanel, BorderLayout.SOUTH)
+    self.add(scrollPane, BorderLayout.EAST)
     btnPanel.setBackground(Color.CYAN)
+
     override def render(): Unit = ???
 
     private def createCanvas(): Task[Enviroment] =
       val w = (width*0.6).toInt
       val h = (height*0.7).toInt
+      println("canvas w: " + w)
+      println("canvas h: " + h)
       for
         cnv <- new Enviroment(w, h)
         _ <- cnv.setSize(w, h)
@@ -64,7 +74,8 @@ object SimulationPanel:
 class Enviroment(val w: Int, val h: Int) extends JPanel:
       override def getPreferredSize: Dimension = new Dimension(w, h)
       override def paintComponent(g: Graphics): Unit =
-        g.drawRect(20, 20, 100, 100)
+        g.setColor(Color.BLUE)
+        g.fillRect(0,0, w, h)
 
 
 
