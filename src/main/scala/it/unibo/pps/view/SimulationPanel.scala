@@ -75,6 +75,7 @@ object SimulationPanel:
         p <- new JPanel()
         chart <- createChart()
         chartP <- chart.getPanel()
+        _ <- chartP.setPreferredSize(new Dimension((width * 0.35).toInt, 300))
         _ <- p.add(chartP)
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(22)
