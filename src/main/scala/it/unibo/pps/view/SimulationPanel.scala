@@ -11,9 +11,7 @@ import java.awt.event.{ActionEvent, ActionListener}
 
 trait SimulationPanel extends JPanel:
 
-  /** Method for rendering the new snapshot of the simulation
-   *
-   */
+  /** Method for rendering the new snapshot of the simulation */
   def render(): Unit
 
 object SimulationPanel:
@@ -24,40 +22,36 @@ object SimulationPanel:
   given Conversion[JButton, Task[JButton]] = Task(_)
   given Conversion[Component, Task[Component]] = Task(_)
   given Conversion[JPanel, Task[JPanel]] = Task(_)
+  given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
 
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel = new SimulationPanelImpl(width, height, controller)
+  def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
+    new SimulationPanelImpl(width, height, controller)
 
-  private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends SimulationPanel:
+  private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+      extends SimulationPanel:
     self =>
     self.setLayout(new BorderLayout())
     private val canvas = createCanvas()
-    canvas.foreach(c => self.add(c, BorderLayout.WEST))
     private val btnPanel = new JPanel()
-    val pn = new JPanel()
-    private val scrollPane = new JScrollPane(pn)
-    scrollPane.setVerticalScrollBarPolicy(22)
-    val wc =(width*0.4).toInt
-    val hc = (height*0.7).toInt
+    private val scrollPanel = createChartsPanel()
     Task
       .sequence(
         createButton("Start", e => println("button start pressed")) ::
-        createButton("Stop", e => println("button stop pressed")) ::
-        createButton("+ Vel", e => println("button incVel pressed")) ::
-        createButton("- Vel", e => println("button decVel pressed")) ::
-        Nil)
-      .foreach(btns => btns.foreach(b => btnPanel.add(b)))
-
+          createButton("Stop", e => println("button stop pressed")) ::
+          createButton("+ Vel", e => println("button incVel pressed")) ::
+          createButton("- Vel", e => println("button decVel pressed")) ::
+          Nil
+      )
+      .foreach(buttons => buttons.foreach(b => btnPanel.add(b)))
+    canvas.foreach(c => self.add(c, BorderLayout.WEST))
     self.add(btnPanel, BorderLayout.SOUTH)
-    self.add(scrollPane, BorderLayout.EAST)
-    btnPanel.setBackground(Color.CYAN)
+    scrollPanel.foreach(sp => self.add(sp, BorderLayout.EAST))
 
     override def render(): Unit = ???
 
     private def createCanvas(): Task[Enviroment] =
-      val w = (width*0.6).toInt
-      val h = (height*0.7).toInt
-      println("canvas w: " + w)
-      println("canvas h: " + h)
+      val w = (width * 0.6).toInt
+      val h = (height * 0.7).toInt
       for
         cnv <- new Enviroment(w, h)
         _ <- cnv.setSize(w, h)
@@ -71,11 +65,16 @@ object SimulationPanel:
         _ <- jb.addActionListener(listener)
       yield jb
 
+    private def createChartsPanel(): Task[JScrollPane] =
+      for
+        p <- new JPanel()
+        sp <- new JScrollPane(p)
+        _ <- sp.setVerticalScrollBarPolicy(22)
+        _ <- sp.setPreferredSize(new Dimension((width * 0.4).toInt, (height * 0.7).toInt))
+      yield sp
+
 class Enviroment(val w: Int, val h: Int) extends JPanel:
-      override def getPreferredSize: Dimension = new Dimension(w, h)
-      override def paintComponent(g: Graphics): Unit =
-        g.setColor(Color.BLUE)
-        g.fillRect(0,0, w, h)
-
-
-
+  override def getPreferredSize: Dimension = new Dimension(w, h)
+  override def paintComponent(g: Graphics): Unit =
+    g.setColor(Color.BLUE)
+    g.fillRect(0, 0, w, h)
