@@ -1,8 +1,9 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, WindowConstants}
+import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
@@ -73,17 +74,28 @@ object SimulationPanel:
     private def createChartsPanel(): Task[JScrollPane] =
       for
         p <- new JPanel()
-        chart <- createChart()
-        chartP <- chart.getPanel()
-        _ <- chartP.setPreferredSize(new Dimension((width * 0.35).toInt, 300))
-        _ <- p.add(chartP)
+        _ <- p.setLayout(new BoxLayout(p, 1))
+        w = (width * 0.35).toInt
+        h = 300
+        chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
+        chartVelP <- chartVel.getPanel()
+        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
+        chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
+        chartFuelP <- chartFuel.getPanel()
+        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
+        chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
+        chartTyresP <- chartTyres.getPanel()
+        _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
+        _ <- p.add(chartVelP)
+        _ <- p.add(chartFuelP)
+        _ <- p.add(chartTyresP)
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(22)
         _ <- sp.setPreferredSize(new Dimension((width * 0.4).toInt, (height * 0.7).toInt))
       yield sp
 
-    private def createChart(): Task[LineChart] =
-      for chart <- LineChart("Prova", "Virtual Time", "Velocity", "vel")
+    private def createChart(title: String, xLabel: String, yLabel: String, serieName: String): Task[LineChart] =
+      for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
