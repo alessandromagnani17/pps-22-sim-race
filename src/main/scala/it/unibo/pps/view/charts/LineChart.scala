@@ -2,10 +2,11 @@ package it.unibo.pps.view.charts
 
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.xy.{XYDataset, XYSeries, XYSeriesCollection}
-import org.jfree.chart.{ChartFactory, JFreeChart}
+import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 
 trait LineChart:
   def addValue(x: Double, y: Double): Unit
+  def getPanel(): ChartPanel
 
 object LineChart:
 
@@ -19,6 +20,9 @@ object LineChart:
     override def addValue(x: Double, y: Double): Unit =
       serie.add(x, y)
       chart.getXYPlot.setDataset(XYSeriesCollection(serie))
+
+    override def getPanel(): ChartPanel =
+      ChartPanel(chart)
 
     private def createChart(dataset: XYSeries): JFreeChart =
       ChartFactory.createXYLineChart(

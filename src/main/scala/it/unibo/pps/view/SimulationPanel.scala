@@ -1,11 +1,12 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
 import javax.swing.{JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.view.charts.LineChart
+import org.jfree.chart.ChartPanel
 
 import java.awt.event.{ActionEvent, ActionListener}
 
@@ -23,6 +24,8 @@ object SimulationPanel:
   given Conversion[Component, Task[Component]] = Task(_)
   given Conversion[JPanel, Task[JPanel]] = Task(_)
   given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
+  given Conversion[LineChart, Task[LineChart]] = Task(_)
+  given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
 
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
     new SimulationPanelImpl(width, height, controller)
@@ -70,10 +73,17 @@ object SimulationPanel:
     private def createChartsPanel(): Task[JScrollPane] =
       for
         p <- new JPanel()
+        chart <- createChart()
+        chartP <- chart.getPanel()
+        _ <- p.add(chartP)
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(22)
         _ <- sp.setPreferredSize(new Dimension((width * 0.4).toInt, (height * 0.7).toInt))
       yield sp
+
+    private def createChart(): Task[LineChart] =
+      for chart <- LineChart("Prova", "Virtual Time", "Velocity", "vel")
+      yield chart
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def getPreferredSize: Dimension = new Dimension(w, h)
