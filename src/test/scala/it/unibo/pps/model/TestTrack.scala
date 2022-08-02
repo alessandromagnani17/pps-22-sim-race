@@ -10,3 +10,11 @@ class TestTrack extends AnyFlatSpec with Matchers:
     val t = Track()
     t.getSectorByID(1) shouldBe Option.empty
   }
+
+  "After adding a sector you" should "be able to retrieve it" in {
+    val t = Track()
+    val id = 1
+    t.addSector(Straight(id, 0, 0, 10, 10))
+    val s = t.getSectorByID(id)
+    assert(s.get._id == id)
+  }
