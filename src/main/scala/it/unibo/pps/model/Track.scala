@@ -1,7 +1,7 @@
 package it.unibo.pps.model
 
 trait Track:
-  def getSectorByID(id: Int): Option[Sector]
+  def getSectors(): List[Sector]
   def addSector(sector: Sector): Unit
 
 object Track:
@@ -12,8 +12,7 @@ object Track:
 
     private var sectors: List[Sector] = List.empty
 
-    override def getSectorByID(id: Int): Option[Sector] =
-      sectors.filter(_._id == id).headOption
+    override def getSectors(): List[Sector] = sectors
 
     override def addSector(sector: Sector): Unit =
       sectors = sectors :+ sector

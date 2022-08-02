@@ -3,11 +3,23 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, WindowConstants}
+import javax.swing.{
+  BoxLayout,
+  JButton,
+  JComponent,
+  JLabel,
+  JPanel,
+  JScrollPane,
+  JTextArea,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
+import it.unibo.pps.model.Sector
+import it.unibo.pps.model.Track
 
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.math.atan2
@@ -35,9 +47,10 @@ object SimulationPanel:
   private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends SimulationPanel:
     self =>
+    private val cnv = createCanvas()
     val p = for
       _ <- self.setLayout(new BorderLayout())
-      canvas <- createCanvas()
+      canvas <- cnv
       scrollPanel <- createChartsPanel()
       startButton <- createButton("Start", e => println("button start pressed"))
       stopButton <- createButton("Stop", e => println("button stop pressed"))
@@ -51,10 +64,17 @@ object SimulationPanel:
       _ <- self.add(scrollPanel, BorderLayout.EAST)
       _ <- self.add(buttonsPanel, BorderLayout.SOUTH)
       _ <- self.add(canvas, BorderLayout.WEST)
+      _ <- initTrack()
+      _ <- render()
     yield ()
     p.runAsyncAndForget
 
-    override def render(): Unit = ???
+    override def render(): Unit = SwingUtilities.invokeLater { () =>
+      cnv.foreach(c =>
+        c.invalidate()
+        c.repaint()
+      )
+    }
 
     private def createCanvas(): Task[Enviroment] =
       val w = (width * 0.6).toInt
@@ -99,102 +119,106 @@ object SimulationPanel:
       for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
 
-    //private def createCircuitBorder(w1: Int, w2: Int, h1: Int, h2: Int): Unit =
-
+    private def initTrack(): Unit =
+      cnv.foreach(c => c.track.addSector(Sector.Straight(1, 5, 0, 15, 10)))
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
+
+  var track: Track = Track()
+
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
-      var w1 = (0.30 * w).toInt
-      var w2 = (0.70 * w).toInt
-      var h1 = (0.30 * h).toInt
-      var h2 = (0.70 * h).toInt
+    g.setColor(Color.BLACK)
 
-      g.drawLine(w1, h1, w2, h1)
-      g.drawLine(w1, h2, w2, h2)
+    def matcher(e: Sector) = e match {
+      case s: Sector.Straight => g.drawLine(s.initialX, s.finalX, s.initialY, s.finalY)
+      case _ => println("qui ci va il resto")
+    }
 
-      var x0 = w2 //Da cambiare metto il riferimento a w1
-      var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-      var x1 = w2
-      var x2 = w2
-      var y1 = h1
-      var y2 = h2
+    track.getSectors().foreach(matcher(_))
 
-      //Arco grande a Dx
-      var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-      var x: Int = x0 - r
-      var y: Int = y0 - r
-      var width: Int = 2 * r
-      var height: Int = 2 * r
-      var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-      var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-      g.drawArc(x, y, width, height, startAngle, endAngle)
+/*var w1 = (0.30 * w).toInt
+    var w2 = (0.70 * w).toInt
+    var h1 = (0.30 * h).toInt
+    var h2 = (0.70 * h).toInt
 
-      //Arco grande a Sx
-      x0 = w1 //Da cambiare metto il riferimento a w1
-      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-      x1 = w1
-      x2 = w1
-      y1 = h1
-      y2 = h2
-      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-      x = x0 - r
-      y = y0 - r
-      width = 2 * r
-      height = 2 * r
-      startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-      g.drawArc(x, y, width, height, startAngle, endAngle)
+    g.drawLine(w1, h1, w2, h1)
+    g.drawLine(w1, h2, w2, h2)
 
-      //Combio delle coordinate principali
-      h1 = (0.40 * h).toInt
-      h2 = (0.60 * h).toInt
-      g.drawLine(w1, h1, w2, h1)
-      g.drawLine(w1, h2, w2, h2)
-      x0 = w2 //Da cambiare metto il riferimento a w1
-      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-      x1 = w2
-      x2 = w2
-      y1 = h1
-      y2 = h2
+    var x0 = w2 //Da cambiare metto il riferimento a w1
+    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    var x1 = w2
+    var x2 = w2
+    var y1 = h1
+    var y2 = h2
 
+    //Arco grande a Dx
+    var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+    var x: Int = x0 - r
+    var y: Int = y0 - r
+    var width: Int = 2 * r
+    var height: Int = 2 * r
+    var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+    var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+    g.drawArc(x, y, width, height, startAngle, endAngle)
 
-      //Arco piccolo a Dx
-      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-      x = x0 - r
-      y = y0 - r
-      width = 2 * r
-      height = 2 * r
-      startAngle = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-      g.drawArc(x, y, width, height, startAngle, endAngle)
+    //Arco grande a Sx
+    x0 = w1 //Da cambiare metto il riferimento a w1
+    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    x1 = w1
+    x2 = w1
+    y1 = h1
+    y2 = h2
+    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+    x = x0 - r
+    y = y0 - r
+    width = 2 * r
+    height = 2 * r
+    startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+    g.drawArc(x, y, width, height, startAngle, endAngle)
 
-      //Arco piccola a Sx
-      x0 = w1 //Da cambiare metto il riferimento a w1
-      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-      x1 = w1
-      x2 = w1
-      y1 = h1
-      y2 = h2
-      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-      x = x0 - r
-      y = y0 - r
-      width = 2 * r
-      height = 2 * r
-      startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-      g.drawArc(x, y, width, height, startAngle, endAngle)
+    //Combio delle coordinate principali
+    h1 = (0.40 * h).toInt
+    h2 = (0.60 * h).toInt
+    g.drawLine(w1, h1, w2, h1)
+    g.drawLine(w1, h2, w2, h2)
+    x0 = w2 //Da cambiare metto il riferimento a w1
+    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    x1 = w2
+    x2 = w2
+    y1 = h1
+    y2 = h2
 
+    //Arco piccolo a Dx
+    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+    x = x0 - r
+    y = y0 - r
+    width = 2 * r
+    height = 2 * r
+    startAngle = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+    g.drawArc(x, y, width, height, startAngle, endAngle)
 
+    //Arco piccola a Sx
+    x0 = w1 //Da cambiare metto il riferimento a w1
+    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    x1 = w1
+    x2 = w1
+    y1 = h1
+    y2 = h2
+    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+    x = x0 - r
+    y = y0 - r
+    width = 2 * r
+    height = 2 * r
+    startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+    g.drawArc(x, y, width, height, startAngle, endAngle)
 
-      //g.setColor(Color.BLACK)
-      //g.fillRect(0, 0, w, h)
+    //g.setColor(Color.BLACK)
+    //g.fillRect(0, 0, w, h)
 
-
-      println("centro: " + w1 + ", " + (h1 + h2) / 2)
-      println("prima linea: " + w1 + ", " + h1)
-      println("seconda linea: " + w1 + ", " + h2)
-
-
-
-
+    println("centro: " + w1 + ", " + (h1 + h2) / 2)
+    println("prima linea: " + w1 + ", " + h1)
+    println("seconda linea: " + w1 + ", " + h2)*/

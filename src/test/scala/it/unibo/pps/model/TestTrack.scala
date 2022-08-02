@@ -6,15 +6,14 @@ import org.scalatest.matchers.should.Matchers
 
 class TestTrack extends AnyFlatSpec with Matchers:
 
-  "An empty track" should "return an empty Option" in {
+  "An empty track" should "return an empty List" in {
     val t = Track()
-    t.getSectorByID(1) shouldBe Option.empty
+    t.getSectors() shouldBe List.empty
   }
 
-  "After adding a sector you" should "be able to retrieve it" in {
+  "After adding a sector the track" should "be non-empty" in {
     val t = Track()
-    val id = 1
-    t.addSector(Straight(id, 0, 0, 10, 10))
-    val s = t.getSectorByID(id)
-    assert(s.get._id == id)
+    t.addSector(Sector.Straight(1, 0, 0, 10, 10))
+    t.addSector(Sector.Straight(2, 0, 0, 15, 15))
+    assert(t.getSectors().size > 0)
   }
