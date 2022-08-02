@@ -3,7 +3,7 @@ package it.unibo.pps.utility
 import monix.eval.Task
 
 import java.awt.{Component, GridBagConstraints}
-import javax.swing.{JButton, JFrame, JPanel}
+import javax.swing.{JButton, JComboBox, JFrame, JPanel}
 
 object GivenConversion:
 
@@ -14,7 +14,8 @@ object GivenConversion:
     given Conversion[JFrame, Task[JFrame]] = Task(_)
     given Conversion[JPanel, Task[JPanel]] = Task(_)
     given Conversion[JButton, Task[JButton]] = Task(_)
+    given Conversion[JComboBox[String], Task[JComboBox[String]]] = Task(_)
     given Conversion[Component, Task[Component]] = Task(_)
     given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
 
-    
+
