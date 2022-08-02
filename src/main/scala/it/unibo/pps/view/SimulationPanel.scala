@@ -10,6 +10,7 @@ import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 
 import java.awt.event.{ActionEvent, ActionListener}
+import scala.math.atan2
 
 trait SimulationPanel extends JPanel:
 
@@ -98,8 +99,102 @@ object SimulationPanel:
       for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
 
+    //private def createCircuitBorder(w1: Int, w2: Int, h1: Int, h2: Int): Unit =
+
+
 class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
-    g.setColor(Color.BLUE)
-    g.fillRect(0, 0, w, h)
+      var w1 = (0.30 * w).toInt
+      var w2 = (0.70 * w).toInt
+      var h1 = (0.30 * h).toInt
+      var h2 = (0.70 * h).toInt
+
+      g.drawLine(w1, h1, w2, h1)
+      g.drawLine(w1, h2, w2, h2)
+
+      var x0 = w2 //Da cambiare metto il riferimento a w1
+      var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      var x1 = w2
+      var x2 = w2
+      var y1 = h1
+      var y2 = h2
+
+      //Arco grande a Dx
+      var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+      var x: Int = x0 - r
+      var y: Int = y0 - r
+      var width: Int = 2 * r
+      var height: Int = 2 * r
+      var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+      var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+      g.drawArc(x, y, width, height, startAngle, endAngle)
+
+      //Arco grande a Sx
+      x0 = w1 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w1
+      x2 = w1
+      y1 = h1
+      y2 = h2
+      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+      x = x0 - r
+      y = y0 - r
+      width = 2 * r
+      height = 2 * r
+      startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+      g.drawArc(x, y, width, height, startAngle, endAngle)
+
+      //Combio delle coordinate principali
+      h1 = (0.40 * h).toInt
+      h2 = (0.60 * h).toInt
+      g.drawLine(w1, h1, w2, h1)
+      g.drawLine(w1, h2, w2, h2)
+      x0 = w2 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w2
+      x2 = w2
+      y1 = h1
+      y2 = h2
+
+
+      //Arco piccolo a Dx
+      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+      x = x0 - r
+      y = y0 - r
+      width = 2 * r
+      height = 2 * r
+      startAngle = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+      g.drawArc(x, y, width, height, startAngle, endAngle)
+
+      //Arco piccola a Sx
+      x0 = w1 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w1
+      x2 = w1
+      y1 = h1
+      y2 = h2
+      r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+      x = x0 - r
+      y = y0 - r
+      width = 2 * r
+      height = 2 * r
+      startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+      endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+      g.drawArc(x, y, width, height, startAngle, endAngle)
+
+
+
+      //g.setColor(Color.BLACK)
+      //g.fillRect(0, 0, w, h)
+
+
+      println("centro: " + w1 + ", " + (h1 + h2) / 2)
+      println("prima linea: " + w1 + ", " + h1)
+      println("seconda linea: " + w1 + ", " + h2)
+
+
+
+

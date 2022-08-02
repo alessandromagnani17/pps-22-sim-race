@@ -32,4 +32,4 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield fr
 
 object Prova extends App:
-  new Gui(1000, 800, null)
+  new Gui(1000, 1000, null)
