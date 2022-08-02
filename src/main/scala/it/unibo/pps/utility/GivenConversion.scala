@@ -2,7 +2,7 @@ package it.unibo.pps.utility
 
 import monix.eval.Task
 
-import java.awt.Component
+import java.awt.{Component, GridBagConstraints}
 import javax.swing.{JButton, JFrame, JPanel}
 
 object GivenConversion:
@@ -15,3 +15,6 @@ object GivenConversion:
     given Conversion[JPanel, Task[JPanel]] = Task(_)
     given Conversion[JButton, Task[JButton]] = Task(_)
     given Conversion[Component, Task[Component]] = Task(_)
+    given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
+
+    
