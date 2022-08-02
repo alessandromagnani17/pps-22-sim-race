@@ -2,6 +2,7 @@ package it.unibo.pps.utility
 
 import monix.eval.Task
 
+import java.awt.image.BufferedImage
 import java.awt.{Component, GridBagConstraints}
 import javax.swing.{JButton, JComboBox, JFrame, JLabel, JPanel}
 
@@ -17,6 +18,7 @@ object GivenConversion:
     given Conversion[JButton, Task[JButton]] = Task(_)
     given Conversion[JComboBox[String], Task[JComboBox[String]]] = Task(_)
     given Conversion[Component, Task[Component]] = Task(_)
+    given Conversion[BufferedImage, Task[BufferedImage]] = Task(_)
     given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
 
 
