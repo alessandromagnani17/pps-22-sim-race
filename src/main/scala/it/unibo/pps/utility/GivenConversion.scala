@@ -2,7 +2,7 @@ package it.unibo.pps.utility
 
 import monix.eval.Task
 
-import javax.swing.JFrame
+import javax.swing.{JFrame, JPanel}
 
 object GivenConversion:
 
@@ -11,3 +11,4 @@ object GivenConversion:
 
   object GuiConversion extends CommonConversion:
     given Conversion[JFrame, Task[JFrame]] = Task(_)
+    given Conversion[JPanel, Task[JPanel]] = Task(_)
