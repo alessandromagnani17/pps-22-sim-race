@@ -13,7 +13,7 @@ object ViewModule:
   trait Component:
     context: Requirements =>
     class ViewImpl extends View:
-      val gui = new Gui(700, 700, context.controller)
+      val gui = new Gui(1300, 700, context.controller)
 
   
   trait Interface extends Provider with Component:
