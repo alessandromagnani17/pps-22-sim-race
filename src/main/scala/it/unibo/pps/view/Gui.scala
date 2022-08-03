@@ -28,8 +28,9 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       fr <- new JFrame("Prova")
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
+      _ <- fr.setResizable(false)
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr
 
 object Prova extends App:
-  new Gui(1000, 1000, null)
+  new Gui(1300, 1100, null)
