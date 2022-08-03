@@ -1,16 +1,24 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, SwingUtilities, WindowConstants}
+import javax.swing.{
+  BoxLayout,
+  JButton,
+  JComponent,
+  JLabel,
+  JPanel,
+  JScrollPane,
+  JTextArea,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Sector, Track, TrackBuilder}
-import it.unibo.pps.model.Sector.radius
-
+import it.unibo.pps.util.PimpScala.RichTuple2._
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.math.atan2
 
@@ -123,13 +131,13 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def paintComponent(g: Graphics): Unit =
     g.setColor(Color.BLACK)
 
-    def matcher(e: Sector) = e match {
+    def sketcher(e: Sector) = e match {
       case s: Sector.Straight => drawStraigth(s, g)
-      case t: Sector.Turn => println("ciao")
+      case t: Sector.Turn => drawTurn(t, g)
     }
 
-    track.getSectors().foreach(matcher(_))
-  
+    track.getSectors().foreach(sketcher(_))
+
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
     val p0 = s.drawingParams.p0
     val p1 = s.drawingParams.p1
@@ -139,17 +147,16 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.drawLine(p0._1, p0._2, p1._1, p1._2)
     g.drawLine(p2._1, p2._2, p3._1, p3._2)
 
-  /*
   private def drawTurn(t: Sector.Turn, g: Graphics): Unit =
-    val r = radius(t)
-    val x = t.center._1 - r
-    val y = t.center._2 - r
-    var width: Int = 2 * r
-    var height: Int = 2 * r
-    var startAngle: Int = 270
-    var endAngle: Int = 180*t.direction
-    g.drawArc(x, y, width, height, startAngle, endAngle)
- */
-
-
-
+    val externalRadius = t.drawingParams.center euclideanDistance t.drawingParams.startPointE
+    val interalRadius = t.drawingParams.center euclideanDistance t.drawingParams.startPointI
+    val xE = t.drawingParams.center._1 - externalRadius
+    val yE = t.drawingParams.center._2 - externalRadius
+    val xI = t.drawingParams.center._1 - interalRadius
+    val yI = t.drawingParams.center._2 - interalRadius
+    val whE = 2 * externalRadius
+    val whI = 2 * interalRadius
+    val startAngle = 270
+    val endAngle = 180 * t.drawingParams.direction
+    g.drawArc(xE, yE, whE, whE, startAngle, endAngle)
+    g.drawArc(xI, yI, whI, whI, startAngle, endAngle)
