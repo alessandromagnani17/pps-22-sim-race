@@ -135,7 +135,17 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
       case _ => println("qui ci va il resto")
     }
 
-    track.getSectors().foreach(matcher(_))
+    //track.getSectors().foreach(matcher(_))
+    // x coordinates of vertices// x coordinates of vertices
+    val x = Array(0, 10, 100, 110, 100, 10)
+    // y coordinates of vertices
+    val y = Array(45, 10, 10, 45, 80, 80)
+    // number of vertices
+    val numberofpoints = 6
+    // set the color of line drawn to blue
+    g.setColor(Color.blue)
+    // draw the polygon using drawPolygon function
+    g.drawPolygon(x, y, numberofpoints)
 
 /*var w1 = (0.30 * w).toInt
     var w2 = (0.70 * w).toInt
