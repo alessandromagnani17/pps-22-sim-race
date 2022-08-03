@@ -19,6 +19,7 @@ import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.Sector
+import it.unibo.pps.model.Sector.radius
 import it.unibo.pps.model.Track
 
 import java.awt.event.{ActionEvent, ActionListener}
@@ -120,7 +121,21 @@ object SimulationPanel:
       yield chart
 
     private def initTrack(): Unit =
-      cnv.foreach(c => c.track.addSector(Sector.Straight(1, 5, 0, 15, 10)))
+      cnv.foreach(c =>
+        val w1 = (0.3 * c.w).toInt
+        val w2 = (0.7 * c.w).toInt
+        val h1 = (0.3 * c.h).toInt
+        val h2 = (0.7 * c.h).toInt
+        var x0 = w2 //Da cambiare metto il riferimento a w1
+        val y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+        val x1 = w2
+        val x2 = w2
+        val y1 = h1
+        val y2 = h2
+        c.track.addSector(Sector.Straight(1, w1, h1, w2, h1))
+        c.track.addSector(Sector.Straight(3, w1, h2, w2, h2))
+        c.track.addSector(Sector.Turn(2, (x0, y0), (x1, y1), (x2, y2)))
+      )
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
 
@@ -131,23 +146,62 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
 
     def matcher(e: Sector) = e match {
-      case s: Sector.Straight => g.drawLine(s.initialX, s.finalX, s.initialY, s.finalY)
-      case _ => println("qui ci va il resto")
+      case s: Sector.Straight => g.drawLine(s.initialX, s.initialY, s.finalX, s.finalY)
+      case t: Sector.Turn => drawTurn(t, g)
     }
 
-    //track.getSectors().foreach(matcher(_))
-    // x coordinates of vertices// x coordinates of vertices
-    val x = Array(0, 10, 100, 110, 100, 10)
-    // y coordinates of vertices
-    val y = Array(45, 10, 10, 45, 80, 80)
-    // number of vertices
-    val numberofpoints = 6
-    // set the color of line drawn to blue
-    g.setColor(Color.blue)
-    // draw the polygon using drawPolygon function
-    g.drawPolygon(x, y, numberofpoints)
+    track.getSectors().foreach(matcher(_))
 
-/*var w1 = (0.30 * w).toInt
+  /*var w1 = (0.30 * w).toInt
+    var w2 = (0.70 * w).toInt
+    var h1 = (0.30 * h).toInt
+    var h2 = (0.70 * h).toInt
+
+    g.drawLine(w1, h1, w2, h1)
+    g.drawLine(w1, h2, w2, h2)
+
+    var x0 = w2 //Da cambiare metto il riferimento a w1
+    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    g.drawOval(x0, y0, 3, 3)
+
+    var x1 = w2
+    var x2 = w2
+    var y1 = h1
+    var y2 = h2
+
+    drawTurn(Sector.Turn(1, (x0, y0), (x1, y1), (x2, y2)), g)*/
+
+  //track.getSectors().foreach(matcher(_))
+
+  /* var w1 = (0.30 * w).toInt
+    var w2 = (0.70 * w).toInt
+    var h1 = (0.30 * h).toInt
+    var h2 = (0.70 * h).toInt
+
+    g.drawLine(w1, h1, w2, h1)
+    g.drawLine(w1, h2, w2, h2)
+
+    var x0 = w2 //Da cambiare metto il riferimento a w1
+    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+    g.drawOval(x0, y0, 3, 3)
+
+    var x1 = w2
+    var x2 = w2
+    var y1 = h1
+    var y2 = h2
+
+    //Arco grande a Dx
+    var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
+    var x: Int = x0 - r
+    var y: Int = y0 - r
+    var width: Int = 2 * r
+    var height: Int = 2 * r
+    var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
+    var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
+    //g.drawRect(x, y, width, height)
+    g.drawArc(x, y, width, height, startAngle, endAngle) */
+
+  /*var w1 = (0.30 * w).toInt
     var w2 = (0.70 * w).toInt
     var h1 = (0.30 * h).toInt
     var h2 = (0.70 * h).toInt
@@ -232,3 +286,13 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     println("centro: " + w1 + ", " + (h1 + h2) / 2)
     println("prima linea: " + w1 + ", " + h1)
     println("seconda linea: " + w1 + ", " + h2)*/
+
+  private def drawTurn(t: Sector.Turn, g: Graphics): Unit =
+    val r = radius(t)
+    val x = t.center._1 - r
+    val y = t.center._2 - r
+    var width: Int = 2 * r
+    var height: Int = 2 * r
+    var startAngle: Int = 270
+    var endAngle: Int = 180
+    g.drawArc(x, y, width, height, startAngle, endAngle)
