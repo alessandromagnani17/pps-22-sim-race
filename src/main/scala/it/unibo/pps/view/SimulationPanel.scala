@@ -3,24 +3,13 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JPanel,
-  JScrollPane,
-  JTextArea,
-  SwingUtilities,
-  WindowConstants
-}
+import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JPanel, JScrollPane, JTextArea, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.Sector
+import it.unibo.pps.model.{Sector, Track, TrackBuilder}
 import it.unibo.pps.model.Sector.radius
-import it.unibo.pps.model.Track
 
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.math.atan2
@@ -122,19 +111,8 @@ object SimulationPanel:
 
     private def initTrack(): Unit =
       cnv.foreach(c =>
-        val w1 = (0.3 * c.w).toInt
-        val w2 = (0.7 * c.w).toInt
-        val h1 = (0.3 * c.h).toInt
-        val h2 = (0.7 * c.h).toInt
-        var x0 = w2 //Da cambiare metto il riferimento a w1
-        val y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-        val x1 = w2
-        val x2 = w2
-        val y1 = h1
-        val y2 = h2
-        c.track.addSector(Sector.Straight(1, w1, h1, w2, h1))
-        c.track.addSector(Sector.Straight(3, w1, h2, w2, h2))
-        c.track.addSector(Sector.Turn(2, (x0, y0), (x1, y1), (x2, y2)))
+        val trackBuilder = TrackBuilder()
+        c.track = trackBuilder.createBaseTrack(c.w, c.h)
       )
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
@@ -146,147 +124,22 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
 
     def matcher(e: Sector) = e match {
-      case s: Sector.Straight => g.drawLine(s.initialX, s.initialY, s.finalX, s.finalY)
-      case t: Sector.Turn => drawTurn(t, g)
+      case s: Sector.Straight => drawStraigth(s, g)
+      case t: Sector.Turn => println("ciao")
     }
 
     track.getSectors().foreach(matcher(_))
+  
+  private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
+    val p0 = s.drawingParams.p0
+    val p1 = s.drawingParams.p1
+    val p2 = s.drawingParams.p2
+    val p3 = s.drawingParams.p3
 
-  /*var w1 = (0.30 * w).toInt
-    var w2 = (0.70 * w).toInt
-    var h1 = (0.30 * h).toInt
-    var h2 = (0.70 * h).toInt
+    g.drawLine(p0._1, p0._2, p1._1, p1._2)
+    g.drawLine(p2._1, p2._2, p3._1, p3._2)
 
-    g.drawLine(w1, h1, w2, h1)
-    g.drawLine(w1, h2, w2, h2)
-
-    var x0 = w2 //Da cambiare metto il riferimento a w1
-    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    g.drawOval(x0, y0, 3, 3)
-
-    var x1 = w2
-    var x2 = w2
-    var y1 = h1
-    var y2 = h2
-
-    drawTurn(Sector.Turn(1, (x0, y0), (x1, y1), (x2, y2)), g)*/
-
-  //track.getSectors().foreach(matcher(_))
-
-  /* var w1 = (0.30 * w).toInt
-    var w2 = (0.70 * w).toInt
-    var h1 = (0.30 * h).toInt
-    var h2 = (0.70 * h).toInt
-
-    g.drawLine(w1, h1, w2, h1)
-    g.drawLine(w1, h2, w2, h2)
-
-    var x0 = w2 //Da cambiare metto il riferimento a w1
-    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    g.drawOval(x0, y0, 3, 3)
-
-    var x1 = w2
-    var x2 = w2
-    var y1 = h1
-    var y2 = h2
-
-    //Arco grande a Dx
-    var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-    var x: Int = x0 - r
-    var y: Int = y0 - r
-    var width: Int = 2 * r
-    var height: Int = 2 * r
-    var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-    var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-    //g.drawRect(x, y, width, height)
-    g.drawArc(x, y, width, height, startAngle, endAngle) */
-
-  /*var w1 = (0.30 * w).toInt
-    var w2 = (0.70 * w).toInt
-    var h1 = (0.30 * h).toInt
-    var h2 = (0.70 * h).toInt
-
-    g.drawLine(w1, h1, w2, h1)
-    g.drawLine(w1, h2, w2, h2)
-
-    var x0 = w2 //Da cambiare metto il riferimento a w1
-    var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    var x1 = w2
-    var x2 = w2
-    var y1 = h1
-    var y2 = h2
-
-    //Arco grande a Dx
-    var r: Int = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-    var x: Int = x0 - r
-    var y: Int = y0 - r
-    var width: Int = 2 * r
-    var height: Int = 2 * r
-    var startAngle: Int = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-    var endAngle: Int = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-    g.drawArc(x, y, width, height, startAngle, endAngle)
-
-    //Arco grande a Sx
-    x0 = w1 //Da cambiare metto il riferimento a w1
-    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    x1 = w1
-    x2 = w1
-    y1 = h1
-    y2 = h2
-    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-    x = x0 - r
-    y = y0 - r
-    width = 2 * r
-    height = 2 * r
-    startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-    g.drawArc(x, y, width, height, startAngle, endAngle)
-
-    //Combio delle coordinate principali
-    h1 = (0.40 * h).toInt
-    h2 = (0.60 * h).toInt
-    g.drawLine(w1, h1, w2, h1)
-    g.drawLine(w1, h2, w2, h2)
-    x0 = w2 //Da cambiare metto il riferimento a w1
-    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    x1 = w2
-    x2 = w2
-    y1 = h1
-    y2 = h2
-
-    //Arco piccolo a Dx
-    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-    x = x0 - r
-    y = y0 - r
-    width = 2 * r
-    height = 2 * r
-    startAngle = (180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-    g.drawArc(x, y, width, height, startAngle, endAngle)
-
-    //Arco piccola a Sx
-    x0 = w1 //Da cambiare metto il riferimento a w1
-    y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
-    x1 = w1
-    x2 = w1
-    y1 = h1
-    y2 = h2
-    r = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toInt
-    x = x0 - r
-    y = y0 - r
-    width = 2 * r
-    height = 2 * r
-    startAngle = (-180 / Math.PI * atan2(y1 - y0, x1 - x0)).asInstanceOf[Int]
-    endAngle = (360 / Math.PI * atan2(y2 - y0, x2 - x0)).asInstanceOf[Int]
-    g.drawArc(x, y, width, height, startAngle, endAngle)
-
-    //g.setColor(Color.BLACK)
-    //g.fillRect(0, 0, w, h)
-
-    println("centro: " + w1 + ", " + (h1 + h2) / 2)
-    println("prima linea: " + w1 + ", " + h1)
-    println("seconda linea: " + w1 + ", " + h2)*/
-
+  /*
   private def drawTurn(t: Sector.Turn, g: Graphics): Unit =
     val r = radius(t)
     val x = t.center._1 - r
@@ -294,5 +147,9 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     var width: Int = 2 * r
     var height: Int = 2 * r
     var startAngle: Int = 270
-    var endAngle: Int = 180
+    var endAngle: Int = 180*t.direction
     g.drawArc(x, y, width, height, startAngle, endAngle)
+ */
+
+
+
