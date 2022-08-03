@@ -1,0 +1,93 @@
+package it.unibo.pps.model
+
+import it.unibo.pps.view.DrawingStraightParams
+
+trait TrackBuilder:
+  def createBaseTrack(w: Int, h: Int): Track
+
+object TrackBuilder:
+
+  def apply(): TrackBuilder =
+     new TrackBuilderImpl()
+
+  private class TrackBuilderImpl() extends TrackBuilder:
+
+    private def computeStraightUp(w: Int, h: Int): DrawingStraightParams =
+      val w1 = (0.3 * w).toInt
+      val w2 = (0.7 * w).toInt
+      val h1 = (0.3 * h).toInt
+      val h3 = (0.4 * h).toInt
+
+      DrawingStraightParams((w1, h1), (w2, h1), (w1, h3), (w2, h3))
+
+    private def computeStraightDown(w: Int, h: Int): DrawingStraightParams =
+      val w1 = (0.3 * w).toInt
+      val w2 = (0.7 * w).toInt
+      val h2 = (0.7 * h).toInt
+      val h4 = (0.6 * h).toInt
+
+      DrawingStraightParams((w1, h2), (w2, h2), (w1, h4), (w2, h4))
+
+    override def createBaseTrack(w: Int, h: Int): Track =
+      val track = Track()
+      track.addSector(Sector.Straight(1, computeStraightUp(w, h)))
+      track.addSector(Sector.Straight(2, computeStraightDown(w, h)))
+
+      track
+      /*
+      var w1 = (0.3 * w).toInt
+      var w2 = (0.7 * w).toInt
+      var h1 = (0.3 * h).toInt
+      var h2 = (0.7 * h).toInt
+
+      var x0 = w2 //Da cambiare metto il riferimento a w1
+      var y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      var x1 = w2
+      var x2 = w2
+      var y1 = h1
+      var y2 = h2
+      track.addSector(Sector.Straight(1, w1, h1, w2, h1))
+      track.addSector(Sector.Turn(2, (x0, y0), (x1, y1), (x2, y2), 1))
+
+      x0 = w1 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w1
+      x2 = w1
+      y1 = h1
+      y2 = h2
+      track.addSector(Sector.Straight(3, w1, h2, w2, h2))
+      track.addSector(Sector.Turn(4, (x0, y0), (x1, y1), (x2, y2), -1))
+
+      h1 = (0.40 * h).toInt
+      h2 = (0.60 * h).toInt
+
+      x0 = w2 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w2
+      x2 = w2
+      y1 = h1
+      y2 = h2
+      track.addSector(Sector.Straight(1, w1, h1, w2, h1))
+      track.addSector(Sector.Turn(2, (x0, y0), (x1, y1), (x2, y2), 1))
+
+      x0 = w1 //Da cambiare metto il riferimento a w1
+      y0 = (h1 + h2) / 2 //Da cambiare metto il riferimento a w1
+      x1 = w1
+      x2 = w1
+      y1 = h1
+      y2 = h2
+      track.addSector(Sector.Straight(3, w1, h2, w2, h2))
+      track.addSector(Sector.Turn(4, (x0, y0), (x1, y1), (x2, y2), -1))
+
+      track
+      */
+
+
+
+
+
+
+
+
+
+

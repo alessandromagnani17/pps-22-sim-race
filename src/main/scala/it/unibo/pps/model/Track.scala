@@ -13,6 +13,5 @@ object Track:
     private var sectors: List[Sector] = List.empty
 
     override def getSectors(): List[Sector] = sectors
-
     override def addSector(sector: Sector): Unit =
       sectors = sectors :+ sector
