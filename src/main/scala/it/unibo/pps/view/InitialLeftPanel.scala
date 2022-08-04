@@ -10,6 +10,8 @@ import javax.swing.JPanel
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
+import java.util
+
 
 trait InitialLeftPanel extends JPanel
 
@@ -21,10 +23,11 @@ object InitialLeftPanel:
     self =>
 
     private var currentCarIndex = 0
+    private val mapCarNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
     private val initialLeftPanel = createPanel()
 
-    private val carSelectedLabel = createJLabel("Car selected: ")
+    private val carSelectedLabel = createJLabel("Car selected: " + mapCarNames(currentCarIndex))
 
     private val topArrowButton = createTopArrowButton("src/main/resources/arrows/arrow-up.png")
     private val bottomArrowButton = createBottomArrowButton("src/main/resources/arrows/arrow-bottom.png")
@@ -72,6 +75,7 @@ object InitialLeftPanel:
               if f.getName == nextIndex then f.setVisible(true)
               ))
             currentCarIndex = nextIndex.toInt
+            carSelectedLabel.foreach(e => e.setText("Car selected: " + mapCarNames(currentCarIndex)))
         })
       yield button
 
@@ -88,6 +92,7 @@ object InitialLeftPanel:
               if f.getName == prevIndex then f.setVisible(true)
             ))
             currentCarIndex = prevIndex.toInt
+            carSelectedLabel.foreach(e => e.setText("Car selected: " + mapCarNames(currentCarIndex)))
         })
       yield button
 
