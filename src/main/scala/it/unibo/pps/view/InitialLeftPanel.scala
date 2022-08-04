@@ -42,6 +42,8 @@ object InitialLeftPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
+    
+    controller.setCurrentCarIndex(currentCarIndex)
 
     initialLeftPanel foreach(e => self.add(e))
 

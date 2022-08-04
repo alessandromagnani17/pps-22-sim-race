@@ -64,7 +64,7 @@ object InitialRightPanel:
             if f.getText == button.getText then
               f.setBackground(colorSelected)
               f.setOpaque(true)
-              
+
             else
               f.setBackground(colorNotSelected)
           }))
