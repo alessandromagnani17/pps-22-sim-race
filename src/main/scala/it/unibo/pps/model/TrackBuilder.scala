@@ -17,7 +17,6 @@ object TrackBuilder:
       val w2 = (0.7 * w).toInt
       val h1 = (0.3 * h).toInt
       val h3 = (0.4 * h).toInt
-
       DrawingStraightParams((w1, h1), (w2, h1), (w1, h3), (w2, h3))
 
     private def computeStraightDown(w: Int, h: Int): DrawingStraightParams =
@@ -25,7 +24,6 @@ object TrackBuilder:
       val w2 = (0.7 * w).toInt
       val h2 = (0.7 * h).toInt
       val h4 = (0.6 * h).toInt
-
       DrawingStraightParams((w1, h2), (w2, h2), (w1, h4), (w2, h4))
 
     private def computeTurnRight(w: Int, h: Int, direction: Int): DrawingTurnParams =
@@ -44,7 +42,6 @@ object TrackBuilder:
       val x2I = w2
       val y1I = h1
       val y2I = h2
-
       DrawingTurnParams((x0E, y0E), (x1E, y1E), (x1I, y1I), (x2E, y2E), (x2I, y2I), direction)
 
     override def createBaseTrack(w: Int, h: Int): Track =
