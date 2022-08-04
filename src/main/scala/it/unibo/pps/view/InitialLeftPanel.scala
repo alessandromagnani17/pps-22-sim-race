@@ -68,12 +68,8 @@ object InitialLeftPanel:
           override def actionPerformed(e: ActionEvent): Unit =
             val nextIndex = if (currentCarIndex + 1) == numCars then 0.toString else (currentCarIndex + 1).toString
             labelImages foreach( e => e foreach( f =>
-              if f.getName == currentCarIndex.toString then
-                f.setVisible(false)
-                  println("TOP | Entro if con label --> " + f.getName + "| current index -> " + currentCarIndex)
-              if f.getName == nextIndex then
-                f.setVisible(true)
-                  println("TOP | Entro else con label --> " + f.getName + "| current index -> " + currentCarIndex)
+              if f.getName == currentCarIndex.toString then f.setVisible(false)
+              if f.getName == nextIndex then f.setVisible(true)
               ))
             currentCarIndex = nextIndex.toInt
         })
@@ -88,12 +84,8 @@ object InitialLeftPanel:
           override def actionPerformed(e: ActionEvent): Unit =
             val prevIndex = if (currentCarIndex - 1) < 0 then (numCars - 1).toString else (currentCarIndex - 1).toString
             labelImages foreach( e => e foreach( f =>
-              if f.getName == currentCarIndex.toString then
-                f.setVisible(false)
-                println("Entro if con label --> " + f.getName + "| current index -> " + currentCarIndex)
-              if f.getName == prevIndex then
-                f.setVisible(true)
-                println("Entro else con label --> " + f.getName + "| current index -> " + currentCarIndex)
+              if f.getName == currentCarIndex.toString then f.setVisible(false)
+              if f.getName == prevIndex then f.setVisible(true)
             ))
             currentCarIndex = prevIndex.toInt
         })
