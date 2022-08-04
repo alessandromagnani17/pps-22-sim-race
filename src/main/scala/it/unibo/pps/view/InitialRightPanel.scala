@@ -29,10 +29,12 @@ object InitialRightPanel:
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
     private val lapsLabel = createJLabel("Select laps:")
+    private var numLaps = 1
+
+
     private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
     private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
-    private var numLaps = 1
-    private val lapsSelectedLabel = createJLabel("" + numLaps)
+    private val lapsSelectedLabel = createJLabel(numLaps.toString)
 
     //private val maximumSpeed = createJSlider(100, 350)
 
@@ -40,10 +42,6 @@ object InitialRightPanel:
     private val colorSelected = Color(79, 195, 247)
 
     initialRightPanel foreach(e => self.add(e))
-
-
-
-
 
 /*    private def createJSlider(minValue: Int, maxValue: Int): Task[JSlider] =
       for
@@ -71,51 +69,27 @@ object InitialRightPanel:
         })
       yield button
 
+
     private def createRightArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit =
-            leftArrowButton.foreach(e => e.setEnabled(true))
-            numLaps += 1
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString));
+        _ <- button.addActionListener(e =>{
+          numLaps = numLaps + 1
+          lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
         })
       yield button
 
     private def createLeftArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
-        //_ <- button.setEnabled(false)
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit =
-            numLaps += 1
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString));
+        _ <- button.addActionListener(e =>{
+          if numLaps > 1 then
+            numLaps = numLaps - 1
+            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
         })
       yield button
-
-    /*println("Entro")
-                val x = for
-                  l <- lapsSelectedLabel
-                  _ <- if numLaps > 1 then numLaps = numLaps - 1
-                  _ <- l.setText("" + numLaps)
-                yield()
-                x.runAsyncAndForget
-                if numLaps > 1 then
-                  println("Entro")
-                  numLaps = numLaps - 1
-                  lapsSelectedLabel.foreach(e => {println("EEEEE"); e.setText(numLaps.toString)})*/
-
-
-      //lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); if e.getText.toInt == 1 then button.setEnabled(false) })
-
-      /* for
-lapsSelectedLabel <- lapsSelectedLabel
-_ <- lapsSelectedLabel.setText((lapsSelectedLabel.getText.toInt - 1).toString)
-_ <- if lapsSelectedLabel.getText.toInt == 1 then button.setEnabled(false)
-yield */
-    // fine aggiunte
 
     private def createJLabel(text: String): Task[JLabel] =
       for
@@ -142,9 +116,8 @@ yield */
         _ <- lapsSelectedLabel.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.05).toInt))
         _ <- lapsSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- lapsSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
-
-        rightArrowButton <- rightArrowButton
-        leftArrowButton <- leftArrowButton
+        rab <- rightArrowButton
+        lab <- leftArrowButton
         hardTyresButton <- hardTyresButton
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
@@ -157,9 +130,9 @@ yield */
         _ <- panel.add(mediumTyresButton)
         _ <- panel.add(softTyresButton)
         _ <- panel.add(lapsLabel)
-        _ <- panel.add(leftArrowButton)
+        _ <- panel.add(lab)
         _ <- panel.add(lapsSelectedLabel)
-        _ <- panel.add(rightArrowButton)
-       // _ <- panel.add(maximumSpeed)
+        _ <- panel.add(rab)
+        //_ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
