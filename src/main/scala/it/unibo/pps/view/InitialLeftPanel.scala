@@ -22,6 +22,8 @@ object InitialLeftPanel:
 
     private val initialLeftPanel = createPanel()
 
+    private val carSelectedLabel = createJLabel("Car selected: ")
+
     private val topArrowButton = createTopArrowButton("src/main/resources/arrows/arrow-up.png")
     private val bottomArrowButton = createBottomArrowButton("src/main/resources/arrows/arrow-bottom.png")
 
@@ -53,7 +55,7 @@ object InitialLeftPanel:
       for
         label <- JLabel(text)
         _ <- label.setPreferredSize(Dimension(width, (height * 0.2).toInt))
-        _ <- label.setVerticalAlignment(SwingConstants.TOP)
+        _ <- label.setVerticalAlignment(SwingConstants.CENTER)
         _ <- label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
 
@@ -85,6 +87,8 @@ object InitialLeftPanel:
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
 
+        carLabel <- carSelectedLabel
+
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
 
@@ -94,6 +98,7 @@ object InitialLeftPanel:
         labelImage4 <- labelImage4
         _ <- labelImage1.setVisible(true)
 
+        _ <- panel.add(carLabel)
         _ <- panel.add(topArrowButton)
         _ <- panel.add(labelImage1)
         _ <- panel.add(labelImage2)
