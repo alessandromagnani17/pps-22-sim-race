@@ -32,7 +32,7 @@ object InitialLeftPanel:
     private val topArrowButton = createTopArrowButton("src/main/resources/arrows/arrow-up.png")
     private val bottomArrowButton = createBottomArrowButton("src/main/resources/arrows/arrow-bottom.png")
 
-    private val labelImage1 = createLabelImage("src/main/resources/cars/0.png", "0")
+    private val labelImage1 = createLabelImage("src/main/resources/cars/0-hard.png", "0")
     private val labelImage2 = createLabelImage("src/main/resources/cars/1.png", "1")
     private val labelImage3 = createLabelImage("src/main/resources/cars/2.png", "2")
     private val labelImage4 = createLabelImage("src/main/resources/cars/3.png", "3")

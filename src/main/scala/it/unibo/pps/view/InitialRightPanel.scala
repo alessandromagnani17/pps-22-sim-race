@@ -22,9 +22,9 @@ object InitialRightPanel:
     private val initialRightPanel = createPanel()
 
     private val tyresLabel = createJLabel("Select tyres: ")
-    private val hardTyresButton = createJButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png")
-    private val mediumTyresButton = createJButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png")
-    private val softTyresButton = createJButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png")
+    private val hardTyresButton = createJButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png", "hard")
+    private val mediumTyresButton = createJButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png", "medium")
+    private val softTyresButton = createJButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png", "soft")
 
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
@@ -53,9 +53,10 @@ object InitialRightPanel:
 
 
     // inizio aggiunte (le informazioni come setBackground o setPreferredSize le metterei sotto)
-    private def createJButton(text: String, fileName: String): Task[JButton] =
+    private def createJButton(text: String, fileName: String, name: String): Task[JButton] =
       for
         button <- JButton(text, ImageIcon(fileName))
+        _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.07).toInt))
         _ <- button.addActionListener(new ActionListener {
@@ -63,6 +64,7 @@ object InitialRightPanel:
             if f.getText == button.getText then
               f.setBackground(colorSelected)
               f.setOpaque(true)
+              
             else
               f.setBackground(colorNotSelected)
           }))
@@ -146,6 +148,9 @@ yield */
         hardTyresButton <- hardTyresButton
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
+
+        _ <- hardTyresButton.setBackground(colorSelected)
+        _ <- hardTyresButton.setOpaque(true)
 
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
