@@ -20,6 +20,8 @@ object InitialLeftPanel:
     extends InitialLeftPanel:
     self =>
 
+    private var currentCarIndex = 0
+
     private val initialLeftPanel = createPanel()
 
     private val carSelectedLabel = createJLabel("Car selected: ")
@@ -27,20 +29,18 @@ object InitialLeftPanel:
     private val topArrowButton = createTopArrowButton("src/main/resources/arrows/arrow-up.png")
     private val bottomArrowButton = createBottomArrowButton("src/main/resources/arrows/arrow-bottom.png")
 
-    private val labelImage1 = createLabelImage("src/main/resources/cars/1.png", "1")
-    private val labelImage2 = createLabelImage("src/main/resources/cars/2.png", "2")
-    private val labelImage3 = createLabelImage("src/main/resources/cars/3.png", "3")
-    private val labelImage4 = createLabelImage("src/main/resources/cars/4.png", "4")
+    private val labelImage1 = createLabelImage("src/main/resources/cars/0.png", "0")
+    private val labelImage2 = createLabelImage("src/main/resources/cars/1.png", "1")
+    private val labelImage3 = createLabelImage("src/main/resources/cars/2.png", "2")
+    private val labelImage4 = createLabelImage("src/main/resources/cars/3.png", "3")
 
     private val labelImages = List(labelImage1, labelImage2, labelImage3, labelImage4)
 
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
+    private val numCars = 4
 
     initialLeftPanel foreach(e => self.add(e))
-
-
-
 
     private def createLabelImage(filename: String, name: String): Task[JLabel] =
       for
@@ -59,14 +59,23 @@ object InitialLeftPanel:
         _ <- label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
 
-
     private def createTopArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = labelImages.foreach(r => r.foreach(f => if f.isVisible then println(f.getComponent(1))))
+          override def actionPerformed(e: ActionEvent): Unit =
+            val nextIndex = if (currentCarIndex + 1) == numCars then 0.toString else (currentCarIndex + 1).toString
+            labelImages foreach( e => e foreach( f =>
+              if f.getName == currentCarIndex.toString then
+                f.setVisible(false)
+                  println("TOP | Entro if con label --> " + f.getName + "| current index -> " + currentCarIndex)
+              if f.getName == nextIndex then
+                f.setVisible(true)
+                  println("TOP | Entro else con label --> " + f.getName + "| current index -> " + currentCarIndex)
+              ))
+            currentCarIndex = nextIndex.toInt
         })
       yield button
 
@@ -76,7 +85,17 @@ object InitialLeftPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.TOP)
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = labelImages.foreach(r => r.foreach(f => if f.isVisible then println(f.getComponent(1))))
+          override def actionPerformed(e: ActionEvent): Unit =
+            val prevIndex = if (currentCarIndex - 1) < 0 then (numCars - 1).toString else (currentCarIndex - 1).toString
+            labelImages foreach( e => e foreach( f =>
+              if f.getName == currentCarIndex.toString then
+                f.setVisible(false)
+                println("Entro if con label --> " + f.getName + "| current index -> " + currentCarIndex)
+              if f.getName == prevIndex then
+                f.setVisible(true)
+                println("Entro else con label --> " + f.getName + "| current index -> " + currentCarIndex)
+            ))
+            currentCarIndex = prevIndex.toInt
         })
       yield button
 
