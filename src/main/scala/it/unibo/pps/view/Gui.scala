@@ -2,9 +2,11 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import monix.eval.Task
-import java.awt.Component
+
+import java.awt.{Component, Toolkit}
 import javax.swing.JFrame
 import monix.execution.Scheduler.Implicits.global
+
 import javax.swing.WindowConstants
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
@@ -33,4 +35,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield fr
 
 object Prova extends App:
-  new Gui(1300, 1100, null)
+  val screenSize = Toolkit.getDefaultToolkit.getScreenSize
+  val w = (screenSize.width * 0.9).toInt
+  val h = (screenSize.height * 0.9).toInt
+  new Gui(w, h, null)
