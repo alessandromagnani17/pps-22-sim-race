@@ -75,7 +75,7 @@ object SimulationPanel:
     }
 
     private def createCanvas(): Task[Enviroment] =
-      val w = (width * 0.6).toInt
+      val w = (width * 0.7).toInt
       val h = (height * 0.7).toInt
       for
         cnv <- new Enviroment(w, h)
@@ -94,7 +94,7 @@ object SimulationPanel:
       for
         p <- new JPanel()
         _ <- p.setLayout(new BoxLayout(p, 1))
-        w = (width * 0.35).toInt
+        w = (width * 0.25).toInt
         h = 300
         chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
         chartVelP <- chartVel.getPanel()
@@ -110,7 +110,7 @@ object SimulationPanel:
         _ <- p.add(chartTyresP)
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(22)
-        _ <- sp.setPreferredSize(new Dimension((width * 0.4).toInt, (height * 0.7).toInt))
+        _ <- sp.setPreferredSize(new Dimension((width * 0.3).toInt, (height * 0.7).toInt))
       yield sp
 
     private def createChart(title: String, xLabel: String, yLabel: String, serieName: String): Task[LineChart] =
