@@ -5,8 +5,7 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import monix.eval.Task
 
 import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
-import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, SwingConstants}
-import javax.swing.JPanel
+import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, JSlider, SwingConstants}
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
@@ -30,14 +29,26 @@ object InitialRightPanel:
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
     private val lapsLabel = createJLabel("Select laps:")
-    private val rightArrowButton = createRightArrowButton("src/main/resources/arrow-right.png")
-    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrow-left.png")
+    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
+    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
     private val lapsSelectedLabel = createJLabel("1")
+
+    //private val maximumSpeed = createJSlider(100, 350)
 
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
     initialRightPanel foreach(e => self.add(e))
+
+
+
+
+
+/*    private def createJSlider(minValue: Int, maxValue: Int): Task[JSlider] =
+      for
+        slider <- JSlider(minValue, maxValue)
+      yield slider*/
+
 
 
     // inizio aggiunte (le informazioni come setBackground o setPreferredSize le metterei sotto)
@@ -70,6 +81,10 @@ object InitialRightPanel:
         })
       yield button
 
+
+   
+      
+    
       //lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); if e.getText.toInt == 1 then button.setEnabled(false) })
 
       /* for
@@ -84,8 +99,8 @@ yield */
 
     private def createJLabel(text: String): Task[JLabel] =
       for
-        jl <- JLabel(text)
-      yield jl
+        label <- JLabel(text)
+      yield label
 
 
     private def createPanel(): Task[JPanel] =
@@ -117,6 +132,9 @@ yield */
 
         rightArrowButton <- rightArrowButton
 
+       // maximumSpeed <- maximumSpeed
+
+
 
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
@@ -126,5 +144,6 @@ yield */
         _ <- panel.add(leftArrowButton)
         _ <- panel.add(lapsSelectedLabel)
         _ <- panel.add(rightArrowButton)
+       // _ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
