@@ -47,7 +47,13 @@ object InitialRightPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.07).toInt))
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = tyresButtons.foreach(e => e.foreach(f => { f.getName == button.getName; f.setBackground(colorNotSelected); button.setBackground(colorSelected) }))
+          override def actionPerformed(e: ActionEvent): Unit = tyresButtons.foreach(e => e.foreach(f => {
+            if f.getText == button.getText then
+              f.setBackground(colorSelected)
+              f.setOpaque(true)
+            else
+              f.setBackground(colorNotSelected)
+          }))
         })
       yield button
 
@@ -66,7 +72,7 @@ object InitialRightPanel:
         _ <- button.setEnabled(false)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit =  lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); println((e.getText.toInt - 1).toString) } )
+          override def actionPerformed(e: ActionEvent): Unit = lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); println((e.getText.toInt - 1).toString) } )
         })
       yield button
 
@@ -79,14 +85,10 @@ _ <- if lapsSelectedLabel.getText.toInt == 1 then button.setEnabled(false)
 yield */
     // fine aggiunte
 
-
-
-
     private def createJLabel(text: String): Task[JLabel] =
       for
         jl <- JLabel(text)
       yield jl
-
 
     private def createPanel(): Task[JPanel] =
       for
@@ -116,7 +118,6 @@ yield */
         _ <- lapsSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
 
         rightArrowButton <- rightArrowButton
-
 
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)

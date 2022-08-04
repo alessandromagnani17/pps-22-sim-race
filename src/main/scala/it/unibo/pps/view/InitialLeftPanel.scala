@@ -43,10 +43,7 @@ object InitialLeftPanel:
         _ <- label.setPreferredSize(Dimension(width, (height * 0.6).toInt))
         _ <- label.setVerticalAlignment(SwingConstants.BOTTOM)
       yield label
-
-
-
-
+    
     private def createJLabel(text: String): Task[JLabel] =
       for
         jl <- JLabel(text)
