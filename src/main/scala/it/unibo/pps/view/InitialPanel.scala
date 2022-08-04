@@ -12,7 +12,8 @@ import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagC
 import javax.imageio.ImageIO
 import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, SwingConstants}
 
-trait InitialPanel extends JPanel
+trait InitialPanel extends JPanel:
+  def changeCar(carIndex: Int, tyresType: String): Unit
 
 object InitialPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): InitialPanel = InitialPanelImpl(width, height, controller)

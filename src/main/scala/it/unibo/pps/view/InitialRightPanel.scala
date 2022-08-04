@@ -35,22 +35,14 @@ object InitialRightPanel:
     private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
     private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
     private val lapsSelectedLabel = createJLabel(numLaps.toString)
-
-    //private val maximumSpeed = createJSlider(100, 350)
-
+    
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
     initialRightPanel foreach(e => self.add(e))
 
-/*    private def createJSlider(minValue: Int, maxValue: Int): Task[JSlider] =
-      for
-        slider <- JSlider(minValue, maxValue)
-      yield slider*/
 
 
-
-    // inizio aggiunte (le informazioni come setBackground o setPreferredSize le metterei sotto)
     private def createJButton(text: String, fileName: String, name: String): Task[JButton] =
       for
         button <- JButton(text, ImageIcon(fileName))
@@ -63,6 +55,7 @@ object InitialRightPanel:
               f.setBackground(colorSelected)
               f.setOpaque(true)
               controller.changeDisplayedCar(f.getName)
+              
             else
               f.setBackground(colorNotSelected)
           }))
