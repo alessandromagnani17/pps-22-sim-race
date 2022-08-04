@@ -37,8 +37,8 @@ object InitialPanel:
 
     mainPanel foreach( p => self.add(p))
 
-
-
+    def changeCar(carIndex: Int, tyresType: String): Unit = initialLeftPanel.changeCar(carIndex, tyresType)
+    
     private def createJPanel(w: Int, h: Int, layout: LayoutManager): Task[JPanel] =
       for
         panel <- JPanel()

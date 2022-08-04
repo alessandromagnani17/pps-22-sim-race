@@ -42,10 +42,14 @@ object InitialLeftPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
-    
+
     controller.setCurrentCarIndex(currentCarIndex)
 
     initialLeftPanel foreach(e => self.add(e))
+
+    def changeCar(carIndex: Int, tyresType: String): Unit = ???
+      // Fai vedere la macchina con indice carIndex e le gomme tyresType
+
 
     private def createLabelImage(filename: String, name: String): Task[JLabel] =
       for

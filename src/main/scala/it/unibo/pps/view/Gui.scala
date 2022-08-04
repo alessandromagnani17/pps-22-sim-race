@@ -31,6 +31,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       //_ <- fr.getContentPane().setLayout(null) // AGGIUNTA NUOVA
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr
+    
+  def changeCar(carIndex: Int, tyresType: String): Unit = initialPanel.changeCar(carIndex, tyresType)
 
 object Prova extends App:
   new Gui(1000, 800, null)

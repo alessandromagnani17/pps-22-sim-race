@@ -8,6 +8,7 @@ import it.unibo.pps.view.ViewModule
 object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
+    def changeDisplayedCar(tyresType: String): Unit
     def setCurrentCarIndex(index: Int): Unit
     
   trait Provider:
@@ -22,6 +23,9 @@ object ControllerModule:
 
       def notifyStart(): Unit = ???
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
+
+      def changeDisplayedCar(tyresType: String): Unit =
+        context.view.updateDisplayedCar(currentCarIndex, tyresType)
 
       
   trait Interface extends Provider with Component:

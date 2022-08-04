@@ -62,7 +62,7 @@ object InitialRightPanel:
             if f.getText == button.getText then
               f.setBackground(colorSelected)
               f.setOpaque(true)
-
+              controller.changeDisplayedCar(f.getName)
             else
               f.setBackground(colorNotSelected)
           }))
