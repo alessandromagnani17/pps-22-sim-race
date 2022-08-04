@@ -31,7 +31,8 @@ object InitialRightPanel:
     private val lapsLabel = createJLabel("Select laps:")
     private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
     private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
-    private val lapsSelectedLabel = createJLabel("1")
+    private var numLaps = 1
+    private val lapsSelectedLabel = createJLabel("" + numLaps)
 
     //private val maximumSpeed = createJSlider(100, 350)
 
@@ -73,24 +74,38 @@ object InitialRightPanel:
         button <- JButton(ImageIcon(filename))
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = { lapsSelectedLabel.foreach(e => e.setText((e.getText.toInt + 1).toString)); leftArrowButton.foreach(e => e.setEnabled(true)) }
+          override def actionPerformed(e: ActionEvent): Unit =
+            leftArrowButton.foreach(e => e.setEnabled(true))
+            numLaps += 1
+            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString));
         })
       yield button
 
     private def createLeftArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
-        _ <- button.setEnabled(false)
+        //_ <- button.setEnabled(false)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); println((e.getText.toInt - 1).toString) } )
+          override def actionPerformed(e: ActionEvent): Unit =
+            numLaps += 1
+            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString));
         })
       yield button
 
+    /*println("Entro")
+                val x = for
+                  l <- lapsSelectedLabel
+                  _ <- if numLaps > 1 then numLaps = numLaps - 1
+                  _ <- l.setText("" + numLaps)
+                yield()
+                x.runAsyncAndForget
+                if numLaps > 1 then
+                  println("Entro")
+                  numLaps = numLaps - 1
+                  lapsSelectedLabel.foreach(e => {println("EEEEE"); e.setText(numLaps.toString)})*/
 
-   
-      
-    
+
       //lapsSelectedLabel.foreach(e => { e.setText((e.getText.toInt - 1).toString); if e.getText.toInt == 1 then button.setEnabled(false) })
 
       /* for
@@ -116,16 +131,10 @@ yield */
         _ <- tyresLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- tyresLabel.setVerticalAlignment(SwingConstants.BOTTOM)
 
-        hardTyresButton <- hardTyresButton
-        mediumTyresButton <- mediumTyresButton
-        softTyresButton <- softTyresButton
-
         lapsLabel <- lapsLabel
         _ <- lapsLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
         _ <- lapsLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- lapsLabel.setVerticalAlignment(SwingConstants.BOTTOM)
-
-        leftArrowButton <- leftArrowButton
 
         lapsSelectedLabel <- lapsSelectedLabel
         _ <- lapsSelectedLabel.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.05).toInt))
@@ -133,6 +142,10 @@ yield */
         _ <- lapsSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
 
         rightArrowButton <- rightArrowButton
+        leftArrowButton <- leftArrowButton
+        hardTyresButton <- hardTyresButton
+        mediumTyresButton <- mediumTyresButton
+        softTyresButton <- softTyresButton
 
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
