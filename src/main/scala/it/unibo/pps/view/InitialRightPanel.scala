@@ -38,10 +38,10 @@ object InitialRightPanel:
     private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
     private val speedSelectedLabel = createJLabel(maxSpeed.toString)
 
+    //private val lapsSelectedLabel = createJLabel(numLaps.toString)
+    private val starButtons = createStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png")
 
 
-    private val lapsSelectedLabel = createJLabel(numLaps.toString)
-    
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
@@ -113,6 +113,28 @@ object InitialRightPanel:
         })
       yield button*/
 
+    private def createStarButtons(filenameNotSelected: String, filenameSelected: String): List[Task[JButton]] =
+      val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 1.toString),
+        createStarButton(filenameNotSelected, filenameSelected, 2.toString),
+        createStarButton(filenameNotSelected, filenameSelected, 3.toString),
+        createStarButton(filenameNotSelected, filenameSelected, 4.toString),
+        createStarButton(filenameNotSelected, filenameSelected, 5.toString))
+
+      starButtons
+
+
+    private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(filenameNotSelected))
+        _ <- button.setName(name)
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          button.setIcon(ImageIcon(filenameSelected))
+        })
+      yield button
+
+
+
     private def createJLabel(text: String): Task[JLabel] =
       for
         label <- JLabel(text)
@@ -147,6 +169,8 @@ object InitialRightPanel:
         _ <- hardTyresButton.setBackground(colorSelected)
         _ <- hardTyresButton.setOpaque(true)
 
+        firstStarButton <- starButtons(0)
+
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
         _ <- panel.add(mediumTyresButton)
@@ -155,6 +179,6 @@ object InitialRightPanel:
         _ <- panel.add(lab)
         _ <- panel.add(speedSelectedLabel)
         _ <- panel.add(rab)
-        //_ <- panel.add(maximumSpeed)
+        _ <- panel.add(firstStarButton)
         _ <- panel.setVisible(true)
       yield panel
