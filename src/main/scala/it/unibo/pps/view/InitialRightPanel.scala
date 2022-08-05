@@ -30,7 +30,7 @@ object InitialRightPanel:
 
 
 
-    private val maxSpeedLabel = createJLabel("Select speed:")
+    private val maxSpeedLabel = createJLabel("Select Maximum Speed (km/h):")
     private var maxSpeed = 200
 
     private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
@@ -143,6 +143,7 @@ object InitialRightPanel:
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
+        _ <- panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK))
 
         tyresLabel <- tyresLabel
         _ <- tyresLabel.setPreferredSize(Dimension(width, (height * 0.05).toInt))

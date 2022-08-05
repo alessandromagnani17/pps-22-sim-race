@@ -35,4 +35,4 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def changeCar(carIndex: Int, tyresType: String): Unit = initialPanel.changeCar(carIndex, tyresType)
 
 object Prova extends App:
-  new Gui(1000, 800, null)
+  new Gui(1000, 650, null)

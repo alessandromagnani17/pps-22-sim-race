@@ -23,7 +23,7 @@ object InitialPanel:
     self =>
 
     private val panelWidth = (width * 0.48).toInt
-    private val panelHeight = (height * 0.85).toInt
+    private val panelHeight = (height * 0.65).toInt
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
@@ -37,7 +37,7 @@ object InitialPanel:
     private val lapsSelectedLabel = createJLabel(numLaps.toString)
 
     private val startBtn = createButton("Start Simulation")
-    private val bottomPanel = createJPanel(width, (height * 0.15).toInt, FlowLayout())
+    private val bottomPanel = createJPanel(width, height - panelHeight, FlowLayout())
     private val mainPanel = createMainPanelAndAddAllComponents()
 
     mainPanel foreach( p => self.add(p))
@@ -54,6 +54,7 @@ object InitialPanel:
     private def createButton(text: String): Task[JButton] =
       for
         button <- JButton(text)
+        _ <- button.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.06).toInt))
       yield button
 
     private def createJLabel(text: String): Task[JLabel] =
@@ -99,10 +100,18 @@ object InitialPanel:
         lab <- leftArrowButton
         b <- startBtn
 
+        x <- JLabel()
+        _ <- x.setPreferredSize(Dimension(width, (height * 0.03).toInt))
+
+        y <- JLabel()
+        _ <- y.setPreferredSize(Dimension(width, (height * 0.03).toInt))
+        _ <- bp.add(x)
+
         _ <- bp.add(lapsLabel)
         _ <- bp.add(lab)
         _ <- bp.add(lapsSelectedLabel)
         _ <- bp.add(rab)
+        _ <- bp.add(y)
         _ <- bp.add(b)
 
         _ <- mainp.add(initialLeftPanel)
