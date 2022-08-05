@@ -122,7 +122,6 @@ object InitialLeftPanel:
         _ <- panel.add(topArrowButton)
         _ <- panel.add(labelImage)
         _ <- panel.add(bottomArrowButton)
-
-
+        
         _ <- panel.setVisible(true)
       yield panel

@@ -28,8 +28,7 @@ object InitialRightPanel:
 
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
-    private val lapsLabel = createJLabel("Select laps:")
-    private var numLaps = 20
+
 
     private val maxSpeedLabel = createJLabel("Select speed:")
     private var maxSpeed = 200
@@ -92,27 +91,6 @@ object InitialRightPanel:
       yield button
 
 
-   /* private def createRightArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          numLaps = numLaps + 1
-          lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
-        })
-      yield button
-
-    private def createLeftArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          if numLaps > 1 then
-            numLaps = numLaps - 1
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
-        })
-      yield button*/
-
     private def createStarButtons(filenameNotSelected: String, filenameSelected: String): List[Task[JButton]] =
       val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 1.toString),
         createStarButton(filenameNotSelected, filenameSelected, 2.toString),
@@ -151,6 +129,7 @@ object InitialRightPanel:
         _ <- tyresLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- tyresLabel.setVerticalAlignment(SwingConstants.BOTTOM)
 
+
         maxSpeedLabel <- maxSpeedLabel
         _ <- maxSpeedLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
         _ <- maxSpeedLabel.setHorizontalAlignment(SwingConstants.CENTER)
@@ -162,6 +141,7 @@ object InitialRightPanel:
         _ <- speedSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
         rab <- rightArrowButton
         lab <- leftArrowButton
+
         hardTyresButton <- hardTyresButton
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
@@ -179,6 +159,10 @@ object InitialRightPanel:
         _ <- panel.add(lab)
         _ <- panel.add(speedSelectedLabel)
         _ <- panel.add(rab)
+
         _ <- panel.add(firstStarButton)
+
+
+        //_ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
