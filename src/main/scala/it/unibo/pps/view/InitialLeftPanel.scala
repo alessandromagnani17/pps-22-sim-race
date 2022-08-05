@@ -72,6 +72,7 @@ object InitialLeftPanel:
     private def createTopArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener(new ActionListener {
@@ -90,6 +91,7 @@ object InitialLeftPanel:
     private def createBottomArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.TOP)
         _ <- button.addActionListener(new ActionListener {

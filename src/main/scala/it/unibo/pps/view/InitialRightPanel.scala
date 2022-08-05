@@ -38,13 +38,15 @@ object InitialRightPanel:
     private val speedSelectedLabel = createJLabel(maxSpeed.toString)
 
     //private val lapsSelectedLabel = createJLabel(numLaps.toString)
-    private val starButtons = createStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png")
+    private val starAttackLabel = createJLabel("Select Driver Attack Skills:")
+    private val starAttackButtons = createAttackStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png")
 
 
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
     initialRightPanel foreach(e => self.add(e))
+
 
 
 
@@ -71,6 +73,7 @@ object InitialRightPanel:
     private def createRightArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
           if maxSpeed < 350 then
@@ -82,6 +85,7 @@ object InitialRightPanel:
     private def createLeftArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
           if maxSpeed > 200 then
@@ -91,23 +95,30 @@ object InitialRightPanel:
       yield button
 
 
-    private def createStarButtons(filenameNotSelected: String, filenameSelected: String): List[Task[JButton]] =
-      val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 1.toString),
-        createStarButton(filenameNotSelected, filenameSelected, 2.toString),
-        createStarButton(filenameNotSelected, filenameSelected, 3.toString),
-        createStarButton(filenameNotSelected, filenameSelected, 4.toString),
-        createStarButton(filenameNotSelected, filenameSelected, 5.toString))
+    private def createAttackStarButtons(filenameNotSelected: String, filenameSelected: String): List[Task[JButton]] =
+      val starButtons: List[Task[JButton]] = List(createAttackStarButton(filenameNotSelected, filenameSelected, 0.toString),
+        createAttackStarButton(filenameNotSelected, filenameSelected, 1.toString),
+        createAttackStarButton(filenameNotSelected, filenameSelected, 2.toString),
+        createAttackStarButton(filenameNotSelected, filenameSelected, 3.toString),
+        createAttackStarButton(filenameNotSelected, filenameSelected, 4.toString))
 
       starButtons
 
 
-    private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String): Task[JButton] =
+    private def createAttackStarButton (filenameNotSelected: String, filenameSelected: String, name: String): Task[JButton] =
       for
-        button <- JButton(ImageIcon(filenameNotSelected))
+        button <- if name.equals("0") then JButton(ImageIcon(filenameSelected)) else JButton(ImageIcon(filenameNotSelected))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
+        _ <- button.setPreferredSize(Dimension((width * 0.09).toInt, (height * 0.08).toInt))
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
-          button.setIcon(ImageIcon(filenameSelected))
+          starAttackButtons.foreach(e => e.foreach(f =>
+            if f.getName.toInt <= button.getName.toInt then
+              f.setIcon(ImageIcon(filenameSelected))
+            else
+              f.setIcon(ImageIcon(filenameNotSelected))
+          ))
         })
       yield button
 
@@ -146,10 +157,14 @@ object InitialRightPanel:
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
 
+        starAttackLabel <- starAttackLabel
+        _ <- starAttackLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
+        _ <- starAttackLabel.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- starAttackLabel.setVerticalAlignment(SwingConstants.BOTTOM)
+
+
         _ <- hardTyresButton.setBackground(colorSelected)
         _ <- hardTyresButton.setOpaque(true)
-
-        firstStarButton <- starButtons(0)
 
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
@@ -159,8 +174,9 @@ object InitialRightPanel:
         _ <- panel.add(lab)
         _ <- panel.add(speedSelectedLabel)
         _ <- panel.add(rab)
+        _ <- panel.add(starAttackLabel)
+        _ <- starAttackButtons.foreach(e => e.foreach(f => panel.add(f)))
 
-        _ <- panel.add(firstStarButton)
 
 
         //_ <- panel.add(maximumSpeed)
