@@ -11,7 +11,7 @@ straight(3, 272, 396, 634, 396, 272, 340, 634, 340).
 
 %Direction ---> -1 or 1
 %SP ---> Start Point
-%EP ---> Etart Point
+%EP ---> End Point
 
 % Turn(id, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I,direction)
 turn(2, 634, 283, 634, 170, 634, 226, 634, 396, 634, 340, 1).
