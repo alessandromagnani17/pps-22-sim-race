@@ -29,7 +29,7 @@ object InitialRightPanel:
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
     private val lapsLabel = createJLabel("Select laps:")
-    private var numLaps = 1
+    private var numLaps = 20
 
 
     private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
