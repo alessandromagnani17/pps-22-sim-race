@@ -70,4 +70,9 @@ object TrackBuilder:
       track.addSector(Sector.Turn(2, computeTurnRight(w, h, 1)))
       track.addSector(Sector.Straight(3, computeStraightDown(w, h)))
       track.addSector(Sector.Turn(4, computeTurnLeft(w, h, -1)))
+
+      track
+        .getSectors()
+        .foreach(println(_))
+
       track
