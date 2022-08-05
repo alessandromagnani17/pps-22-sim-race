@@ -4,10 +4,8 @@ import it.unibo.pps.controller.ControllerModule
 import monix.eval.Task
 
 import java.awt.{Component, Toolkit}
-import javax.swing.JFrame
+import javax.swing.{JFrame, JTable, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
-
-import javax.swing.WindowConstants
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   given Conversion[Unit, Task[Unit]] = Task(_)
