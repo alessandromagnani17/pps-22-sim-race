@@ -12,3 +12,7 @@ libraryDependencies += "org.jfree" % "jfreechart" % "1.5.3"
 
 //Add ScalaTest dependencies
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % Test
+
+//Add Prolog dependencies
+libraryDependencies += "it.unibo.alice.tuprolog" % "2p-core" % "4.1.1"
+libraryDependencies += "it.unibo.alice.tuprolog" % "2p-ui" % "4.1.1"

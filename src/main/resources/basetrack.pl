@@ -4,6 +4,7 @@
 % I ---> Internal
 
 
+
 %straight(id, x0_E, y0_E, x1_E, y1_E, x0_I, y0_I, x1_I, y1_I)
 %straight(id(ID), startPointE(X0_E, Y0_E), endPointE(X1_E, Y1_E), startPointI(X0_I, Y0_I), endPointI(X1_I, Y1_I))
 straight(id(1), startPointE(272, 170), endPointE(634, 170), startPointI(272, 226), endPointI(634, 226)).

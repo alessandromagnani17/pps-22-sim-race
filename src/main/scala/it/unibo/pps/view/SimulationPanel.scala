@@ -12,7 +12,12 @@ import it.unibo.pps.model.{Sector, Track, TrackBuilder}
 import it.unibo.pps.util.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
+import scala.concurrent.duration.FiniteDuration
 import scala.math.atan2
+
+import concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.language.postfixOps
+import scala.language.implicitConversions
 
 trait SimulationPanel extends JPanel:
 
@@ -56,10 +61,11 @@ object SimulationPanel:
       _ <- self.add(resultPanel, BorderLayout.NORTH)
       _ <- self.add(buttonsPanel, BorderLayout.SOUTH)
       _ <- self.add(canvas, BorderLayout.WEST)
-      _ <- initTrack()
+      _ <- initTrack(canvas)
       _ <- render()
     yield ()
-    p.runAsyncAndForget
+    p.runSyncUnsafe()
+   // p.runAsyncAndForget
 
     override def render(): Unit = SwingUtilities.invokeLater { () =>
       cnv.foreach(c =>
@@ -111,8 +117,6 @@ object SimulationPanel:
       for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
 
-    private def initTrack(): Unit =
-      cnv.foreach(c =>
-        val trackBuilder = TrackBuilder()
-        c.track = trackBuilder.createBaseTrack(c.w, c.h)
-      )
+    private def initTrack(c: Enviroment): Unit =
+      val trackBuilder = TrackBuilder()
+      c.track = trackBuilder.createBaseTrack(c.w, c.h)
