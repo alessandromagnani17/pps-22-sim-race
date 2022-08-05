@@ -14,6 +14,51 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def paintComponent(g: Graphics): Unit =
     g.setColor(Color.BLACK)
 
+//---------------------------------------------->>>> MACCHINE <<<<-------------------------------------------------------
+
+    //Variabili relative alle macchine
+    var intW = (w * 0.5).toInt
+    var intH = (h * 0.3).toInt
+    var carDiameter = 20
+    var distanceBeetweenCars = 20
+
+    //Metodo 1 per disegnare le macchine
+
+    g.setColor(Color.BLUE)
+    g.fillOval(intW, intH, carDiameter, carDiameter)
+    g.setColor(Color.GREEN)
+    g.fillOval(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
+    g.setColor(Color.RED)
+    g.fillOval(intW + (distanceBeetweenCars*2), intH + (distanceBeetweenCars*2), carDiameter, carDiameter)
+    g.setColor(Color.BLACK)
+
+
+    //Metodo 2 per disegnare le macchine
+    /*
+    Un'idea potrebbe essere quella di memorizzare una shape dentro alla classe macchina, oltre a gli altri parametri
+    */
+
+    /*
+    import java.awt.Graphics2D
+    import java.awt.Shape
+    import java.awt.geom.Ellipse2D
+
+    val g2d: Graphics2D = g.asInstanceOf[Graphics2D]
+
+    val car1: Shape = new Ellipse2D.Double(intW, intH, carDiameter, carDiameter)
+    val car2: Shape = new Ellipse2D.Double(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
+    val car3: Shape = new Ellipse2D.Double(intW + (distanceBeetweenCars*2), intH + (distanceBeetweenCars*2), carDiameter, carDiameter)
+
+    g2d.setColor(Color.CYAN)
+    g2d.fill(car1)
+    g2d.setColor(Color.MAGENTA)
+    g2d.fill(car2)
+    g2d.setColor(Color.ORANGE)
+    g2d.fill(car3)
+    g2d.setColor(Color.BLACK)
+    */
+//----------------------------------------------------------------------------------------------------------------------
+
     def sketcher(e: Sector) = e match {
       case s: Sector.Straight => drawStraigth(s, g)
       case t: Sector.Turn => drawTurn(t, g)

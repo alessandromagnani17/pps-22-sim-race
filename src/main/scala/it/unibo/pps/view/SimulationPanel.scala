@@ -1,24 +1,16 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JPanel,
-  JScrollPane,
-  JTextArea,
-  SwingUtilities,
-  WindowConstants
-}
+import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Sector, Track, TrackBuilder}
-import it.unibo.pps.util.PimpScala.RichTuple2._
+import it.unibo.pps.util.PimpScala.RichTuple2.*
+
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.math.atan2
 
@@ -55,11 +47,13 @@ object SimulationPanel:
       incVelocityButton <- createButton("+ Velocity", e => println("button incVel pressed"))
       decVelocityButton <- createButton("- Velocity", e => println("button decVel pressed"))
       buttonsPanel = new JPanel()
+      resultPanel = new JPanel()
       _ <- buttonsPanel.add(startButton)
       _ <- buttonsPanel.add(stopButton)
       _ <- buttonsPanel.add(incVelocityButton)
       _ <- buttonsPanel.add(decVelocityButton)
       _ <- self.add(scrollPanel, BorderLayout.EAST)
+      _ <- self.add(resultPanel, BorderLayout.NORTH)
       _ <- self.add(buttonsPanel, BorderLayout.SOUTH)
       _ <- self.add(canvas, BorderLayout.WEST)
       _ <- initTrack()
