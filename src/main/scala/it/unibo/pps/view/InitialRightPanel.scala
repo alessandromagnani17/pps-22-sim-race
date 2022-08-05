@@ -28,6 +28,17 @@ object InitialRightPanel:
 
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
+
+
+    private val maxSpeedLabel = createJLabel("Select speed:")
+    private var maxSpeed = 200
+
+    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
+    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
+    private val speedSelectedLabel = createJLabel(maxSpeed.toString)
+
+
+
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
@@ -54,6 +65,30 @@ object InitialRightPanel:
         })
       yield button
 
+
+    private def createRightArrowButton(filename: String): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(filename))
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          if maxSpeed < 350 then
+            maxSpeed = maxSpeed + 10
+            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
+        })
+      yield button
+
+    private def createLeftArrowButton(filename: String): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(filename))
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          if maxSpeed > 200 then
+            maxSpeed = maxSpeed - 10
+            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
+        })
+      yield button
+
+
     private def createJLabel(text: String): Task[JLabel] =
       for
         label <- JLabel(text)
@@ -70,6 +105,19 @@ object InitialRightPanel:
         _ <- tyresLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- tyresLabel.setVerticalAlignment(SwingConstants.BOTTOM)
 
+
+        maxSpeedLabel <- maxSpeedLabel
+        _ <- maxSpeedLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
+        _ <- maxSpeedLabel.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- maxSpeedLabel.setVerticalAlignment(SwingConstants.BOTTOM)
+
+        speedSelectedLabel <- speedSelectedLabel
+        _ <- speedSelectedLabel.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.05).toInt))
+        _ <- speedSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- speedSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
+        rab <- rightArrowButton
+        lab <- leftArrowButton
+
         hardTyresButton <- hardTyresButton
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
@@ -81,6 +129,11 @@ object InitialRightPanel:
         _ <- panel.add(hardTyresButton)
         _ <- panel.add(mediumTyresButton)
         _ <- panel.add(softTyresButton)
+        _ <- panel.add(maxSpeedLabel)
+        _ <- panel.add(lab)
+        _ <- panel.add(speedSelectedLabel)
+        _ <- panel.add(rab)
+
         //_ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
