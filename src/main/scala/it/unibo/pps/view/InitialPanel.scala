@@ -66,23 +66,22 @@ object InitialPanel:
     private def createRightArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
-        _ <- button.setPreferredSize(Dimension((width * 0.05).toInt, (height * 0.05).toInt))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
-          numLaps = numLaps + 1
-          lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
+          if numLaps < 50 then
+            numLaps = numLaps + 1
+            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
         })
       yield button
 
     private def createLeftArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
-        _ <- button.setPreferredSize(Dimension((width * 0.05).toInt, (height * 0.05).toInt))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
-          if numLaps > 1 then
+          if numLaps > 20 then
             numLaps = numLaps - 1
             lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
         })
@@ -95,7 +94,13 @@ object InitialPanel:
         bp <- bottomPanel
 
         lapsSelectedLabel <- lapsSelectedLabel
+        _ <- lapsSelectedLabel.setPreferredSize(Dimension((width * 0.04).toInt, (height * 0.06).toInt))
+        _ <- lapsSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER)
+
         lapsLabel <- lapsLabel
+        _ <- lapsLabel.setPreferredSize(Dimension((width * 0.06).toInt, (height * 0.06).toInt))
+        _ <- lapsLabel.setHorizontalAlignment(SwingConstants.LEFT)
+
         rab <- rightArrowButton
         lab <- leftArrowButton
         b <- startBtn
