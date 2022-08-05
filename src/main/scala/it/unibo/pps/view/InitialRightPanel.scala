@@ -39,7 +39,10 @@ object InitialRightPanel:
 
     //private val lapsSelectedLabel = createJLabel(numLaps.toString)
     private val starAttackLabel = createJLabel("Select Driver Attack Skills:")
-    private val starAttackButtons = createAttackStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png")
+    private val starAttackButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", true)
+
+    private val starDefenseLabel = createJLabel("Select Driver Defense Skills:")
+    private val starDefenseButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", false)
 
 
     private val colorNotSelected = Color(238, 238, 238)
@@ -95,17 +98,17 @@ object InitialRightPanel:
       yield button
 
 
-    private def createAttackStarButtons(filenameNotSelected: String, filenameSelected: String): List[Task[JButton]] =
-      val starButtons: List[Task[JButton]] = List(createAttackStarButton(filenameNotSelected, filenameSelected, 0.toString),
-        createAttackStarButton(filenameNotSelected, filenameSelected, 1.toString),
-        createAttackStarButton(filenameNotSelected, filenameSelected, 2.toString),
-        createAttackStarButton(filenameNotSelected, filenameSelected, 3.toString),
-        createAttackStarButton(filenameNotSelected, filenameSelected, 4.toString))
+    private def createSkillsStarButtons(filenameNotSelected: String, filenameSelected: String, isAttack: Boolean): List[Task[JButton]] =
+      val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 0.toString, isAttack),
+        createStarButton(filenameNotSelected, filenameSelected, 1.toString, isAttack),
+        createStarButton(filenameNotSelected, filenameSelected, 2.toString, isAttack),
+        createStarButton(filenameNotSelected, filenameSelected, 3.toString, isAttack),
+        createStarButton(filenameNotSelected, filenameSelected, 4.toString, isAttack))
 
       starButtons
 
 
-    private def createAttackStarButton (filenameNotSelected: String, filenameSelected: String, name: String): Task[JButton] =
+    private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String, isAttack: Boolean): Task[JButton] =
       for
         button <- if name.equals("0") then JButton(ImageIcon(filenameSelected)) else JButton(ImageIcon(filenameNotSelected))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
@@ -113,12 +116,18 @@ object InitialRightPanel:
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
-          starAttackButtons.foreach(e => e.foreach(f =>
-            if f.getName.toInt <= button.getName.toInt then
-              f.setIcon(ImageIcon(filenameSelected))
-            else
-              f.setIcon(ImageIcon(filenameNotSelected))
-          ))
+          if isAttack then
+            starAttackButtons.foreach(e => e.foreach(f =>
+              if f.getName.toInt <= button.getName.toInt then
+                f.setIcon(ImageIcon(filenameSelected))
+              else
+                f.setIcon(ImageIcon(filenameNotSelected))))
+          else
+            starDefenseButtons.foreach(e => e.foreach(f =>
+              if f.getName.toInt <= button.getName.toInt then
+                f.setIcon(ImageIcon(filenameSelected))
+              else
+                f.setIcon(ImageIcon(filenameNotSelected))))
         })
       yield button
 
@@ -162,6 +171,11 @@ object InitialRightPanel:
         _ <- starAttackLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- starAttackLabel.setVerticalAlignment(SwingConstants.BOTTOM)
 
+        starDefenseLabel <- starDefenseLabel
+        _ <- starDefenseLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
+        _ <- starDefenseLabel.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- starDefenseLabel.setVerticalAlignment(SwingConstants.BOTTOM)
+
 
         _ <- hardTyresButton.setBackground(colorSelected)
         _ <- hardTyresButton.setOpaque(true)
@@ -176,6 +190,8 @@ object InitialRightPanel:
         _ <- panel.add(rab)
         _ <- panel.add(starAttackLabel)
         _ <- starAttackButtons.foreach(e => e.foreach(f => panel.add(f)))
+        _ <- panel.add(starDefenseLabel)
+        _ <- starDefenseButtons.foreach(e => e.foreach(f => panel.add(f)))
 
 
 

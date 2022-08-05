@@ -53,8 +53,8 @@ object InitialPanel:
 
     private def createButton(text: String): Task[JButton] =
       for
-        btn <- JButton(text)
-      yield btn
+        button <- JButton(text)
+      yield button
 
     private def createJLabel(text: String): Task[JLabel] =
       for
@@ -65,6 +65,8 @@ object InitialPanel:
     private def createRightArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setPreferredSize(Dimension((width * 0.05).toInt, (height * 0.05).toInt))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
           numLaps = numLaps + 1
@@ -75,6 +77,8 @@ object InitialPanel:
     private def createLeftArrowButton(filename: String): Task[JButton] =
       for
         button <- JButton(ImageIcon(filename))
+        _ <- button.setPreferredSize(Dimension((width * 0.05).toInt, (height * 0.05).toInt))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
           if numLaps > 1 then

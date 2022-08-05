@@ -57,7 +57,7 @@ object InitialLeftPanel:
       for
         label <- JLabel(ImageIcon(filename))
         _ <- label.setName(name)
-        _ <- label.setPreferredSize(Dimension(width, (height * 0.4).toInt))
+        _ <- label.setPreferredSize(Dimension(width, (height * 0.35).toInt))
         _ <- label.setVerticalAlignment(SwingConstants.CENTER)
       yield label
     
@@ -81,8 +81,6 @@ object InitialLeftPanel:
             
             controller.setCurrentCarIndex(nextIndex.toInt)
             changeCar(nextIndex.toInt, "hard")
-            //labelImage.foreach(e => e.setIcon(ImageIcon("src/main/resources/cars/" + nextIndex + "-hard.png")))
-
             currentCarIndex = nextIndex.toInt
             carSelectedLabel.foreach(e => e.setText("Car selected: " + mapCarNames(currentCarIndex)))
         })
@@ -100,7 +98,6 @@ object InitialLeftPanel:
             
             controller.setCurrentCarIndex(prevIndex.toInt)
             changeCar(prevIndex.toInt, "hard")
-            //labelImage.foreach(e => e.setIcon(ImageIcon("src/main/resources/cars/" + prevIndex + ".png")))
             currentCarIndex = prevIndex.toInt
             carSelectedLabel.foreach(e => e.setText("Car selected: " + mapCarNames(currentCarIndex)))
         })
