@@ -22,18 +22,22 @@ object InitialPanel:
     extends InitialPanel:
     self =>
 
-    private val panelWidth = (width * 0.5).toInt
-    private val panelHeight = (height * 0.9).toInt
+    private val panelWidth = (width * 0.48).toInt
+    private val panelHeight = (height * 0.85).toInt
+    private val colorNotSelected = Color(238, 238, 238)
+    private val colorSelected = Color(79, 195, 247)
 
-    // private val carLabelCombo = createJLabel("Select a car: ")
-    // private val carComboBox = createJComboBox(List("1", "2", "3", "4"))
-    // private val carPanel = createJPanel(panelWidth, panelHeight, FlowLayout())
     private val initialLeftPanel = InitialLeftPanel(panelWidth, panelHeight, controller)
     private val initialRightPanel = InitialRightPanel(panelWidth, panelHeight, controller)
 
-    // private val paramPanel = createJPanel(panelWidth, panelHeight, FlowLayout())
+    private var numLaps = 20
+    private val lapsLabel = createJLabel("Select laps:")
+    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
+    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
+    private val lapsSelectedLabel = createJLabel(numLaps.toString)
+
     private val startBtn = createButton("Start Simulation")
-    private val bottomPanel = createJPanel(panelWidth, height - panelHeight, BorderLayout())
+    private val bottomPanel = createJPanel(width, (height * 0.15).toInt, FlowLayout())
     private val mainPanel = createMainPanelAndAddAllComponents()
 
     mainPanel foreach( p => self.add(p))
@@ -44,7 +48,6 @@ object InitialPanel:
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(w, h))
-        _ <- panel.setBorder(BorderFactory.createLineBorder(Color.BLACK))
         _ <- panel.setLayout(layout)
       yield panel
 
@@ -53,18 +56,52 @@ object InitialPanel:
         btn <- JButton(text)
       yield btn
 
+    private def createJLabel(text: String): Task[JLabel] =
+      for
+        label <- JLabel(text)
+        _ <- label.setVerticalAlignment(SwingConstants.CENTER)
+      yield label
+
+    private def createRightArrowButton(filename: String): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(filename))
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          numLaps = numLaps + 1
+          lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
+        })
+      yield button
+
+    private def createLeftArrowButton(filename: String): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(filename))
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          if numLaps > 1 then
+            numLaps = numLaps - 1
+            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
+        })
+      yield button
+
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(width, height))
-        _ <- mainp.setLayout(BorderLayout())
         bp <- bottomPanel
-        _ <- bp.setBackground(Color.RED)
 
+        lapsSelectedLabel <- lapsSelectedLabel
+        lapsLabel <- lapsLabel
+        rab <- rightArrowButton
+        lab <- leftArrowButton
         b <- startBtn
 
-        _ <- mainp.add(initialLeftPanel, BorderLayout.WEST)
-        _ <- mainp.add(initialRightPanel, BorderLayout.EAST)
-        _ <- mainp.add(bp, BorderLayout.SOUTH)
+        _ <- bp.add(lapsLabel)
+        _ <- bp.add(lab)
+        _ <- bp.add(lapsSelectedLabel)
+        _ <- bp.add(rab)
+        _ <- bp.add(b)
 
+        _ <- mainp.add(initialLeftPanel)
+        _ <- mainp.add(initialRightPanel)
+        _ <- mainp.add(bp)
       yield mainp

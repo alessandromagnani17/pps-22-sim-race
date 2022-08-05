@@ -28,14 +28,6 @@ object InitialRightPanel:
 
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
 
-    private val lapsLabel = createJLabel("Select laps:")
-    private var numLaps = 20
-
-
-    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
-    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
-    private val lapsSelectedLabel = createJLabel(numLaps.toString)
-    
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
@@ -62,28 +54,6 @@ object InitialRightPanel:
         })
       yield button
 
-
-    private def createRightArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          numLaps = numLaps + 1
-          lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
-        })
-      yield button
-
-    private def createLeftArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          if numLaps > 1 then
-            numLaps = numLaps - 1
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
-        })
-      yield button
-
     private def createJLabel(text: String): Task[JLabel] =
       for
         label <- JLabel(text)
@@ -100,17 +70,6 @@ object InitialRightPanel:
         _ <- tyresLabel.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- tyresLabel.setVerticalAlignment(SwingConstants.BOTTOM)
 
-        lapsLabel <- lapsLabel
-        _ <- lapsLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
-        _ <- lapsLabel.setHorizontalAlignment(SwingConstants.CENTER)
-        _ <- lapsLabel.setVerticalAlignment(SwingConstants.BOTTOM)
-
-        lapsSelectedLabel <- lapsSelectedLabel
-        _ <- lapsSelectedLabel.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.05).toInt))
-        _ <- lapsSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER)
-        _ <- lapsSelectedLabel.setVerticalAlignment(SwingConstants.CENTER)
-        rab <- rightArrowButton
-        lab <- leftArrowButton
         hardTyresButton <- hardTyresButton
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
@@ -122,10 +81,6 @@ object InitialRightPanel:
         _ <- panel.add(hardTyresButton)
         _ <- panel.add(mediumTyresButton)
         _ <- panel.add(softTyresButton)
-        _ <- panel.add(lapsLabel)
-        _ <- panel.add(lab)
-        _ <- panel.add(lapsSelectedLabel)
-        _ <- panel.add(rab)
         //_ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
