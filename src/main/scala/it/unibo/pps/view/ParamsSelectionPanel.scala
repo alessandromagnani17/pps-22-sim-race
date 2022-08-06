@@ -85,19 +85,18 @@ object ParamsSelectionPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
           if isAttack then
-            starAttackButtons.foreach(e => e.foreach(f =>
-              if f.getName.toInt <= button.getName.toInt then
-                f.setIcon(ImageIcon(filenameSelected))
-              else
-                f.setIcon(ImageIcon(filenameNotSelected))))
+            updateStar(starAttackButtons, filenameSelected, filenameNotSelected, button)
           else
-            starDefenseButtons.foreach(e => e.foreach(f =>
-              if f.getName.toInt <= button.getName.toInt then
-                f.setIcon(ImageIcon(filenameSelected))
-              else
-                f.setIcon(ImageIcon(filenameNotSelected))))
+            updateStar(starDefenseButtons, filenameSelected, filenameNotSelected, button)
         })
       yield button
+
+    private def updateStar(list: List[Task[JButton]], filenameSelected: String, filenameNotSelected: String, button: JButton): Unit =
+      list.foreach(e => e.foreach(f =>
+        if f.getName.toInt <= button.getName.toInt then
+          f.setIcon(ImageIcon(filenameSelected))
+        else
+          f.setIcon(ImageIcon(filenameNotSelected))))
 
     private def createLabel(text: String, dim: Dimension, horizontal: Int, vertical: Int): Task[JLabel] =
       for
