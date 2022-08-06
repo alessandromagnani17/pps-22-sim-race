@@ -13,14 +13,14 @@ import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.util
 
 
-trait InitialLeftPanel extends JPanel:
+trait CarSelectionPanel extends JPanel:
   def changeCar(carIndex: Int, tyresType: String): Unit
 
-object InitialLeftPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): InitialLeftPanel = InitialLeftPanelImpl(width, height, controller)
+object CarSelectionPanel:
+  def apply(width: Int, height: Int, controller: ControllerModule.Controller): CarSelectionPanel = CarSelectionPanelImpl(width, height, controller)
 
-  private class InitialLeftPanelImpl (width: Int, height: Int, controller: ControllerModule.Controller)
-    extends InitialLeftPanel:
+  private class CarSelectionPanelImpl (width: Int, height: Int, controller: ControllerModule.Controller)
+    extends CarSelectionPanel:
     self =>
 
     private var currentCarIndex = 0

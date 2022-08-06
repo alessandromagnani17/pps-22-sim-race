@@ -10,13 +10,13 @@ import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 
-trait InitialRightPanel extends JPanel
+trait ParamsSelectionPanel extends JPanel
 
-object InitialRightPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): InitialRightPanel = InitialRightPanelImpl(width, height, controller)
+object ParamsSelectionPanel:
+  def apply(width: Int, height: Int, controller: ControllerModule.Controller): ParamsSelectionPanel = ParamsSelectionPanelImpl(width, height, controller)
 
-  private class InitialRightPanelImpl (width: Int, height: Int, controller: ControllerModule.Controller)
-    extends InitialRightPanel:
+  private class ParamsSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+    extends ParamsSelectionPanel:
     self =>
 
     private val initialRightPanel = createPanel()

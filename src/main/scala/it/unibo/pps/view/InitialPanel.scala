@@ -27,8 +27,8 @@ object InitialPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var numLaps = 20
-    private val initialLeftPanel = InitialLeftPanel(panelWidth, panelHeight, controller)
-    private val initialRightPanel = InitialRightPanel(panelWidth, panelHeight, controller)
+    private val carSelectionPanel = CarSelectionPanel(panelWidth, panelHeight, controller)
+    private val initialRightPanel = ParamsSelectionPanel(panelWidth, panelHeight, controller)
     private val lapsLabel = createJLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
     private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png",  _ < 50, _ + 1)
     private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png",  _ > 20, _ - 1)
@@ -39,7 +39,7 @@ object InitialPanel:
 
     mainPanel foreach( p => self.add(p))
 
-    def changeCar(carIndex: Int, tyresType: String): Unit = initialLeftPanel.changeCar(carIndex, tyresType)
+    def changeCar(carIndex: Int, tyresType: String): Unit = carSelectionPanel.changeCar(carIndex, tyresType)
     
     private def createJPanel(w: Int, h: Int, layout: LayoutManager): Task[JPanel] =
       for
@@ -95,7 +95,7 @@ object InitialPanel:
         _ <- bottomPanel.add(rightArrowButton)
         _ <- bottomPanel.add(paddingLabel1)
         _ <- bottomPanel.add(b)
-        _ <- mainp.add(initialLeftPanel)
+        _ <- mainp.add(carSelectionPanel)
         _ <- mainp.add(initialRightPanel)
         _ <- mainp.add(bottomPanel)
       yield mainp
