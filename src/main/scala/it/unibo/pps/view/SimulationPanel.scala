@@ -21,7 +21,7 @@ import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Sector, Track, TrackBuilder}
-import it.unibo.pps.util.PimpScala.RichTuple2.*
+import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration

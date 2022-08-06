@@ -1,4 +1,4 @@
-package it.unibo.pps.util
+package it.unibo.pps.utility
 
 object PimpScala:
 
@@ -8,7 +8,7 @@ object PimpScala:
       def root: Int = Math.sqrt(i).toInt
 
   object RichTuple2:
-    import RichInt._
+    import RichInt.*
     extension (p0: Tuple2[Int, Int])
       def euclideanDistance(p1: Tuple2[Int, Int]): Int =
         ((p1._1 - p0._1) ** 2 + (p1._2 - p0._2) ** 2).root
