@@ -28,7 +28,7 @@ object CarSelectionPanel:
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-    private val carSelectedLabel = createJLabel(s"Car selected: ${carNames(currentCarIndex)}")
+    private val carSelectedLabel = createLabel(s"Car selected: ${carNames(currentCarIndex)}")
     private val topArrowButton = createArrowButton("src/main/resources/arrows/arrow-up.png", e => if (e + 1) == numCars then 0.toString else (e + 1).toString)
     private val bottomArrowButton = createArrowButton("src/main/resources/arrows/arrow-bottom.png", e => if (e - 1) < 0 then (numCars - 1).toString else (e - 1).toString)
     private val labelImage = createLabelImage("src/main/resources/cars/0-hard.png", "0")
@@ -47,7 +47,7 @@ object CarSelectionPanel:
         _ <- label.setVerticalAlignment(SwingConstants.CENTER)
       yield label
     
-    private def createJLabel(text: String): Task[JLabel] =
+    private def createLabel(text: String): Task[JLabel] =
       for
         label <- JLabel(text)
         _ <- label.setPreferredSize(Dimension(width, (height * 0.2).toInt))

@@ -19,29 +19,23 @@ object ParamsSelectionPanel:
     extends ParamsSelectionPanel:
     self =>
 
-    private val initialRightPanel = createPanel()
-
-    private val tyresLabel = createJLabel("Select tyres: ", Dimension(width, (height * 0.05).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
-    private val hardTyresButton = createJButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png", "hard")
-    private val mediumTyresButton = createJButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png", "medium")
-    private val softTyresButton = createJButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png", "soft")
-    private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
-
-    private val maxSpeedLabel = createJLabel("Select Maximum Speed (km/h):", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
-    private var maxSpeed = 200
-
-    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 200, _-_)
-    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 350, _+_)
-    private val speedSelectedLabel = createJLabel(maxSpeed.toString, Dimension((width * 0.2).toInt, (height * 0.05).toInt), SwingConstants.CENTER, SwingConstants.CENTER)
-
-    private val starAttackLabel = createJLabel("Select Driver Attack Skills:", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
-    private val starAttackButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", true)
-
-    private val starDefenseLabel = createJLabel("Select Driver Defense Skills:", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
-    private val starDefenseButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", false)
-
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
+    private var maxSpeed = 200
+    private val tyresLabel = createLabel("Select tyres: ", Dimension(width, (height * 0.05).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
+    private val hardTyresButton = createButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png", "hard")
+    private val mediumTyresButton = createButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png", "medium")
+    private val softTyresButton = createButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png", "soft")
+    private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
+    private val maxSpeedLabel = createLabel("Select Maximum Speed (km/h):", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
+    private val speedSelectedLabel = createLabel(maxSpeed.toString, Dimension((width * 0.2).toInt, (height * 0.05).toInt), SwingConstants.CENTER, SwingConstants.CENTER)
+    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 200, _-_)
+    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 350, _+_)
+    private val starAttackLabel = createLabel("Select Driver Attack Skills:", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
+    private val starAttackButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", true)
+    private val starDefenseLabel = createLabel("Select Driver Defense Skills:", Dimension(width, (height * 0.1).toInt), SwingConstants.CENTER, SwingConstants.BOTTOM)
+    private val starDefenseButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", false)
+    private val initialRightPanel = createPanelAndAddAllComponents()
 
     initialRightPanel foreach(e => self.add(e))
 
@@ -57,11 +51,11 @@ object ParamsSelectionPanel:
         })
       yield button
 
-    private def createJButton(text: String, fileName: String, name: String): Task[JButton] =
+    private def createButton(text: String, fileName: String, name: String): Task[JButton] =
       for
         button <- JButton(text, ImageIcon(fileName))
         _ <- button.setName(name)
-        _ <- button.setBackground(colorNotSelected)
+        _ <- if name.equals("hard") then {button.setBackground(colorSelected); button.setOpaque(true)} else button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e => e.foreach(f => {
@@ -76,14 +70,13 @@ object ParamsSelectionPanel:
       yield button
 
     private def createSkillsStarButtons(filenameNotSelected: String, filenameSelected: String, isAttack: Boolean): List[Task[JButton]] =
-
       val buttons = for
         index <- 0 to 4
         button = createStarButton(filenameNotSelected, filenameSelected, index.toString, isAttack)
       yield button
       buttons.toList
 
-    private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String, isAttack: Boolean): Task[JButton] =
+    private def createStarButton(filenameNotSelected: String, filenameSelected: String, name: String, isAttack: Boolean): Task[JButton] =
       for
         button <- if name.equals("0") then JButton(ImageIcon(filenameSelected)) else JButton(ImageIcon(filenameNotSelected))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
@@ -106,7 +99,7 @@ object ParamsSelectionPanel:
         })
       yield button
 
-    private def createJLabel(text: String, dim: Dimension, horizontal: Int, vertical: Int): Task[JLabel] =
+    private def createLabel(text: String, dim: Dimension, horizontal: Int, vertical: Int): Task[JLabel] =
       for
         label <- JLabel(text)
         _ <- label.setPreferredSize(dim)
@@ -114,42 +107,33 @@ object ParamsSelectionPanel:
         _ <- label.setVerticalAlignment(vertical)
       yield label
 
-    private def createPanel(): Task[JPanel] =
+    private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
         _ <- panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK))
-
         tyresLabel <- tyresLabel
-
-        maxSpeedLabel <- maxSpeedLabel
-        speedSelectedLabel <- speedSelectedLabel
-
-        rab <- rightArrowButton
-        lab <- leftArrowButton
-
         hardTyresButton <- hardTyresButton
-        _ <- hardTyresButton.setBackground(colorSelected)
-        _ <- hardTyresButton.setOpaque(true)
         mediumTyresButton <- mediumTyresButton
         softTyresButton <- softTyresButton
-
+        maxSpeedLabel <- maxSpeedLabel
+        speedSelectedLabel <- speedSelectedLabel
+        rightArrowButton <- rightArrowButton
+        leftArrowButton <- leftArrowButton
         starAttackLabel <- starAttackLabel
         starDefenseLabel <- starDefenseLabel
-
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
         _ <- panel.add(mediumTyresButton)
         _ <- panel.add(softTyresButton)
         _ <- panel.add(maxSpeedLabel)
-        _ <- panel.add(lab)
+        _ <- panel.add(leftArrowButton)
         _ <- panel.add(speedSelectedLabel)
-        _ <- panel.add(rab)
+        _ <- panel.add(rightArrowButton)
         _ <- panel.add(starAttackLabel)
         _ <- starAttackButtons.foreach(e => e.foreach(f => panel.add(f)))
         _ <- panel.add(starDefenseLabel)
         _ <- starDefenseButtons.foreach(e => e.foreach(f => panel.add(f)))
-
         _ <- panel.setVisible(true)
       yield panel

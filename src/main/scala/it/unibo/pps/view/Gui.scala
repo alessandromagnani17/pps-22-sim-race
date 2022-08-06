@@ -28,6 +28,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       fr <- new JFrame("Sim-race")
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
+      _ <- fr.setResizable(false)
       //_ <- fr.getContentPane().setLayout(null) // AGGIUNTA NUOVA
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr

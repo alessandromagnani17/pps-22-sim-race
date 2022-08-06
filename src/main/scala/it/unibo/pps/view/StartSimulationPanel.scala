@@ -21,12 +21,12 @@ object StartSimulationPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var numLaps = 20
-    private val lapsLabel = createJLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
+    private val lapsLabel = createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
     private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png",  _ < 50, _ + 1)
     private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png",  _ > 20, _ - 1)
-    private val lapsSelectedLabel = createJLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
+    private val lapsSelectedLabel = createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
     private val startButton = createButton("Start Simulation")
-    private val startSimulationPanel = createPanel()
+    private val startSimulationPanel = createPanelAndAddAllComponents()
 
     startSimulationPanel foreach(e => self.add(e))
 
@@ -36,7 +36,7 @@ object StartSimulationPanel:
         _ <- button.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.2).toInt))
       yield button
 
-    private def createJLabel(text: String, dim: Dimension, pos: Int): Task[JLabel] =
+    private def createLabel(text: String, dim: Dimension, pos: Int): Task[JLabel] =
       for
         label <- JLabel(text)
         _ <- label.setVerticalAlignment(SwingConstants.CENTER)
@@ -56,7 +56,7 @@ object StartSimulationPanel:
         })
       yield button
 
-    private def createPanel(): Task[JPanel] =
+    private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
