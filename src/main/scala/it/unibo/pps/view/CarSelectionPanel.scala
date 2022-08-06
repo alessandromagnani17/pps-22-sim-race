@@ -64,7 +64,7 @@ object CarSelectionPanel:
         _ <- button.addActionListener(new ActionListener {
           override def actionPerformed(e: ActionEvent): Unit =
             val nextIndex = calcIndex(currentCarIndex)
-            controller.setCurrentCarIndex(nextIndex.toInt) 
+            controller.setCurrentCarIndex(nextIndex.toInt)
             changeCar(nextIndex.toInt, "hard")
             currentCarIndex = nextIndex.toInt
             carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
@@ -76,11 +76,11 @@ object CarSelectionPanel:
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
-        carLabel <- carSelectedLabel
+        carSelectedLabel <- carSelectedLabel
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
-        _ <- panel.add(carLabel)
+        _ <- panel.add(carSelectedLabel)
         _ <- panel.add(topArrowButton)
         _ <- panel.add(labelImage)
         _ <- panel.add(bottomArrowButton)

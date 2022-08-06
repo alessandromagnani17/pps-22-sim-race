@@ -50,7 +50,7 @@ object ParamsSelectionPanel:
         button <- JButton(ImageIcon(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
+        _ <- button.addActionListener(e => {
           if comparator(maxSpeed) then
             maxSpeed = function(maxSpeed, 10)
             speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
@@ -63,13 +63,12 @@ object ParamsSelectionPanel:
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
-        _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit = tyresButtons.foreach(e => e.foreach(f => {
+        _ <- button.addActionListener(e => {
+          tyresButtons.foreach(e => e.foreach(f => {
             if f.getText == button.getText then
               f.setBackground(colorSelected)
               f.setOpaque(true)
               controller.changeDisplayedCar(f.getName)
-              
             else
               f.setBackground(colorNotSelected)
           }))
