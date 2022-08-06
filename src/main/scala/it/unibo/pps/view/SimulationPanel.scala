@@ -109,13 +109,13 @@ object SimulationPanel:
         w = (width * 0.25).toInt
         h = 300
         chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
-        chartVelP <- chartVel.getPanel()
+        chartVelP <- chartVel.wrapToPanel()
         _ <- chartVelP.setPreferredSize(new Dimension(w, h))
         chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
-        chartFuelP <- chartFuel.getPanel()
+        chartFuelP <- chartFuel.wrapToPanel()
         _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
         chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
-        chartTyresP <- chartTyres.getPanel()
+        chartTyresP <- chartTyres.wrapToPanel()
         _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
         _ <- p.add(chartVelP)
         _ <- p.add(chartFuelP)

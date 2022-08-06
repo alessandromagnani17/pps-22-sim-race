@@ -4,9 +4,19 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.xy.{XYDataset, XYSeries, XYSeriesCollection}
 import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 
+/** Scala facade for a 2D JFreeChart Line Chart */
 trait LineChart:
+
+  /** Method that add a point in the chart
+    * @param x
+    *   X value of the point
+    * @param y
+    *   Y value of the point
+    */
   def addValue(x: Double, y: Double): Unit
-  def getPanel(): ChartPanel
+
+  /** Method that wraps the chart into a panel */
+  def wrapToPanel(): ChartPanel
 
 object LineChart:
 
@@ -21,7 +31,7 @@ object LineChart:
       serie.add(x, y)
       chart.getXYPlot.setDataset(XYSeriesCollection(serie))
 
-    override def getPanel(): ChartPanel =
+    override def wrapToPanel(): ChartPanel =
       ChartPanel(chart)
 
     private def createChart(dataset: XYSeries): JFreeChart =
