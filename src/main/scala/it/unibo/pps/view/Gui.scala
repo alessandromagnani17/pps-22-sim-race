@@ -33,8 +33,4 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield fr
 
 object Prova extends App:
-  val screenSize = Toolkit.getDefaultToolkit.getScreenSize
-  val w = (screenSize.width * 0.9).toInt
-  val h = (screenSize.height * 0.9).toInt
-  println(s"w: $w h: $h")
   new Gui(1296, 810, null)

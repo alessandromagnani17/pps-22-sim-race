@@ -14,16 +14,12 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def paintComponent(g: Graphics): Unit =
     g.setColor(Color.BLACK)
 
-//---------------------------------------------->>>> MACCHINE <<<<-------------------------------------------------------
-
+    // ---------------- Metodo 1 per disegnare le macchine --------------------------------------------
     //Variabili relative alle macchine
     var intW = (w * 0.5).toInt
     var intH = (h * 0.2).toInt + 2
     var carDiameter = 12
     var distanceBeetweenCars = 20
-
-    //Metodo 1 per disegnare le macchine
-
     g.setColor(Color.BLUE)
     g.fillOval(intW, intH, carDiameter, carDiameter)
     g.setColor(Color.GREEN)
@@ -32,31 +28,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
     g.setColor(Color.BLACK)
 
-    //Metodo 2 per disegnare le macchine
-    /*
-    Un'idea potrebbe essere quella di memorizzare una shape dentro alla classe macchina, oltre a gli altri parametri
-     */
-
-    /*
-    import java.awt.Graphics2D
-    import java.awt.Shape
-    import java.awt.geom.Ellipse2D
-
-    val g2d: Graphics2D = g.asInstanceOf[Graphics2D]
-
-    val car1: Shape = new Ellipse2D.Double(intW, intH, carDiameter, carDiameter)
-    val car2: Shape = new Ellipse2D.Double(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
-    val car3: Shape = new Ellipse2D.Double(intW + (distanceBeetweenCars*2), intH + (distanceBeetweenCars*2), carDiameter, carDiameter)
-
-    g2d.setColor(Color.CYAN)
-    g2d.fill(car1)
-    g2d.setColor(Color.MAGENTA)
-    g2d.fill(car2)
-    g2d.setColor(Color.ORANGE)
-    g2d.fill(car3)
-    g2d.setColor(Color.BLACK)
-     */
-//----------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------
 
     def sketcher(e: Sector) = e match {
       case s: Sector.Straight => drawStraigth(s, g)
@@ -64,7 +36,6 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     }
 
     track.getSectors().foreach(sketcher(_))
-    g.setColor(Color.BLACK)
     g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
@@ -72,7 +43,6 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     val p1 = s.drawingParams.p1
     val p2 = s.drawingParams.p2
     val p3 = s.drawingParams.p3
-
     g.drawLine(p0._1, p0._2, p1._1, p1._2)
     g.drawLine(p2._1, p2._2, p3._1, p3._2)
 
