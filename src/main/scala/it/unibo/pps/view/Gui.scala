@@ -2,10 +2,10 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import monix.eval.Task
-import java.awt.Component
-import javax.swing.JFrame
+
+import java.awt.{Component, Toolkit}
+import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
-import javax.swing.WindowConstants
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   given Conversion[Unit, Task[Unit]] = Task(_)
@@ -13,26 +13,32 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   given Conversion[JFrame, Task[JFrame]] = Task(_)
 
   private val initialPanel = MainPanel(width, height, controller)
+  private val simulationPanel = SimulationPanel(width, height, controller)
+
   private val frame = createFrame()
 
   private val p =
     for
       fr <- frame
-      _ <- fr.add(initialPanel)
+      _ <- fr.getContentPane().add(initialPanel)
       _ <- fr.setVisible(true)
     yield ()
   p.runAsyncAndForget
 
   private def createFrame(): Task[JFrame] =
     for
-      fr <- new JFrame("Sim-race")
+      fr <- new JFrame("Prova")
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
-      //_ <- fr.getContentPane().setLayout(null) // AGGIUNTA NUOVA
+      _ <- fr.setResizable(false)
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr
-    
-  def changeCar(carIndex: Int, tyresType: String): Unit = initialPanel.changeCar(carIndex, tyresType)
 
-object Prova extends App:
-  new Gui(1000, 650, null)
+  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
+
+  def displaySimulationPanel(): Unit =
+    frame.foreach(f =>
+      f.getContentPane().removeAll()
+      f.getContentPane().add(simulationPanel)
+      f.revalidate()
+    )
