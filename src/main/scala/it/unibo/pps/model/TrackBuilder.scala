@@ -8,6 +8,7 @@ import monix.eval.Task
 given Conversion[String, Term] = Term.createTerm(_)
 given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
 given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
+given Conversion[String, Int] = Integer.parseInt(_)
 
 trait TrackBuilder:
   def createBaseTrack(): Track
@@ -23,12 +24,12 @@ object TrackBuilder:
 
     private def createStraight(l: List[String]): Sector.Straight =
       val d = DrawingStraightParams(
-        (l(1).toInt, l(2).toInt),
-        (l(3).toInt, l(4).toInt),
-        (l(5).toInt, l(6).toInt),
-        (l(7).toInt, l(8).toInt)
+        (l(1), l(2)),
+        (l(3), l(4)),
+        (l(5), l(6)),
+        (l(7), l(8))
       )
-      Sector.Straight(l(0).toInt, d)
+      Sector.Straight(l(0), d)
 
     private def loadStraights(): List[Sector.Straight] =
       val l = List("ID", "X0_E", "Y0_E", "X1_E", "Y1_E", "X0_I", "Y0_I", "X1_I", "Y1_I")
@@ -43,14 +44,14 @@ object TrackBuilder:
 
     private def createTurn(l: List[String]): Sector.Turn =
       val d = DrawingTurnParams(
-        (l(1).toInt, l(2).toInt),
-        (l(3).toInt, l(4).toInt),
-        (l(5).toInt, l(6).toInt),
-        (l(7).toInt, l(8).toInt),
-        (l(9).toInt, l(10).toInt),
-        l(11).toInt
+        (l(1), l(2)),
+        (l(3), l(4)),
+        (l(5), l(6)),
+        (l(7), l(8)),
+        (l(9), l(10)),
+        l(11)
       )
-      Sector.Turn(l(0).toInt, d)
+      Sector.Turn(l(0), d)
 
     private def loadTurns(): List[Sector.Turn] =
       val l = List("ID", "X", "Y", "X0_E", "Y0_E", "X0_I", "Y0_I", "X1_E", "Y1_E", "X1_I", "Y1_I", "D")
