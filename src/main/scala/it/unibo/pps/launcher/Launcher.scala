@@ -6,16 +6,17 @@ import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
 
 object Launcher
-  extends ModelModule.Interface
-  with ViewModule.Interface
-  with ControllerModule.Interface
-  with SimulationEngineModule.Interface:
+    extends ModelModule.Interface
+    with ViewModule.Interface
+    with ControllerModule.Interface
+    with SimulationEngineModule.Interface:
 
   override val model = new ModelImpl()
   override val controller = new ControllerImpl()
   override val view = new ViewImpl()
   override val simulationEngine = new SimulationEngineImpl()
 
-  @main def Main(): Unit =
+/* @main def Main(): Unit =
     println("starting simulation.....")
-    
+
+ */
