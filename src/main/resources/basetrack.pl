@@ -3,15 +3,6 @@
 % E ---> External
 % I ---> Internal
 
-
-
-%Straight(1,DrawingStraightParams((181,113),(725,113),(181,170),(725,170)))
-%Straight(3,DrawingStraightParams((181,453),(725,453),(181,396),(725,396)))
-%Turn(2,DrawingTurnParams((725,283),(725,113),(725,170),(725,453),(725,396),1))
-%Turn(4,DrawingTurnParams((181,283),(181,113),(181,170),(181,453),(181,396),-1))
-
-
-
 %straight(id, x0_E, y0_E, x1_E, y1_E, x0_I, y0_I, x1_I, y1_I)
 %straight(id(ID), startPointE(X0_E, Y0_E), endPointE(X1_E, Y1_E), startPointI(X0_I, Y0_I), endPointI(X1_I, Y1_I))
 straight(id(1), startPointE(181, 113), endPointE(725, 113), startPointI(181, 170), endPointI(725, 170)).
