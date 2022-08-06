@@ -28,8 +28,6 @@ object StartSimulationPanel:
     private val startButton = createButton("Start Simulation")
     private val startSimulationPanel = createPanel()
 
-    println("Entro")
-
     startSimulationPanel foreach(e => self.add(e))
 
     private def createButton(text: String): Task[JButton] =

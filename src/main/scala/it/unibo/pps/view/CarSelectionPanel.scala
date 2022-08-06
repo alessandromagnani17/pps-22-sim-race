@@ -61,13 +61,12 @@ object CarSelectionPanel:
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
-        _ <- button.addActionListener(new ActionListener {
-          override def actionPerformed(e: ActionEvent): Unit =
-            val nextIndex = calcIndex(currentCarIndex)
-            controller.setCurrentCarIndex(nextIndex.toInt)
-            changeCar(nextIndex.toInt, "hard")
-            currentCarIndex = nextIndex.toInt
-            carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
+        _ <- button.addActionListener(e => {
+          val nextIndex = calcIndex(currentCarIndex)
+          controller.setCurrentCarIndex(nextIndex.toInt)
+          changeCar(nextIndex.toInt, "hard")
+          currentCarIndex = nextIndex.toInt
+          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
         })
       yield button
 
