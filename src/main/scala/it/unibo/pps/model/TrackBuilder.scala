@@ -11,6 +11,11 @@ given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
 given Conversion[String, Int] = Integer.parseInt(_)
 
 trait TrackBuilder:
+
+  /** Method that loads a base track from a prolog file
+    * @return
+    *   a [[Track]]
+    */
   def createBaseTrack(): Track
 
 object TrackBuilder:
