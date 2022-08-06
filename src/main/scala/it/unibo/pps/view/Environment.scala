@@ -39,10 +39,10 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
-    val p0 = s.drawingParams.p0
-    val p1 = s.drawingParams.p1
-    val p2 = s.drawingParams.p2
-    val p3 = s.drawingParams.p3
+    val p0 = s.drawingParams.p0External
+    val p1 = s.drawingParams.p1External
+    val p2 = s.drawingParams.p0Internal
+    val p3 = s.drawingParams.p1Internal
     g.drawLine(p0._1, p0._2, p1._1, p1._2)
     g.drawLine(p2._1, p2._2, p3._1, p3._2)
 
