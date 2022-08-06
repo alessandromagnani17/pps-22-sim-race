@@ -25,33 +25,37 @@ object InitialRightPanel:
     private val hardTyresButton = createJButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png", "hard")
     private val mediumTyresButton = createJButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png", "medium")
     private val softTyresButton = createJButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png", "soft")
-
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
-
-
 
     private val maxSpeedLabel = createJLabel("Select Maximum Speed (km/h):")
     private var maxSpeed = 200
 
-    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
-    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
+    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 200, _-_)
+    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 350, _+_)
     private val speedSelectedLabel = createJLabel(maxSpeed.toString)
 
-    //private val lapsSelectedLabel = createJLabel(numLaps.toString)
     private val starAttackLabel = createJLabel("Select Driver Attack Skills:")
     private val starAttackButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", true)
 
     private val starDefenseLabel = createJLabel("Select Driver Defense Skills:")
     private val starDefenseButtons = createSkillsStarButtons("src/main/resources/stars/not-selected-star.png", "src/main/resources/stars/selected-star.png", false)
 
-
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
 
     initialRightPanel foreach(e => self.add(e))
 
-
-
+    private def createArrowButton(path: String, comparator: Int => Boolean, function: (Int, Int) => Int): Task[JButton] =
+      for
+        button <- JButton(ImageIcon(path))
+        _ <- button.setBorder(BorderFactory.createEmptyBorder())
+        _ <- button.setBackground(colorNotSelected)
+        _ <- button.addActionListener(e =>{
+          if comparator(maxSpeed) then
+            maxSpeed = function(maxSpeed, 10)
+            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
+        })
+      yield button
 
     private def createJButton(text: String, fileName: String, name: String): Task[JButton] =
       for
@@ -72,41 +76,21 @@ object InitialRightPanel:
         })
       yield button
 
-
-    private def createRightArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          if maxSpeed < 350 then
-            maxSpeed = maxSpeed + 10
-            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
-        })
-      yield button
-
-    private def createLeftArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          if maxSpeed > 200 then
-            maxSpeed = maxSpeed - 10
-            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
-        })
-      yield button
-
-
     private def createSkillsStarButtons(filenameNotSelected: String, filenameSelected: String, isAttack: Boolean): List[Task[JButton]] =
-      val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 0.toString, isAttack),
+
+      val buttons = for
+        index <- 0 to 4
+        button = createStarButton(filenameNotSelected, filenameSelected, index.toString, isAttack)
+      yield button
+      buttons.toList
+
+      /*val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 0.toString, isAttack),
         createStarButton(filenameNotSelected, filenameSelected, 1.toString, isAttack),
         createStarButton(filenameNotSelected, filenameSelected, 2.toString, isAttack),
         createStarButton(filenameNotSelected, filenameSelected, 3.toString, isAttack),
         createStarButton(filenameNotSelected, filenameSelected, 4.toString, isAttack))
 
-      starButtons
-
+      starButtons*/
 
     private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String, isAttack: Boolean): Task[JButton] =
       for
@@ -130,8 +114,6 @@ object InitialRightPanel:
                 f.setIcon(ImageIcon(filenameNotSelected))))
         })
       yield button
-
-
 
     private def createJLabel(text: String): Task[JLabel] =
       for
@@ -194,8 +176,5 @@ object InitialRightPanel:
         _ <- panel.add(starDefenseLabel)
         _ <- starDefenseButtons.foreach(e => e.foreach(f => panel.add(f)))
 
-
-
-        //_ <- panel.add(maximumSpeed)
         _ <- panel.setVisible(true)
       yield panel
