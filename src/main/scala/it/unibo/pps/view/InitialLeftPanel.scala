@@ -88,7 +88,6 @@ object InitialLeftPanel:
 
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
-
         labelImage <- labelImage
 
         _ <- panel.add(carLabel)
