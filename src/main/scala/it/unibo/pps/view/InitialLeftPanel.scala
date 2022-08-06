@@ -27,11 +27,9 @@ object InitialLeftPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
-    private val mapCarNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
+    private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
-    private val initialLeftPanel = createPanel()
-
-    private val carSelectedLabel = createJLabel("Car selected: " + mapCarNames(currentCarIndex))
+    private val carSelectedLabel = createJLabel(s"Car selected: ${carNames(currentCarIndex)}")
 
     private val topArrowButton = createArrowButton("src/main/resources/arrows/arrow-up.png", e => if (e + 1) == numCars then 0.toString else (e + 1).toString)
     private val bottomArrowButton = createArrowButton("src/main/resources/arrows/arrow-bottom.png", e => if (e - 1) < 0 then (numCars - 1).toString else (e - 1).toString)
@@ -40,9 +38,11 @@ object InitialLeftPanel:
 
     controller.setCurrentCarIndex(currentCarIndex)
 
+    private val initialLeftPanel = createPanel()
+
     initialLeftPanel foreach(e => self.add(e))
 
-    def changeCar(carIndex: Int, tyresType: String): Unit = labelImage.foreach(e => e.setIcon(ImageIcon("src/main/resources/cars/" + carIndex + "-" + tyresType + ".png")))
+    def changeCar(carIndex: Int, tyresType: String): Unit = labelImage.foreach(e => e.setIcon(ImageIcon(s"src/main/resources/cars/$carIndex-$tyresType.png")))
 
     private def createLabelImage(filename: String, name: String): Task[JLabel] =
       for
@@ -73,7 +73,7 @@ object InitialLeftPanel:
             controller.setCurrentCarIndex(nextIndex.toInt)
             changeCar(nextIndex.toInt, "hard")
             currentCarIndex = nextIndex.toInt
-            carSelectedLabel.foreach(e => e.setText(s"Car selected: ${mapCarNames(currentCarIndex)}"))
+            carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
         })
       yield button
 
