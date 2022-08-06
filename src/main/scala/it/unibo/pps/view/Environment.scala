@@ -19,7 +19,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     //Variabili relative alle macchine
     var intW = (w * 0.5).toInt
     var intH = (h * 0.3).toInt
-    var carDiameter = 20
+    var carDiameter = 15
     var distanceBeetweenCars = 20
 
     //Metodo 1 per disegnare le macchine
@@ -29,14 +29,13 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.GREEN)
     g.fillOval(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
     g.setColor(Color.RED)
-    g.fillOval(intW + (distanceBeetweenCars*2), intH + (distanceBeetweenCars*2), carDiameter, carDiameter)
+    g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
     g.setColor(Color.BLACK)
-
 
     //Metodo 2 per disegnare le macchine
     /*
     Un'idea potrebbe essere quella di memorizzare una shape dentro alla classe macchina, oltre a gli altri parametri
-    */
+     */
 
     /*
     import java.awt.Graphics2D
@@ -56,7 +55,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g2d.setColor(Color.ORANGE)
     g2d.fill(car3)
     g2d.setColor(Color.BLACK)
-    */
+     */
 //----------------------------------------------------------------------------------------------------------------------
 
     def sketcher(e: Sector) = e match {
