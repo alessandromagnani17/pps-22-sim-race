@@ -36,4 +36,5 @@ object Prova extends App:
   val screenSize = Toolkit.getDefaultToolkit.getScreenSize
   val w = (screenSize.width * 0.9).toInt
   val h = (screenSize.height * 0.9).toInt
-  new Gui(w, h, null)
+  println(s"w: $w h: $h")
+  new Gui(1296, 810, null)

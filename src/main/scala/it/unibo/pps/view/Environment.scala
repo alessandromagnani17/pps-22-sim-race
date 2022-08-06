@@ -18,8 +18,8 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
 
     //Variabili relative alle macchine
     var intW = (w * 0.5).toInt
-    var intH = (h * 0.3).toInt
-    var carDiameter = 15
+    var intH = (h * 0.2).toInt + 2
+    var carDiameter = 12
     var distanceBeetweenCars = 20
 
     //Metodo 1 per disegnare le macchine
@@ -64,6 +64,8 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     }
 
     track.getSectors().foreach(sketcher(_))
+    g.setColor(Color.BLACK)
+    g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
     val p0 = s.drawingParams.p0
