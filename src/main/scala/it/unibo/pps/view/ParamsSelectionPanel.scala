@@ -39,7 +39,7 @@ object ParamsSelectionPanel:
   private class ParamsSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends ParamsSelectionPanel:
     self =>
-
+    private val imageLoader = ImageLoader()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var maxSpeed = 200
@@ -49,10 +49,10 @@ object ParamsSelectionPanel:
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val hardTyresButton = createButton("   Hard Tyres", "src/main/resources/tyres/hardtyres.png", "hard")
+    private val hardTyresButton = createButton("   Hard Tyres", "/tyres/hardtyres.png", "hard")
     private val mediumTyresButton =
-      createButton("   Medium Tyres", "src/main/resources/tyres/mediumtyres.png", "medium")
-    private val softTyresButton = createButton("   Soft Tyres", "src/main/resources/tyres/softtyres.png", "soft")
+      createButton("   Medium Tyres", "/tyres/mediumtyres.png", "medium")
+    private val softTyresButton = createButton("   Soft Tyres", "/tyres/softtyres.png", "soft")
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
     private val maxSpeedLabel = createLabel(
       "Select Maximum Speed (km/h):",
@@ -66,8 +66,8 @@ object ParamsSelectionPanel:
       SwingConstants.CENTER,
       SwingConstants.CENTER
     )
-    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 200, _ - _)
-    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 350, _ + _)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 200, _ - _)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 350, _ + _)
     private val starAttackLabel = createLabel(
       "Select Driver Attack Skills:",
       Dimension(width, (height * 0.1).toInt),
@@ -75,8 +75,8 @@ object ParamsSelectionPanel:
       SwingConstants.BOTTOM
     )
     private val starAttackButtons = createSkillsStarButtons(
-      "src/main/resources/stars/not-selected-star.png",
-      "src/main/resources/stars/selected-star.png",
+      "/stars/not-selected-star.png",
+      "/stars/selected-star.png",
       true
     )
     private val starDefenseLabel = createLabel(
@@ -86,8 +86,8 @@ object ParamsSelectionPanel:
       SwingConstants.BOTTOM
     )
     private val starDefenseButtons = createSkillsStarButtons(
-      "src/main/resources/stars/not-selected-star.png",
-      "src/main/resources/stars/selected-star.png",
+      "/stars/not-selected-star.png",
+      "/stars/selected-star.png",
       false
     )
     private val initialRightPanel = createPanelAndAddAllComponents()
@@ -100,7 +100,7 @@ object ParamsSelectionPanel:
         function: (Int, Int) => Int
     ): Task[JButton] =
       for
-        button <- JButton(ImageIcon(path))
+        button <- JButton(imageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
@@ -112,7 +112,7 @@ object ParamsSelectionPanel:
 
     private def createButton(text: String, fileName: String, name: String): Task[JButton] =
       for
-        button <- JButton(text, ImageIcon(fileName))
+        button <- JButton(text, imageLoader.load(fileName))
         _ <- button.setName(name)
         _ <-
           if name.equals("hard") then { button.setBackground(colorSelected); button.setOpaque(true) }
@@ -150,15 +150,16 @@ object ParamsSelectionPanel:
     ): Task[JButton] =
       for
         button <-
-          if name.equals("0") then JButton(ImageIcon(filenameSelected)) else JButton(ImageIcon(filenameNotSelected))
+          if name.equals("0") then JButton(imageLoader.load(filenameSelected))
+          else JButton(imageLoader.load(filenameNotSelected))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setPreferredSize(Dimension((width * 0.09).toInt, (height * 0.08).toInt))
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e => {
+        _ <- button.addActionListener { e =>
           if isAttack then updateStar(starAttackButtons, filenameSelected, filenameNotSelected, button)
           else updateStar(starDefenseButtons, filenameSelected, filenameNotSelected, button)
-        })
+        }
       yield button
 
     private def updateStar(
@@ -169,8 +170,8 @@ object ParamsSelectionPanel:
     ): Unit =
       list.foreach(e =>
         e.foreach(f =>
-          if f.getName.toInt <= button.getName.toInt then f.setIcon(ImageIcon(filenameSelected))
-          else f.setIcon(ImageIcon(filenameNotSelected))
+          if f.getName.toInt <= button.getName.toInt then f.setIcon(imageLoader.load(filenameSelected))
+          else f.setIcon(imageLoader.load(filenameNotSelected))
         )
       )
 
@@ -206,9 +207,27 @@ object ParamsSelectionPanel:
         _ <- panel.add(leftArrowButton)
         _ <- panel.add(speedSelectedLabel)
         _ <- panel.add(rightArrowButton)
-        _ <- panel.add(starAttackLabel)
-        _ <- starAttackButtons.foreach(e => e.foreach(f => panel.add(f)))
-        _ <- panel.add(starDefenseLabel)
-        _ <- starDefenseButtons.foreach(e => e.foreach(f => panel.add(f)))
+        attackPanel <- JPanel(BorderLayout())
+        _ <- attackPanel.add(starAttackLabel, BorderLayout.NORTH)
+        attackStarPanel <- JPanel()
+        defenseStarPanel <- JPanel()
+        _ <- addStarsToPanel(starAttackButtons, attackStarPanel)
+        _ <- attackPanel.add(attackStarPanel, BorderLayout.CENTER)
+        defensePanel <- JPanel(BorderLayout())
+        _ <- defensePanel.add(starDefenseLabel, BorderLayout.NORTH)
+        _ <- addStarsToPanel(starDefenseButtons, defenseStarPanel)
+        _ <- defensePanel.add(defenseStarPanel, BorderLayout.CENTER)
+        _ <- panel.add(attackPanel)
+        _ <- panel.add(defensePanel)
         _ <- panel.setVisible(true)
       yield panel
+
+    private def addStarsToPanel(starAttackButtons: List[Task[JButton]], panel: JPanel): Task[Unit] =
+      for task <- starAttackButtons do addBtn(task, panel)
+
+    private def addBtn(task: Task[JButton], panel: JPanel): Task[Unit] =
+      val p = for
+        btn <- task
+        _ <- panel.add(btn)
+      yield ()
+      p.runSyncUnsafe()

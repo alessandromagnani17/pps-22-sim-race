@@ -7,7 +7,7 @@ scalaVersion := "3.1.3"
 
 lazy val app = (project in file("app"))
   .settings(
-    assembly / mainClass := Some("it.unibo.pps.view.Gui")
+    assembly / mainClass := Some("it.unibo.pps.launcher.Launcher")
   )
 
 lazy val utils = (project in file("utils"))

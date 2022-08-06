@@ -17,14 +17,14 @@ object StartSimulationPanel:
   private class StartSimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends StartSimulationPanel:
     self =>
-
+    private val imageLoader = ImageLoader()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var numLaps = 20
     private val lapsLabel =
       createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 50, _ + 1)
-    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 20, _ - 1)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 50, _ + 1)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 20, _ - 1)
     private val lapsSelectedLabel =
       createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
     private val startButton = createButton("Start Simulation")
@@ -49,7 +49,7 @@ object StartSimulationPanel:
 
     private def createArrowButton(path: String, comparator: Int => Boolean, function: Int => Int): Task[JButton] =
       for
-        button <- JButton(ImageIcon(path))
+        button <- JButton(imageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
