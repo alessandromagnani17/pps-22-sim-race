@@ -26,15 +26,15 @@ object InitialPanel:
     private val panelHeight = (height * 0.65).toInt
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
+    private var numLaps = 20
 
     private val initialLeftPanel = InitialLeftPanel(panelWidth, panelHeight, controller)
     private val initialRightPanel = InitialRightPanel(panelWidth, panelHeight, controller)
 
-    private var numLaps = 20
-    private val lapsLabel = createJLabel("Select laps:")
-    private val rightArrowButton = createRightArrowButton("src/main/resources/arrows/arrow-right.png")
-    private val leftArrowButton = createLeftArrowButton("src/main/resources/arrows/arrow-left.png")
-    private val lapsSelectedLabel = createJLabel(numLaps.toString)
+    private val lapsLabel = createJLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
+    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png",  _ < 50, _ + 1)
+    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png",  _ > 20, _ - 1)
+    private val lapsSelectedLabel = createJLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
 
     private val startBtn = createButton("Start Simulation")
     private val bottomPanel = createJPanel(width, height - panelHeight, FlowLayout())
@@ -57,32 +57,22 @@ object InitialPanel:
         _ <- button.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.06).toInt))
       yield button
 
-    private def createJLabel(text: String): Task[JLabel] =
+    private def createJLabel(text: String, dim: Dimension, pos: Int): Task[JLabel] =
       for
         label <- JLabel(text)
         _ <- label.setVerticalAlignment(SwingConstants.CENTER)
+        _ <- label.setPreferredSize(dim)
+        _ <- label.setHorizontalAlignment(pos)
       yield label
 
-    private def createRightArrowButton(filename: String): Task[JButton] =
+    private def createArrowButton(path: String, comparator: Int => Boolean, function: Int => Int): Task[JButton] =
       for
-        button <- JButton(ImageIcon(filename))
+        button <- JButton(ImageIcon(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e =>{
-          if numLaps < 50 then
-            numLaps = numLaps + 1
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
-        })
-      yield button
-
-    private def createLeftArrowButton(filename: String): Task[JButton] =
-      for
-        button <- JButton(ImageIcon(filename))
-        _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
-          if numLaps > 20 then
-            numLaps = numLaps - 1
+          if comparator(numLaps) then
+            numLaps = function(numLaps)
             lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
         })
       yield button
@@ -91,18 +81,15 @@ object InitialPanel:
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(width, height))
+
         bp <- bottomPanel
 
         lapsSelectedLabel <- lapsSelectedLabel
-        _ <- lapsSelectedLabel.setPreferredSize(Dimension((width * 0.04).toInt, (height * 0.06).toInt))
-        _ <- lapsSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER)
-
         lapsLabel <- lapsLabel
-        _ <- lapsLabel.setPreferredSize(Dimension((width * 0.06).toInt, (height * 0.06).toInt))
-        _ <- lapsLabel.setHorizontalAlignment(SwingConstants.LEFT)
 
         rab <- rightArrowButton
         lab <- leftArrowButton
+
         b <- startBtn
 
         x <- JLabel()

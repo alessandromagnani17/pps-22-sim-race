@@ -84,14 +84,6 @@ object InitialRightPanel:
       yield button
       buttons.toList
 
-      /*val starButtons: List[Task[JButton]] = List(createStarButton(filenameNotSelected, filenameSelected, 0.toString, isAttack),
-        createStarButton(filenameNotSelected, filenameSelected, 1.toString, isAttack),
-        createStarButton(filenameNotSelected, filenameSelected, 2.toString, isAttack),
-        createStarButton(filenameNotSelected, filenameSelected, 3.toString, isAttack),
-        createStarButton(filenameNotSelected, filenameSelected, 4.toString, isAttack))
-
-      starButtons*/
-
     private def createStarButton (filenameNotSelected: String, filenameSelected: String, name: String, isAttack: Boolean): Task[JButton] =
       for
         button <- if name.equals("0") then JButton(ImageIcon(filenameSelected)) else JButton(ImageIcon(filenameNotSelected))
