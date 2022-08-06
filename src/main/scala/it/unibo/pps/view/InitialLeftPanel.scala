@@ -27,7 +27,6 @@ object InitialLeftPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
-
     private val mapCarNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
     private val initialLeftPanel = createPanel()
@@ -85,7 +84,6 @@ object InitialLeftPanel:
         _ <- panel.setLayout(FlowLayout())
 
         carLabel <- carSelectedLabel
-
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
