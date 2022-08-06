@@ -47,8 +47,7 @@ object SimulationPanel:
       extends SimulationPanel:
     self =>
     private val cnv = createCanvas()
-
-    val p = for
+    private val p = for
       _ <- self.setLayout(new BorderLayout())
       canvas <- cnv
       scrollPanel <- createChartsPanel()
