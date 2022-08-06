@@ -58,7 +58,7 @@ object InitialRightPanel:
         button <- JButton(text, ImageIcon(fileName))
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.07).toInt))
+        _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(new ActionListener {
           override def actionPerformed(e: ActionEvent): Unit = tyresButtons.foreach(e => e.foreach(f => {
             if f.getText == button.getText then
