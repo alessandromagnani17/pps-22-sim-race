@@ -27,15 +27,12 @@ object InitialPanel:
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var numLaps = 20
-
     private val initialLeftPanel = InitialLeftPanel(panelWidth, panelHeight, controller)
     private val initialRightPanel = InitialRightPanel(panelWidth, panelHeight, controller)
-
     private val lapsLabel = createJLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
     private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png",  _ < 50, _ + 1)
     private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png",  _ > 20, _ - 1)
     private val lapsSelectedLabel = createJLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
-
     private val startBtn = createButton("Start Simulation")
     private val bottomPanel = createJPanel(width, height - panelHeight, FlowLayout())
     private val mainPanel = createMainPanelAndAddAllComponents()
@@ -81,32 +78,24 @@ object InitialPanel:
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(width, height))
-
-        bp <- bottomPanel
-
+        bottomPanel <- bottomPanel
         lapsSelectedLabel <- lapsSelectedLabel
         lapsLabel <- lapsLabel
-
-        rab <- rightArrowButton
-        lab <- leftArrowButton
-
+        rightArrowButton <- rightArrowButton
+        leftArrowButton <- leftArrowButton
         b <- startBtn
-
-        x <- JLabel()
-        _ <- x.setPreferredSize(Dimension(width, (height * 0.03).toInt))
-
-        y <- JLabel()
-        _ <- y.setPreferredSize(Dimension(width, (height * 0.03).toInt))
-        _ <- bp.add(x)
-
-        _ <- bp.add(lapsLabel)
-        _ <- bp.add(lab)
-        _ <- bp.add(lapsSelectedLabel)
-        _ <- bp.add(rab)
-        _ <- bp.add(y)
-        _ <- bp.add(b)
-
+        paddingLabel <- JLabel()
+        paddingLabel1 <- JLabel()
+        _ <- paddingLabel.setPreferredSize(Dimension(width, (height * 0.03).toInt))
+        _ <- paddingLabel1.setPreferredSize(Dimension(width, (height * 0.03).toInt))
+        _ <- bottomPanel.add(paddingLabel)
+        _ <- bottomPanel.add(lapsLabel)
+        _ <- bottomPanel.add(leftArrowButton)
+        _ <- bottomPanel.add(lapsSelectedLabel)
+        _ <- bottomPanel.add(rightArrowButton)
+        _ <- bottomPanel.add(paddingLabel1)
+        _ <- bottomPanel.add(b)
         _ <- mainp.add(initialLeftPanel)
         _ <- mainp.add(initialRightPanel)
-        _ <- mainp.add(bp)
+        _ <- mainp.add(bottomPanel)
       yield mainp

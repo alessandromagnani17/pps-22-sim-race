@@ -28,18 +28,13 @@ object InitialLeftPanel:
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-
     private val carSelectedLabel = createJLabel(s"Car selected: ${carNames(currentCarIndex)}")
-
     private val topArrowButton = createArrowButton("src/main/resources/arrows/arrow-up.png", e => if (e + 1) == numCars then 0.toString else (e + 1).toString)
     private val bottomArrowButton = createArrowButton("src/main/resources/arrows/arrow-bottom.png", e => if (e - 1) < 0 then (numCars - 1).toString else (e - 1).toString)
-
     private val labelImage = createLabelImage("src/main/resources/cars/0-hard.png", "0")
+    private val initialLeftPanel = createPanelAndAddAllComponents()
 
     controller.setCurrentCarIndex(currentCarIndex)
-
-    private val initialLeftPanel = createPanel()
-
     initialLeftPanel foreach(e => self.add(e))
 
     def changeCar(carIndex: Int, tyresType: String): Unit = labelImage.foreach(e => e.setIcon(ImageIcon(s"src/main/resources/cars/$carIndex-$tyresType.png")))
@@ -69,29 +64,25 @@ object InitialLeftPanel:
         _ <- button.addActionListener(new ActionListener {
           override def actionPerformed(e: ActionEvent): Unit =
             val nextIndex = calcIndex(currentCarIndex)
-
-            controller.setCurrentCarIndex(nextIndex.toInt)
+            controller.setCurrentCarIndex(nextIndex.toInt) 
             changeCar(nextIndex.toInt, "hard")
             currentCarIndex = nextIndex.toInt
             carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
         })
       yield button
 
-    private def createPanel(): Task[JPanel] =
+    private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
-
         carLabel <- carSelectedLabel
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
-
         _ <- panel.add(carLabel)
         _ <- panel.add(topArrowButton)
         _ <- panel.add(labelImage)
         _ <- panel.add(bottomArrowButton)
-        
         _ <- panel.setVisible(true)
       yield panel
