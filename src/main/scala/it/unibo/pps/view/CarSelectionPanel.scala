@@ -32,10 +32,10 @@ object CarSelectionPanel:
     private val topArrowButton = createArrowButton("src/main/resources/arrows/arrow-up.png", e => if (e + 1) == numCars then 0.toString else (e + 1).toString)
     private val bottomArrowButton = createArrowButton("src/main/resources/arrows/arrow-bottom.png", e => if (e - 1) < 0 then (numCars - 1).toString else (e - 1).toString)
     private val labelImage = createLabelImage("src/main/resources/cars/0-hard.png", "0")
-    private val initialLeftPanel = createPanelAndAddAllComponents()
+    private val carSelectionPanel = createPanelAndAddAllComponents()
 
     controller.setCurrentCarIndex(currentCarIndex)
-    initialLeftPanel foreach(e => self.add(e))
+    carSelectionPanel foreach(e => self.add(e))
 
     def changeCar(carIndex: Int, tyresType: String): Unit = labelImage.foreach(e => e.setIcon(ImageIcon(s"src/main/resources/cars/$carIndex-$tyresType.png")))
 

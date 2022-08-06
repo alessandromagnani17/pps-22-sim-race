@@ -12,7 +12,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   given Conversion[Component, Task[Component]] = Task(_)
   given Conversion[JFrame, Task[JFrame]] = Task(_)
 
-  private val initialPanel = InitialPanel(width, height, controller)
+  private val initialPanel = MainPanel(width, height, controller)
   private val frame = createFrame()
 
   private val p =
