@@ -38,15 +38,7 @@ trait SimulationPanel extends JPanel:
 
 object SimulationPanel:
 
-  given Conversion[Enviroment, Task[Enviroment]] = Task(_)
-  given Conversion[Int, Task[Int]] = Task(_)
-  given Conversion[Unit, Task[Unit]] = Task(_)
-  given Conversion[JButton, Task[JButton]] = Task(_)
-  given Conversion[Component, Task[Component]] = Task(_)
-  given Conversion[JPanel, Task[JPanel]] = Task(_)
-  given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
-  given Conversion[LineChart, Task[LineChart]] = Task(_)
-  given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
+  import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
     new SimulationPanelImpl(width, height, controller)
@@ -55,6 +47,7 @@ object SimulationPanel:
       extends SimulationPanel:
     self =>
     private val cnv = createCanvas()
+
     val p = for
       _ <- self.setLayout(new BorderLayout())
       canvas <- cnv
@@ -77,13 +70,14 @@ object SimulationPanel:
       _ <- render()
     yield ()
     p.runSyncUnsafe()
-    // p.runAsyncAndForget
 
     override def render(): Unit = SwingUtilities.invokeLater { () =>
-      cnv.foreach(c =>
-        c.invalidate()
-        c.repaint()
-      )
+      val p = for
+        canvas <- cnv
+        _ <- canvas.invalidate()
+        _ <- canvas.repaint()
+      yield ()
+      p.runSyncUnsafe()
     }
 
     private def createCanvas(): Task[Enviroment] =
@@ -109,13 +103,13 @@ object SimulationPanel:
         w = (width * 0.25).toInt
         h = 300
         chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
-        chartVelP <- chartVel.wrapToPanel()
-        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
         chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
-        chartFuelP <- chartFuel.wrapToPanel()
-        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
         chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
+        chartVelP <- chartVel.wrapToPanel()
+        chartFuelP <- chartFuel.wrapToPanel()
         chartTyresP <- chartTyres.wrapToPanel()
+        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
+        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
         _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
         _ <- p.add(chartVelP)
         _ <- p.add(chartFuelP)
