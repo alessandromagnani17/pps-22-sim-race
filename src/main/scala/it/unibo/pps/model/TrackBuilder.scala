@@ -10,7 +10,7 @@ given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
 given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
 
 trait TrackBuilder:
-  def createBaseTrack(w: Int, h: Int): Track
+  def createBaseTrack(): Track
 
 object TrackBuilder:
 
@@ -63,7 +63,7 @@ object TrackBuilder:
       yield turn
       result.toList
 
-    override def createBaseTrack(w: Int, h: Int): Track =
+    override def createBaseTrack(): Track =
       val track = Track()
       loadStraights().foreach(track.addSector(_))
       loadTurns().foreach(track.addSector(_))

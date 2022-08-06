@@ -18,3 +18,26 @@ class TestTrack extends AnyFlatSpec with Matchers:
     t.addSector(sector)
     assert(t.getSectors().size > 0)
   }
+
+  "With track Builder you" should "create a base track" in {
+    val track = TrackBuilder().createBaseTrack()
+    track.getSectors().size shouldBe 4
+    track
+      .getSectors()
+      .filter(s =>
+        s match {
+          case straight: Sector.Straight => true
+          case _ => false
+        }
+      )
+      .size shouldBe 2
+    track
+      .getSectors()
+      .filter(s =>
+        s match {
+          case turn: Sector.Turn => true
+          case _ => false
+        }
+      )
+      .size shouldBe 2
+  }

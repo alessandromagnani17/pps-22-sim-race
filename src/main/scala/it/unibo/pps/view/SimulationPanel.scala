@@ -3,7 +3,19 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingUtilities, WindowConstants}
+import javax.swing.{
+  BoxLayout,
+  JButton,
+  JComponent,
+  JLabel,
+  JList,
+  JPanel,
+  JScrollPane,
+  JTable,
+  JTextArea,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
@@ -65,7 +77,7 @@ object SimulationPanel:
       _ <- render()
     yield ()
     p.runSyncUnsafe()
-   // p.runAsyncAndForget
+    // p.runAsyncAndForget
 
     override def render(): Unit = SwingUtilities.invokeLater { () =>
       cnv.foreach(c =>
@@ -119,4 +131,4 @@ object SimulationPanel:
 
     private def initTrack(c: Enviroment): Unit =
       val trackBuilder = TrackBuilder()
-      c.track = trackBuilder.createBaseTrack(c.w, c.h)
+      c.track = trackBuilder.createBaseTrack()
