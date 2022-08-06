@@ -8,7 +8,6 @@ import javax.swing.{BorderFactory, ImageIcon, JButton, JLabel, JPanel, SwingCons
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import monix.execution.Scheduler.Implicits.global
 
-
 trait StartSimulationPanel extends JPanel
 
 object StartSimulationPanel:
