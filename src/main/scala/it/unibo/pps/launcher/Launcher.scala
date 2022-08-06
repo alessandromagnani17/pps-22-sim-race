@@ -16,7 +16,5 @@ object Launcher
   override val view = new ViewImpl()
   override val simulationEngine = new SimulationEngineImpl()
 
-/* @main def Main(): Unit =
+  @main def Main(): Unit =
     println("starting simulation.....")
-
- */

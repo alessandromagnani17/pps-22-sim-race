@@ -11,28 +11,32 @@ import monix.execution.Scheduler.Implicits.global
 trait StartSimulationPanel extends JPanel
 
 object StartSimulationPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): StartSimulationPanel = StartSimulationPanelImpl(width, height, controller)
+  def apply(width: Int, height: Int, controller: ControllerModule.Controller): StartSimulationPanel =
+    StartSimulationPanelImpl(width, height, controller)
 
   private class StartSimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-    extends StartSimulationPanel:
+      extends StartSimulationPanel:
     self =>
 
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var numLaps = 20
-    private val lapsLabel = createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png",  _ < 50, _ + 1)
-    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png",  _ > 20, _ - 1)
-    private val lapsSelectedLabel = createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
+    private val lapsLabel =
+      createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
+    private val rightArrowButton = createArrowButton("src/main/resources/arrows/arrow-right.png", _ < 50, _ + 1)
+    private val leftArrowButton = createArrowButton("src/main/resources/arrows/arrow-left.png", _ > 20, _ - 1)
+    private val lapsSelectedLabel =
+      createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
     private val startButton = createButton("Start Simulation")
     private val startSimulationPanel = createPanelAndAddAllComponents()
 
-    startSimulationPanel foreach(e => self.add(e))
+    startSimulationPanel foreach (e => self.add(e))
 
     private def createButton(text: String): Task[JButton] =
       for
         button <- JButton(text)
         _ <- button.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.2).toInt))
+        _ <- button.addActionListener(e => controller.displaySimulationPanel())
       yield button
 
     private def createLabel(text: String, dim: Dimension, pos: Int): Task[JLabel] =
@@ -48,7 +52,7 @@ object StartSimulationPanel:
         button <- JButton(ImageIcon(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
-        _ <- button.addActionListener(e =>{
+        _ <- button.addActionListener(e => {
           if comparator(numLaps) then
             numLaps = function(numLaps)
             lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
