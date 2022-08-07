@@ -44,7 +44,7 @@ object MainPanel:
     private val panelWidth = (width * 0.48).toInt
     private val panelHeight = (height * 0.65).toInt
     private val carSelectionPanel = CarSelectionPanel(panelWidth, panelHeight, controller)
-    private val initialRightPanel = ParamsSelectionPanel(panelWidth, panelHeight, controller)
+    private val paramsSelectionPanel = ParamsSelectionPanel(panelWidth, panelHeight, controller)
     private val startSimulationPanel = StartSimulationPanel(width, height - panelHeight, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
 
@@ -58,6 +58,6 @@ object MainPanel:
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(width, height))
         _ <- mainp.add(carSelectionPanel)
-        _ <- mainp.add(initialRightPanel)
+        _ <- mainp.add(paramsSelectionPanel)
         _ <- mainp.add(startSimulationPanel)
       yield mainp
