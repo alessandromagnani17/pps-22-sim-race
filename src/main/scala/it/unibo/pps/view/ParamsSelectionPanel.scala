@@ -137,7 +137,7 @@ object ParamsSelectionPanel:
         isAttack: Boolean
     ): List[Task[JButton]] =
       val buttons = for
-        index <- 0 to 4
+        index <- 0 until 5
         button = createStarButton(filenameNotSelected, filenameSelected, index.toString, isAttack)
       yield button
       buttons.toList
