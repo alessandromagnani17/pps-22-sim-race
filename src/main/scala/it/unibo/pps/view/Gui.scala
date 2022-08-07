@@ -8,9 +8,8 @@ import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
-  given Conversion[Unit, Task[Unit]] = Task(_)
-  given Conversion[Component, Task[Component]] = Task(_)
-  given Conversion[JFrame, Task[JFrame]] = Task(_)
+
+  import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
@@ -36,9 +35,12 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
 
-  def displaySimulationPanel(): Unit =
-    frame.foreach(f =>
-      f.getContentPane().removeAll()
-      f.getContentPane().add(simulationPanel)
-      f.revalidate()
-    )
+  def displaySimulationPanel(): Unit = SwingUtilities.invokeLater { () =>
+    val p = for
+      fr <- frame
+      _ <- fr.getContentPane().removeAll()
+      _ <- fr.getContentPane().add(simulationPanel)
+      _ <- fr.revalidate()
+    yield ()
+    p.runSyncUnsafe()
+  }
