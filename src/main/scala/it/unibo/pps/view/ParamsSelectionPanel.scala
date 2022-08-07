@@ -2,7 +2,7 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import monix.eval.Task
+import monix.eval.{Task, TaskLift}
 
 import java.awt.{
   BorderLayout,
@@ -120,12 +120,9 @@ object ParamsSelectionPanel:
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
-            e.foreach(f => {
-              if f.getText == button.getText then
-                f.setBackground(colorSelected)
-                f.setOpaque(true)
-                controller.updateDisplayedCar(f.getName)
-              else f.setBackground(colorNotSelected)
+            e.foreach(f => { f.getText match
+              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(f.getName)
+              case _ => f.setBackground(colorNotSelected)
             })
           )
         })
