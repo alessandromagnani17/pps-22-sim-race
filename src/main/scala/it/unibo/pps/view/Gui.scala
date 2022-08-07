@@ -13,7 +13,6 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
-
   private val frame = createFrame()
 
   private val p =
@@ -22,7 +21,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       _ <- fr.getContentPane().add(initialPanel)
       _ <- fr.setVisible(true)
     yield ()
-  p.runAsyncAndForget
+  p.runSyncUnsafe()
 
   private def createFrame(): Task[JFrame] =
     for
