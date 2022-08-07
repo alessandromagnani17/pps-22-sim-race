@@ -2,7 +2,7 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import monix.eval.Task
+import monix.eval.{Task, TaskLift}
 
 import java.awt.{
   BorderLayout,
@@ -137,7 +137,7 @@ object ParamsSelectionPanel:
         isAttack: Boolean
     ): List[Task[JButton]] =
       val buttons = for
-        index <- 0 to 4
+        index <- 0 until 5
         button = createStarButton(filenameNotSelected, filenameSelected, index.toString, isAttack)
       yield button
       buttons.toList
