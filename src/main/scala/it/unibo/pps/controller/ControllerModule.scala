@@ -28,15 +28,15 @@ object ControllerModule:
       private var currentCarIndex = 0
       private var stopFuture: Option[Cancelable] = None
 
-      override def notifyStart(): Unit =
-        val f = context.simulationEngine
+      override def notifyStart(): Unit = stopFuture = Some(
+        context.simulationEngine
           .simulationStep()
           .loopForever
           .runAsync {
             case Left(exp) => global.reportFailure(exp)
             case _ =>
           }
-        stopFuture = Some(f)
+      )
 
       override def notifyStop(): Unit =
         stopFuture --> (_.cancel())
