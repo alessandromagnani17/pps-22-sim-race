@@ -4,10 +4,12 @@ import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
+import monix.execution.Cancelable
 
 object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
+    def notifyStop(): Unit
     def updateDisplayedCar(tyresType: String): Unit
     def setCurrentCarIndex(index: Int): Unit
     def displaySimulationPanel(): Unit
@@ -23,12 +25,21 @@ object ControllerModule:
     context: Requirements =>
     class ControllerImpl extends Controller:
       private var currentCarIndex = 0
+      private var stopFuture: Option[Cancelable] = None
 
-      def notifyStart(): Unit =
-        context.simulationEngine
+      override def notifyStart(): Unit =
+        val f = context.simulationEngine
           .simulationStep()
           .loopForever
-          .runAsyncAndForget
+          .runAsync {
+            case Left(exp) => global.reportFailure(exp)
+            case _ =>
+          }
+        stopFuture = Some(f)
+
+      override def notifyStop(): Unit =
+        stopFuture.foreach(f => f.cancel())
+        stopFuture = None
 
       override def notifyDecreseSpeed(): Unit =
         context.simulationEngine.decreaseSpeed()
