@@ -54,7 +54,7 @@ object SimulationPanel:
       canvas <- cnv
       scrollPanel <- createChartsPanel()
       startButton <- createButton("Start", e => controller.notifyStart())
-      stopButton <- createButton("Stop", e => println("button stop pressed"))
+      stopButton <- createButton("Stop", e => controller.notifyStop())
       incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
       s <- standing
@@ -69,7 +69,6 @@ object SimulationPanel:
       _ <- mainPanel.add(canvas, BorderLayout.NORTH)
       _ <- mainPanel.add(s, BorderLayout.CENTER)
       _ <- self.add(mainPanel, BorderLayout.WEST)
-      //_ <- self.add(canvas, BorderLayout.WEST)
       _ <- initTrack(canvas)
       _ <- render()
     yield ()
@@ -141,5 +140,3 @@ object SimulationPanel:
 
     private def createStanding(): Task[JLabel] =
       new JLabel("1) Ferrari - 2) Mercedes - 3) RedBull - 4) McLaren")
-
-
