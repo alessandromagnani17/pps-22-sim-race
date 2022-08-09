@@ -3,6 +3,7 @@ package it.unibo.pps.controller
 import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
+import monix.execution.Scheduler.Implicits.global
 
 object ControllerModule:
   trait Controller:
@@ -10,6 +11,8 @@ object ControllerModule:
     def updateDisplayedCar(tyresType: String): Unit
     def setCurrentCarIndex(index: Int): Unit
     def displaySimulationPanel(): Unit
+    def notifyDecreseSpeed(): Unit
+    def notifyIncreaseSpeed(): Unit
 
   trait Provider:
     val controller: Controller
@@ -21,7 +24,18 @@ object ControllerModule:
     class ControllerImpl extends Controller:
       private var currentCarIndex = 0
 
-      def notifyStart(): Unit = ???
+      def notifyStart(): Unit =
+        context.simulationEngine
+          .simulationStep()
+          .loopForever
+          .runAsyncAndForget
+
+      override def notifyDecreseSpeed(): Unit =
+        context.simulationEngine.decreaseSpeed()
+
+      override def notifyIncreaseSpeed(): Unit =
+        context.simulationEngine.increaseSpeed()
+
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
       def updateDisplayedCar(tyresType: String): Unit =
