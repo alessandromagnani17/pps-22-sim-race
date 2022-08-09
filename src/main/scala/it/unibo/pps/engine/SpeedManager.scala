@@ -19,12 +19,17 @@ trait SpeedManager:
     */
   def increaseSpeed(): Unit
 
+  def reset: Unit
+
 object SpeedManager:
   def apply(): SpeedManager = new SpeedManagerImpl()
 
   private class SpeedManagerImpl() extends SpeedManager:
 
     var speed: Double = DEFAULT_SPEED
+
+    def reset: Unit =
+      speed = DEFAULT_SPEED
 
     override def _simulationSpeed: Double = speed
 

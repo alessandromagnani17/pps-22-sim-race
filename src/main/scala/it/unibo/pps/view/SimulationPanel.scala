@@ -51,10 +51,10 @@ object SimulationPanel:
       _ <- self.setLayout(new BorderLayout())
       canvas <- cnv
       scrollPanel <- createChartsPanel()
-      startButton <- createButton("Start", e => println("button start pressed"))
+      startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => println("button stop pressed"))
-      incVelocityButton <- createButton("+ Velocity", e => println("button incVel pressed"))
-      decVelocityButton <- createButton("- Velocity", e => println("button decVel pressed"))
+      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
+      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
       buttonsPanel = new JPanel()
       resultPanel = new JPanel()
       _ <- buttonsPanel.add(startButton)

@@ -3,6 +3,7 @@ package it.unibo.pps.engine
 import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
+import monix.execution.Scheduler
 import concurrent.duration.{Duration, DurationInt, FiniteDuration, DurationDouble}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
@@ -26,25 +27,28 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
 
-      override def decreaseSpeed(): Unit = speedManager.decreaseSpeed()
-      override def increaseSpeed(): Unit = speedManager.increaseSpeed()
+      override def decreaseSpeed(): Unit =
+        speedManager.decreaseSpeed()
+
+      override def increaseSpeed(): Unit =
+        speedManager.increaseSpeed()
 
       override def simulationStep(): Task[Unit] =
         for
-          _ <- waitFor(speedManager._simulationSpeed)
+          _ <- speedManager.reset
           _ <- moveCars()
           _ <- updateStanding()
           - <- updateCharts()
           _ <- updateView()
+          _ <- waitFor(speedManager._simulationSpeed)
         yield ()
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
         val time = BASE_TIME * simulationSpeed
-        println(s"Time: $time")
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
-        for _ <- println("Updating cars....")
+        for _ <- println("Updating cars.... " + speedManager._simulationSpeed)
         yield ()
 
       private def updateCharts(): Task[Unit] =
