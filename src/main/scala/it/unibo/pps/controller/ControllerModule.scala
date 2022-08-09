@@ -5,6 +5,7 @@ import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.Cancelable
+import it.unibo.pps.utility.PimpScala.RichOption.*
 
 object ControllerModule:
   trait Controller:
@@ -38,7 +39,7 @@ object ControllerModule:
         stopFuture = Some(f)
 
       override def notifyStop(): Unit =
-        stopFuture.foreach(f => f.cancel())
+        stopFuture --> (_.cancel())
         stopFuture = None
 
       override def notifyDecreseSpeed(): Unit =
