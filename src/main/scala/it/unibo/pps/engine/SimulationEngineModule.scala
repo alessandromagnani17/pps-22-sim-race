@@ -38,7 +38,7 @@ object SimulationEngineModule:
           _ <- speedManager.reset
           _ <- moveCars()
           _ <- updateStanding()
-          - <- updateCharts()
+          _ <- updateCharts()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
         yield ()
