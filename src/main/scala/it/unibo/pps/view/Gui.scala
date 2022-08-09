@@ -25,7 +25,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   private def createFrame(): Task[JFrame] =
     for
-      fr <- new JFrame("Prova")
+      fr <- new JFrame("Racing Simulator")
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
       _ <- fr.setResizable(false)
