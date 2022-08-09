@@ -3,12 +3,17 @@ package it.unibo.pps.engine
 import it.unibo.pps.model.ModelModule
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
+import concurrent.duration.{Duration, DurationInt, FiniteDuration, DurationDouble}
+import scala.language.postfixOps
+import it.unibo.pps.engine.SimulationConstants.*
 
 given Conversion[Unit, Task[Unit]] = Task(_)
 
 object SimulationEngineModule:
   trait SimulationEngine:
     def simulationStep(): Task[Unit]
+    def decreaseSpeed(): Unit
+    def increaseSpeed(): Unit
 
   trait Provider:
     val simulationEngine: SimulationEngine
@@ -18,12 +23,41 @@ object SimulationEngineModule:
   trait Component:
     context: Requirements =>
     class SimulationEngineImpl extends SimulationEngine:
-      override def simulationStep(): Task[Unit] = ???
 
-      private def moveCar(): Task[Unit] = ???
-      private def updateCharts(): Task[Unit] = ???
-      private def updateStanding(): Task[Unit] = ???
-      private def updateView(): Task[Unit] = ???
+      private val speedManager = SpeedManager()
+
+      override def decreaseSpeed(): Unit = speedManager.decreaseSpeed()
+      override def increaseSpeed(): Unit = speedManager.increaseSpeed()
+
+      override def simulationStep(): Task[Unit] =
+        for
+          _ <- waitFor(speedManager._simulationSpeed)
+          _ <- moveCars()
+          _ <- updateStanding()
+          - <- updateCharts()
+          _ <- updateView()
+        yield ()
+
+      private def waitFor(simulationSpeed: Double): Task[Unit] =
+        val time = BASE_TIME * simulationSpeed
+        println(s"Time: $time")
+        Task.sleep(time millis)
+
+      private def moveCars(): Task[Unit] =
+        for _ <- println("Updating cars....")
+        yield ()
+
+      private def updateCharts(): Task[Unit] =
+        for _ <- println("Updating charts....")
+        yield ()
+
+      private def updateStanding(): Task[Unit] =
+        for _ <- println("Updating standing....")
+        yield ()
+
+      private def updateView(): Task[Unit] =
+        for _ <- println("Updating view....")
+        yield ()
 
   trait Interface extends Provider with Component:
     self: Requirements =>
