@@ -28,7 +28,8 @@ object ParamsSelectionPanel:
     private val colorSelected = Color(79, 195, 247)
     private val fileNameSelected = "/stars/selected-star.png"
     private val fileNameNotSelected = "/stars/not-selected-star.png"
-    private var maxSpeed = 200
+    private val minSpeed = 200
+    private val maxSpeed = 350
     private val tyresLabel = createLabel(
       "Select tyres: ",
       Dimension(width, (height * 0.05).toInt),
@@ -47,13 +48,13 @@ object ParamsSelectionPanel:
       SwingConstants.BOTTOM
     )
     private val speedSelectedLabel = createLabel(
-      maxSpeed.toString,
+      minSpeed.toString,
       Dimension((width * 0.2).toInt, (height * 0.05).toInt),
       SwingConstants.CENTER,
       SwingConstants.CENTER
     )
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 200, _ - _)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 350, _ + _)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > minSpeed, _ - _)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < maxSpeed, _ + _)
     private val starAttackLabel = createLabel(
       "Select Driver Attack Skills:",
       Dimension(width, (height * 0.1).toInt),
@@ -93,10 +94,9 @@ object ParamsSelectionPanel:
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
-          if comparator(maxSpeed) then
-            maxSpeed = function(maxSpeed, 10)
-            speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
-            controller.getCurrentCar().maxSpeed = maxSpeed
+          if comparator(controller.getCurrentCar().maxSpeed) then
+            controller.getCurrentCar().maxSpeed = function(controller.getCurrentCar().maxSpeed, 10)
+            speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
         })
       yield button
 
