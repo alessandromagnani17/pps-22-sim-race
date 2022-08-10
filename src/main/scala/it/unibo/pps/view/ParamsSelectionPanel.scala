@@ -127,7 +127,7 @@ object ParamsSelectionPanel:
         button <- JButton(text, imageLoader.load(fileName))
         _ <- button.setName(tyre.toString)
         _ <-
-          if tyre.equals("hard") then { button.setBackground(colorSelected); button.setOpaque(true) }
+          if tyre.equals(Tyre.HARD) then { button.setBackground(colorSelected); button.setOpaque(true) }
           else button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(e => {

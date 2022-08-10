@@ -39,7 +39,7 @@ object ControllerModule:
       def createCars(): Unit =
         val l = for
           index <- 0 until numCars
-          car = Car(carNames(index), Tyre.SOFT, Driver(1,1), 200)
+          car = Car(carNames(index), Tyre.HARD, Driver(1,1), 200)
         yield car
         cars = l.toList
 
