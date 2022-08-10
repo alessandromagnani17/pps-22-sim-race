@@ -9,6 +9,7 @@ object ControllerModule:
     def notifyStart(): Unit
     def createCars(): Unit
     def getCurrentCar(): Car
+    def updateParametersPanel(): Unit
     def updateDisplayedCar(tyresType: String): Unit
     def setCurrentCarIndex(index: Int): Unit
     def displaySimulationPanel(): Unit
@@ -30,6 +31,10 @@ object ControllerModule:
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
       def getCurrentCar(): Car = cars(currentCarIndex)
+
+      def updateParametersPanel(): Unit =
+        context.view.updateParametersPanel()
+
 
       def createCars(): Unit =
         val l = for

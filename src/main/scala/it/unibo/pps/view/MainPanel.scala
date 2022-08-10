@@ -33,6 +33,8 @@ import javax.swing.{
 
 trait MainPanel extends JPanel:
   def updateDisplayedCar(carIndex: Int, tyresType: String): Unit
+  def updateParametersPanel(): Unit
+
 
 object MainPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): MainPanel =
@@ -52,6 +54,9 @@ object MainPanel:
 
     def updateDisplayedCar(carIndex: Int, tyresType: String): Unit =
       carSelectionPanel.updateDisplayedCar(carIndex, tyresType)
+
+    def updateParametersPanel(): Unit =
+      paramsSelectionPanel.updateParametersPanel()
 
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =
       for

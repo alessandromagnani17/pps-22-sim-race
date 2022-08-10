@@ -90,9 +90,8 @@ object CarSelectionPanel:
         _ <- button.addActionListener { e =>
           val nextIndex = calcIndex(currentCarIndex)
           controller.setCurrentCarIndex(nextIndex.toInt)
-          println("Index corrente: " + nextIndex)
-          println("Car corrente: " + controller.getCurrentCar().getName())
-          updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().getTyreType().toString.toLowerCase)
+          updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre.toString)
+          controller.updateParametersPanel()
           currentCarIndex = nextIndex.toInt
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
         }

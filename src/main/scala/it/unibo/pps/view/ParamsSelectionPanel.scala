@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import monix.eval.{Task, TaskLift}
 
@@ -30,7 +31,8 @@ import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 
-trait ParamsSelectionPanel extends JPanel
+trait ParamsSelectionPanel extends JPanel:
+  def updateParametersPanel(): Unit
 
 object ParamsSelectionPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): ParamsSelectionPanel =
@@ -49,10 +51,10 @@ object ParamsSelectionPanel:
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val hardTyresButton = createButton("   Hard Tyres", "/tyres/hardtyres.png", "hard")
+    private val hardTyresButton = createButton("   Hard Tyres", "/tyres/hardtyres.png", Tyre.HARD)
     private val mediumTyresButton =
-      createButton("   Medium Tyres", "/tyres/mediumtyres.png", "medium")
-    private val softTyresButton = createButton("   Soft Tyres", "/tyres/softtyres.png", "soft")
+      createButton("   Medium Tyres", "/tyres/mediumtyres.png", Tyre.MEDIUM)
+    private val softTyresButton = createButton("   Soft Tyres", "/tyres/softtyres.png", Tyre.SOFT)
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
     private val maxSpeedLabel = createLabel(
       "Select Maximum Speed (km/h):",
@@ -94,6 +96,16 @@ object ParamsSelectionPanel:
 
     initialRightPanel foreach (e => self.add(e))
 
+    def updateParametersPanel(): Unit =
+      println("Devo aggiornare")
+      tyresButtons.foreach(e => e.foreach(b => {
+        if b.getName.equals(controller.getCurrentCar().tyre.toString) then
+          println("Aggiorno: " + controller.getCurrentCar().tyre.toString)
+          b.setBackground(colorSelected); b.setOpaque(true)
+        else
+          b.setBackground(colorNotSelected)
+      }))
+
     private def createArrowButton(
         path: String,
         comparator: Int => Boolean,
@@ -110,18 +122,18 @@ object ParamsSelectionPanel:
         })
       yield button
 
-    private def createButton(text: String, fileName: String, name: String): Task[JButton] =
+    private def createButton(text: String, fileName: String, tyre: Tyre): Task[JButton] =
       for
         button <- JButton(text, imageLoader.load(fileName))
-        _ <- button.setName(name)
+        _ <- button.setName(tyre.toString)
         _ <-
-          if name.equals("hard") then { button.setBackground(colorSelected); button.setOpaque(true) }
+          if tyre.equals("hard") then { button.setBackground(colorSelected); button.setOpaque(true) }
           else button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
             e.foreach(f => { f.getText match
-              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(f.getName)
+              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(f.getName); controller.getCurrentCar().tyre = tyre
               case _ => f.setBackground(colorNotSelected)
             })
           )

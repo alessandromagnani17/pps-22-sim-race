@@ -12,7 +12,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-  private val initialPanel = MainPanel(width, height, controller)
+  private val mainPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
   private val frame = createFrame()
   controller.createCars()
@@ -34,7 +34,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val p =
     for
       fr <- frame
-      _ <- fr.getContentPane().add(initialPanel)
+      _ <- fr.getContentPane().add(mainPanel)
       _ <- fr.setVisible(true)
     yield ()
   p.runSyncUnsafe()
@@ -48,7 +48,9 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr
 
-  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
+  def updateParametersPanel(): Unit = mainPanel.updateParametersPanel()
+
+  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = mainPanel.updateDisplayedCar(carIndex, tyresType)
 
   def displaySimulationPanel(): Unit = SwingUtilities.invokeLater { () =>
     val p = for
@@ -59,3 +61,5 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
+
+
