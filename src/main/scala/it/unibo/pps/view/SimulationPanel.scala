@@ -25,8 +25,7 @@ import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
-import scala.math.atan2
-
+import it.unibo.pps.view.ViewConstants.*
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import scala.language.implicitConversions
@@ -48,12 +47,10 @@ object SimulationPanel:
       extends SimulationPanel:
     self =>
 
-    val w = (width * 0.7).toInt
-    val h = (height * 0.7).toInt
     private lazy val cnv =
       for
-        c <- new Enviroment(w, h)
-        _ <- c.setSize(w, h)
+        c <- new Enviroment(CANVAS_WIDTH, CANVAS_HEIGHT)
+        _ <- c.setSize(CANVAS_WIDTH, CANVAS_HEIGHT)
         _ <- c.setVisible(true)
       yield c
 
@@ -61,23 +58,21 @@ object SimulationPanel:
       for
         p <- new JPanel()
         _ <- p.setLayout(new BoxLayout(p, 1))
-        w = (width * 0.25).toInt
-        h = 300
         chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
         chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
         chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
         chartVelP <- chartVel.wrapToPanel()
         chartFuelP <- chartFuel.wrapToPanel()
         chartTyresP <- chartTyres.wrapToPanel()
-        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
-        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
-        _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
+        _ <- chartVelP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
+        _ <- chartFuelP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
+        _ <- chartTyresP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
         _ <- p.add(chartVelP)
         _ <- p.add(chartFuelP)
         _ <- p.add(chartTyresP)
         sp <- new JScrollPane(p)
-        _ <- sp.setVerticalScrollBarPolicy(22)
-        _ <- sp.setPreferredSize(new Dimension((width * 0.3).toInt, (height * 0.7).toInt))
+        _ <- sp.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED)
+        _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
       yield sp
 
     private var standing = createStanding()

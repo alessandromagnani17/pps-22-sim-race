@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.view.ViewConstants.*
 
 object ViewModule:
   trait View:
@@ -15,7 +16,7 @@ object ViewModule:
   trait Component:
     context: Requirements =>
     class ViewImpl extends View:
-      val gui = new Gui(1296, 810, context.controller)
+      val gui = new Gui(FRAME_WIDTH, FRAME_HEIGHT, context.controller)
 
       override def updateDisplayedCar(carIndex: Int, tyresType: String): Unit =
         gui.updateDisplayedCar(carIndex, tyresType)
