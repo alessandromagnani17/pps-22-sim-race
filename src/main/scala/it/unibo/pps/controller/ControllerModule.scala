@@ -12,6 +12,10 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(tyre: Tyre): Unit
     def setCurrentCarIndex(index: Int): Unit
+    def setTyre(tyre: Tyre): Unit
+    def setMaxSpeed(speed: Int): Unit
+    def setAttack(attack: Int): Unit
+    def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
 
   trait Provider:
@@ -28,7 +32,16 @@ object ControllerModule:
       private var cars: List[Car] = List.empty
 
       def notifyStart(): Unit = ???
+
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
+
+      def setTyre(tyre: Tyre): Unit = cars(currentCarIndex).tyre = tyre
+
+      def setMaxSpeed(speed: Int): Unit = cars(currentCarIndex).maxSpeed = speed
+
+      def setAttack(attack: Int): Unit = cars(currentCarIndex).driver.attack = attack
+
+      def setDefense(defense: Int): Unit = cars(currentCarIndex).driver.defense = defense
 
       def getCurrentCar(): Car = cars(currentCarIndex)
 

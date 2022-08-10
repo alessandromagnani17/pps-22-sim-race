@@ -95,7 +95,8 @@ object ParamsSelectionPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
           if comparator(controller.getCurrentCar().maxSpeed) then
-            controller.getCurrentCar().maxSpeed = function(controller.getCurrentCar().maxSpeed, 10)
+            //controller.getCurrentCar().maxSpeed = function(controller.getCurrentCar().maxSpeed, 10)
+            controller.setMaxSpeed(function(controller.getCurrentCar().maxSpeed, 10)) // VEDERE SE PASSARE FUNZIONE O NO
             speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
         })
       yield button
@@ -111,7 +112,12 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
             e.foreach(f => { f.getText match
-              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(matcher.matcher(f.getName)); controller.getCurrentCar().tyre = tyre
+              case b if button.getText.equals(f.getText) => 
+                f.setBackground(colorSelected) 
+                f.setOpaque(true)
+                controller.updateDisplayedCar(matcher.matcher(f.getName))
+                //controller.getCurrentCar().tyre = tyre
+                controller.setTyre(tyre)
               case _ => f.setBackground(colorNotSelected)
             })
           )
@@ -142,10 +148,12 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener { e =>
           if isAttack then
             updateStar(starAttackButtons, button.getName.toInt)
-            controller.getCurrentCar().driver.attack = button.getName.toInt
+            //controller.getCurrentCar().driver.attack = button.getName.toInt
+            controller.setAttack(button.getName.toInt)
           else
             updateStar(starDefenseButtons, button.getName.toInt)
-            controller.getCurrentCar().driver.defense = button.getName.toInt
+            //controller.getCurrentCar().driver.defense = button.getName.toInt
+            controller.setDefense(button.getName.toInt)
         }
       yield button
 
