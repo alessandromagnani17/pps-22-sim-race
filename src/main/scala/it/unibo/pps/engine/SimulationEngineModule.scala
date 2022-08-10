@@ -8,8 +8,6 @@ import concurrent.duration.{Duration, DurationInt, FiniteDuration, DurationDoubl
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
 
-given Conversion[Unit, Task[Unit]] = Task(_)
-
 object SimulationEngineModule:
   trait SimulationEngine:
     def simulationStep(): Task[Unit]
@@ -35,7 +33,7 @@ object SimulationEngineModule:
 
       override def simulationStep(): Task[Unit] =
         for
-          _ <- speedManager.reset
+          _ <- Task(println("simulation step"))
           _ <- moveCars()
           _ <- updateStanding()
           _ <- updateCharts()
@@ -48,19 +46,19 @@ object SimulationEngineModule:
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
-        for _ <- println("Updating cars.... " + speedManager._simulationSpeed)
+        for _ <- Task(println("Updating cars.... " + speedManager._simulationSpeed))
         yield ()
 
       private def updateCharts(): Task[Unit] =
-        for _ <- println("Updating charts....")
+        for _ <- Task(println("Updating charts...."))
         yield ()
 
       private def updateStanding(): Task[Unit] =
-        for _ <- println("Updating standing....")
+        for _ <- Task(println("Updating standing...."))
         yield ()
 
       private def updateView(): Task[Unit] =
-        for _ <- println("Updating view....")
+        for _ <- Task(println("Updating view...."))
         yield ()
 
   trait Interface extends Provider with Component:
