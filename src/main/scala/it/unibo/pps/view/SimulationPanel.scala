@@ -47,12 +47,44 @@ object SimulationPanel:
   private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends SimulationPanel:
     self =>
-    private val cnv = createCanvas()
+
+    val w = (width * 0.7).toInt
+    val h = (height * 0.7).toInt
+    private lazy val cnv =
+      for
+        c <- new Enviroment(w, h)
+        _ <- c.setSize(w, h)
+        _ <- c.setVisible(true)
+      yield c
+
+    private lazy val chartsPanel =
+      for
+        p <- new JPanel()
+        _ <- p.setLayout(new BoxLayout(p, 1))
+        w = (width * 0.25).toInt
+        h = 300
+        chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
+        chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
+        chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
+        chartVelP <- chartVel.wrapToPanel()
+        chartFuelP <- chartFuel.wrapToPanel()
+        chartTyresP <- chartTyres.wrapToPanel()
+        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
+        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
+        _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
+        _ <- p.add(chartVelP)
+        _ <- p.add(chartFuelP)
+        _ <- p.add(chartTyresP)
+        sp <- new JScrollPane(p)
+        _ <- sp.setVerticalScrollBarPolicy(22)
+        _ <- sp.setPreferredSize(new Dimension((width * 0.3).toInt, (height * 0.7).toInt))
+      yield sp
+
     private var standing = createStanding()
     private val p = for
       _ <- self.setLayout(new BorderLayout())
       canvas <- cnv
-      scrollPanel <- createChartsPanel()
+      scrollPanel <- chartsPanel
       startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => controller.notifyStop())
       incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
@@ -91,15 +123,6 @@ object SimulationPanel:
       p.runSyncUnsafe()
     }
 
-    private def createCanvas(): Task[Enviroment] =
-      val w = (width * 0.7).toInt
-      val h = (height * 0.7).toInt
-      for
-        cnv <- new Enviroment(w, h)
-        _ <- cnv.setSize(w, h)
-        _ <- cnv.setVisible(true)
-      yield cnv
-
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for
         jb <- new JButton()
@@ -107,36 +130,15 @@ object SimulationPanel:
         _ <- jb.addActionListener(listener)
       yield jb
 
-    private def createChartsPanel(): Task[JScrollPane] =
-      for
-        p <- new JPanel()
-        _ <- p.setLayout(new BoxLayout(p, 1))
-        w = (width * 0.25).toInt
-        h = 300
-        chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
-        chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
-        chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
-        chartVelP <- chartVel.wrapToPanel()
-        chartFuelP <- chartFuel.wrapToPanel()
-        chartTyresP <- chartTyres.wrapToPanel()
-        _ <- chartVelP.setPreferredSize(new Dimension(w, h))
-        _ <- chartFuelP.setPreferredSize(new Dimension(w, h))
-        _ <- chartTyresP.setPreferredSize(new Dimension(w, h))
-        _ <- p.add(chartVelP)
-        _ <- p.add(chartFuelP)
-        _ <- p.add(chartTyresP)
-        sp <- new JScrollPane(p)
-        _ <- sp.setVerticalScrollBarPolicy(22)
-        _ <- sp.setPreferredSize(new Dimension((width * 0.3).toInt, (height * 0.7).toInt))
-      yield sp
-
     private def createChart(title: String, xLabel: String, yLabel: String, serieName: String): Task[LineChart] =
       for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
 
+    //TODO - Da togliere
     private def initTrack(c: Enviroment): Unit =
       val trackBuilder = TrackBuilder()
       c.track = trackBuilder.createBaseTrack()
 
+    //TODO - Da togliere
     private def createStanding(): Task[JLabel] =
       new JLabel("1) Ferrari - 2) Mercedes - 3) RedBull - 4) McLaren")
