@@ -35,7 +35,6 @@ object ControllerModule:
       def updateParametersPanel(): Unit =
         context.view.updateParametersPanel()
 
-
       def createCars(): Unit =
         val l = for
           index <- 0 until numCars
