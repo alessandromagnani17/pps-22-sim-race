@@ -7,6 +7,7 @@ import monix.execution.Scheduler
 import concurrent.duration.{Duration, DurationInt, FiniteDuration, DurationDouble}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
+import it.unibo.pps.utility.monadic._
 
 object SimulationEngineModule:
   trait SimulationEngine:
@@ -45,19 +46,19 @@ object SimulationEngineModule:
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
-        for _ <- Task(println("Updating cars.... " + speedManager._simulationSpeed))
+        for _ <- io(println("Updating cars.... " + speedManager._simulationSpeed))
         yield ()
 
       private def updateCharts(): Task[Unit] =
-        for _ <- Task(println("Updating charts...."))
+        for _ <- io(println("Updating charts...."))
         yield ()
 
       private def updateStanding(): Task[Unit] =
-        for _ <- Task(println("Updating standing...."))
+        for _ <- io(println("Updating standing...."))
         yield ()
 
       private def updateView(): Task[Unit] =
-        for _ <- Task(println("Updating view...."))
+        for _ <- io(println("Updating view...."))
         yield ()
 
   trait Interface extends Provider with Component:
