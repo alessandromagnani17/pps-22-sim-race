@@ -1,5 +1,6 @@
 package it.unibo.pps.utility
 
+import it.unibo.pps.model.Car
 import monix.eval.Task
 
 import java.awt.image.BufferedImage
@@ -28,3 +29,4 @@ object GivenConversion:
     given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
+    given Conversion[Car, Task[Car]] = Task(_)
