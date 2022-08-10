@@ -75,6 +75,7 @@ object CarSelectionPanel:
           updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre)
           controller.updateParametersPanel()
           currentCarIndex = nextIndex.toInt
+          println("Indice car preso dal name -->" + labelImage.foreach(e => println("è+++" + e.getName)))
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
         }
       yield button
