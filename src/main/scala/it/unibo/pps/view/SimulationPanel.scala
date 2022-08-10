@@ -72,7 +72,7 @@ object SimulationPanel:
       _ <- initTrack(canvas)
       _ <- render()
     yield ()
-    p.runSyncUnsafe()
+    p.runAsyncAndForget
 
     override def render(): Unit = SwingUtilities.invokeLater { () =>
       val p = for

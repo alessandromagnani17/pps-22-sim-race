@@ -13,17 +13,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
-  private val frame = createFrame()
 
-  private val p =
-    for
-      fr <- frame
-      _ <- fr.getContentPane().add(initialPanel)
-      _ <- fr.setVisible(true)
-    yield ()
-  p.runSyncUnsafe()
-
-  private def createFrame(): Task[JFrame] =
+  private lazy val frame: Task[JFrame] =
     for
       fr <- new JFrame("Racing Simulator")
       _ <- fr.setSize(width, height)
@@ -31,6 +22,14 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       _ <- fr.setResizable(false)
       _ <- fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     yield fr
+
+  private lazy val p =
+    for
+      fr <- frame
+      _ <- fr.getContentPane().add(initialPanel)
+      _ <- fr.setVisible(true)
+    yield ()
+  p.runSyncUnsafe()
 
   def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
 
