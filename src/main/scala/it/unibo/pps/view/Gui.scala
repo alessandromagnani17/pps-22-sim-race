@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.{Car, Driver, Tyre}
 import monix.eval.Task
 
 import java.awt.{Component, Toolkit}
@@ -11,9 +12,26 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
+  private val numCars = 4
+  private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
   private val frame = createFrame()
+  private val cars = createCarsList()
+  
+  //controller.setCarList(cars)
+  
+  private def createCarsList(): List[Task[Car]] =
+    val cars = for
+      index <- 0 until numCars
+      car = createCar(index)
+    yield car
+    cars.toList
+    
+  private def createCar(index: Int): Task[Car] =
+    for 
+      car <- Car(carNames(index), Tyre.HARD, Driver(1,1), 200)
+    yield car
 
   private val p =
     for
