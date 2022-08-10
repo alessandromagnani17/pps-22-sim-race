@@ -26,6 +26,8 @@ object ParamsSelectionPanel:
     private val matcher = Matcher()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
+    private val fileNameSelected = "/stars/selected-star.png"
+    private val fileNameNotSelected = "/stars/not-selected-star.png"
     private var maxSpeed = 200
     private val tyresLabel = createLabel(
       "Select tyres: ",
@@ -58,39 +60,28 @@ object ParamsSelectionPanel:
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starAttackButtons = createSkillsStarButtons(
-      "/stars/not-selected-star.png",
-      "/stars/selected-star.png",
-      true
-    )
+    private val starAttackButtons = createSkillsStarButtons(true)
     private val starDefenseLabel = createLabel(
       "Select Driver Defense Skills:",
       Dimension(width, (height * 0.1).toInt),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starDefenseButtons = createSkillsStarButtons(
-      "/stars/not-selected-star.png",
-      "/stars/selected-star.png",
-      false
-    )
+    private val starDefenseButtons = createSkillsStarButtons(false)
     private val initialRightPanel = createPanelAndAddAllComponents()
 
     initialRightPanel foreach (e => self.add(e))
 
     def updateParametersPanel(): Unit =
-      println("Devo aggiornare")
       tyresButtons.foreach(e => e.foreach(b => {
         if b.getName.equals(controller.getCurrentCar().tyre.toString) then
-          println("Aggiorno: " + controller.getCurrentCar().tyre.toString)
           b.setBackground(colorSelected); b.setOpaque(true)
         else
           b.setBackground(colorNotSelected)
       }))
-
-      speedSelectedLabel.foreach(e => {
-        e.setText(controller.getCurrentCar().maxSpeed.toString)
-      })
+      speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
+      updateStar(starAttackButtons, controller.getCurrentCar().driver.attack)
+      updateStar(starDefenseButtons, controller.getCurrentCar().driver.defense)
 
     private def createArrowButton(
         path: String,
@@ -128,46 +119,44 @@ object ParamsSelectionPanel:
       yield button
 
     private def createSkillsStarButtons(
-        filenameNotSelected: String,
-        filenameSelected: String,
         isAttack: Boolean
     ): List[Task[JButton]] =
       val buttons = for
-        index <- 0 until 5
-        button = createStarButton(filenameNotSelected, filenameSelected, index.toString, isAttack)
+        index <- 1 until 6
+        button = createStarButton(index.toString, isAttack)
       yield button
       buttons.toList
 
     private def createStarButton(
-        filenameNotSelected: String,
-        filenameSelected: String,
         name: String,
         isAttack: Boolean
     ): Task[JButton] =
       for
         button <-
-          if name.equals("0") then JButton(imageLoader.load(filenameSelected))
-          else JButton(imageLoader.load(filenameNotSelected))
+          if name.equals("1") then JButton(imageLoader.load(fileNameSelected))
+          else JButton(imageLoader.load(fileNameNotSelected))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setPreferredSize(Dimension((width * 0.09).toInt, (height * 0.08).toInt))
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener { e =>
-          if isAttack then updateStar(starAttackButtons, filenameSelected, filenameNotSelected, button)
-          else updateStar(starDefenseButtons, filenameSelected, filenameNotSelected, button)
+          if isAttack then
+            updateStar(starAttackButtons, button.getName.toInt)
+            controller.getCurrentCar().driver.attack = button.getName.toInt
+          else
+            updateStar(starDefenseButtons, button.getName.toInt)
+            controller.getCurrentCar().driver.defense = button.getName.toInt
         }
       yield button
 
     private def updateStar(
         list: List[Task[JButton]],
-        filenameSelected: String,
-        filenameNotSelected: String,
-        button: JButton
+        index: Int
     ): Unit =
       list.foreach(e =>
         e.foreach(f =>
-          if f.getName.toInt <= button.getName.toInt then f.setIcon(imageLoader.load(filenameSelected))
-          else f.setIcon(imageLoader.load(filenameNotSelected))
+          if f.getName.toInt <= index then f.setIcon(imageLoader.load(fileNameSelected))
+          else f.setIcon(imageLoader.load(fileNameNotSelected))
         )
       )
 

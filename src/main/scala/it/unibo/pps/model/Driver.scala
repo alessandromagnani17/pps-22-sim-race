@@ -1,3 +1,3 @@
 package it.unibo.pps.model
 
-case class Driver(attack: Int, defense: Int)
+case class Driver(var attack: Int, var defense: Int)
