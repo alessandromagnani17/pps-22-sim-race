@@ -15,6 +15,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
   private val frame = createFrame()
+  controller.createCars()
   //private val cars = createCarsList()
 
 

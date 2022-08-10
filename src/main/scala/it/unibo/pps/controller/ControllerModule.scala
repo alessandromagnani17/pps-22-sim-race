@@ -8,6 +8,7 @@ object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def createCars(): Unit
+    def getCurrentCar(): Car
     def updateDisplayedCar(tyresType: String): Unit
     def setCurrentCarIndex(index: Int): Unit
     def displaySimulationPanel(): Unit
@@ -28,10 +29,12 @@ object ControllerModule:
       def notifyStart(): Unit = ???
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
+      def getCurrentCar(): Car = cars(currentCarIndex)
+
       def createCars(): Unit =
         val l = for
           index <- 0 until numCars
-          car = Car(carNames(index), Tyre.HARD, Driver(1,1), 200)
+          car = Car(carNames(index), Tyre.SOFT, Driver(1,1), 200)
         yield car
         cars = l.toList
 
