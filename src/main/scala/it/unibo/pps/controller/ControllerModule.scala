@@ -10,7 +10,7 @@ object ControllerModule:
     def createCars(): Unit
     def getCurrentCar(): Car
     def updateParametersPanel(): Unit
-    def updateDisplayedCar(tyresType: String): Unit
+    def updateDisplayedCar(tyre: Tyre): Unit
     def setCurrentCarIndex(index: Int): Unit
     def displaySimulationPanel(): Unit
 
@@ -43,8 +43,8 @@ object ControllerModule:
         yield car
         cars = l.toList
 
-      def updateDisplayedCar(tyresType: String): Unit =
-        context.view.updateDisplayedCar(currentCarIndex, tyresType)
+      def updateDisplayedCar(tyre: Tyre): Unit =
+        context.view.updateDisplayedCar(currentCarIndex, tyre)
 
       def displaySimulationPanel(): Unit =
         context.view.displaySimulationPanel()

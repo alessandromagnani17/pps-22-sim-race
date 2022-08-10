@@ -50,7 +50,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateParametersPanel(): Unit = mainPanel.updateParametersPanel()
 
-  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = mainPanel.updateDisplayedCar(carIndex, tyresType)
+  def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit = 
+    mainPanel.updateDisplayedCar(carIndex, tyre)
 
   def displaySimulationPanel(): Unit = SwingUtilities.invokeLater { () =>
     val p = for

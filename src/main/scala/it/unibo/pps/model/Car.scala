@@ -1,6 +1,6 @@
 package it.unibo.pps.model
 
-case class Car(name: String, var tyre: Tyre, driver: Driver, maxSpeed: Int)
+case class Car(name: String, var tyre: Tyre, var driver: Driver, var maxSpeed: Int)
 /*
 trait Car:
   def getName(): String

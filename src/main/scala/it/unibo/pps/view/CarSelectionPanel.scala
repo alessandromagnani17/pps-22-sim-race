@@ -1,30 +1,12 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import monix.eval.Task
 
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  GridBagConstraints,
-  GridBagLayout,
-  LayoutManager
-}
-import javax.swing.{
-  BorderFactory,
-  DefaultListCellRenderer,
-  ImageIcon,
-  JButton,
-  JComboBox,
-  JLabel,
-  JList,
-  JPanel,
-  SwingConstants
-}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
+import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, SwingConstants}
 import javax.swing.JPanel
 import monix.execution.Scheduler.Implicits.global
 
@@ -32,7 +14,7 @@ import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.util
 
 trait CarSelectionPanel extends JPanel:
-  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit
+  def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
 
 object CarSelectionPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): CarSelectionPanel =
@@ -62,8 +44,8 @@ object CarSelectionPanel:
     controller.setCurrentCarIndex(currentCarIndex)
     carSelectionPanel foreach (e => self.add(e))
 
-    def updateDisplayedCar(carIndex: Int, tyresType: String): Unit =
-      labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-$tyresType.png")))
+    def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
+      labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-${tyre.toString.toLowerCase}.png")))
 
     private def createLabelImage(filename: String, name: String): Task[JLabel] =
       for
@@ -90,7 +72,7 @@ object CarSelectionPanel:
         _ <- button.addActionListener { e =>
           val nextIndex = calcIndex(currentCarIndex)
           controller.setCurrentCarIndex(nextIndex.toInt)
-          updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre.toString)
+          updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre)
           controller.updateParametersPanel()
           currentCarIndex = nextIndex.toInt
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))

@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
@@ -8,31 +9,12 @@ import monix.execution.Scheduler.Implicits.global
 import java.io.File
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  GridBagConstraints,
-  GridBagLayout,
-  LayoutManager
-}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
 import javax.imageio.ImageIO
-import javax.swing.{
-  BorderFactory,
-  DefaultListCellRenderer,
-  ImageIcon,
-  JButton,
-  JComboBox,
-  JLabel,
-  JList,
-  JPanel,
-  SwingConstants
-}
+import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, SwingConstants}
 
 trait MainPanel extends JPanel:
-  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit
+  def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
   def updateParametersPanel(): Unit
 
 
@@ -52,8 +34,8 @@ object MainPanel:
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(carIndex: Int, tyresType: String): Unit =
-      carSelectionPanel.updateDisplayedCar(carIndex, tyresType)
+    def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
+      carSelectionPanel.updateDisplayedCar(carIndex, tyre)
 
     def updateParametersPanel(): Unit =
       paramsSelectionPanel.updateParametersPanel()

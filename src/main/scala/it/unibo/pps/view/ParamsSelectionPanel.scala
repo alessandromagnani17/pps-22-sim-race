@@ -3,30 +3,11 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.utility.Matcher
 import monix.eval.{Task, TaskLift}
 
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  GridBagConstraints,
-  GridBagLayout,
-  LayoutManager
-}
-import javax.swing.{
-  BorderFactory,
-  DefaultListCellRenderer,
-  ImageIcon,
-  JButton,
-  JComboBox,
-  JLabel,
-  JList,
-  JPanel,
-  JSlider,
-  SwingConstants
-}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
+import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, JSlider, SwingConstants}
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
@@ -42,6 +23,7 @@ object ParamsSelectionPanel:
       extends ParamsSelectionPanel:
     self =>
     private val imageLoader = ImageLoader()
+    private val matcher = Matcher()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private var maxSpeed = 200
@@ -106,6 +88,10 @@ object ParamsSelectionPanel:
           b.setBackground(colorNotSelected)
       }))
 
+      speedSelectedLabel.foreach(e => {
+        e.setText(controller.getCurrentCar().maxSpeed.toString)
+      })
+
     private def createArrowButton(
         path: String,
         comparator: Int => Boolean,
@@ -119,6 +105,7 @@ object ParamsSelectionPanel:
           if comparator(maxSpeed) then
             maxSpeed = function(maxSpeed, 10)
             speedSelectedLabel.foreach(e => e.setText(maxSpeed.toString))
+            controller.getCurrentCar().maxSpeed = maxSpeed
         })
       yield button
 
@@ -133,7 +120,7 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
             e.foreach(f => { f.getText match
-              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(f.getName); controller.getCurrentCar().tyre = tyre
+              case b if button.getText.equals(f.getText) => f.setBackground(colorSelected); f.setOpaque(true); controller.updateDisplayedCar(matcher.matcher(f.getName)); controller.getCurrentCar().tyre = tyre
               case _ => f.setBackground(colorNotSelected)
             })
           )

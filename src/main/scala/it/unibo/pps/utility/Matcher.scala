@@ -10,6 +10,6 @@ object Matcher:
 
   private class MatcherImpl() extends Matcher:
     override def matcher(tyre: String): Tyre = tyre match
-      case "hard" => Tyre.HARD
-      case "medium" => Tyre.MEDIUM
-      case "soft" => Tyre.SOFT
+      case "HARD" => Tyre.HARD
+      case "MEDIUM" => Tyre.MEDIUM
+      case "SOFT" => Tyre.SOFT
