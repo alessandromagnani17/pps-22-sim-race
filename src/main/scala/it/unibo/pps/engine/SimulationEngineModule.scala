@@ -33,7 +33,6 @@ object SimulationEngineModule:
 
       override def simulationStep(): Task[Unit] =
         for
-          _ <- Task(println("simulation step"))
           _ <- moveCars()
           _ <- updateStanding()
           _ <- updateCharts()
