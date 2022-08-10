@@ -47,12 +47,12 @@ object SimulationPanel:
       extends SimulationPanel:
     self =>
 
-    private lazy val cnv =
+    private lazy val canvas =
       for
-        c <- new Enviroment(CANVAS_WIDTH, CANVAS_HEIGHT)
-        _ <- c.setSize(CANVAS_WIDTH, CANVAS_HEIGHT)
-        _ <- c.setVisible(true)
-      yield c
+        cnv <- new Enviroment(CANVAS_WIDTH, CANVAS_HEIGHT)
+        _ <- cnv.setSize(CANVAS_WIDTH, CANVAS_HEIGHT)
+        _ <- cnv.setVisible(true)
+      yield cnv
 
     private lazy val chartsPanel =
       for
@@ -76,9 +76,10 @@ object SimulationPanel:
       yield sp
 
     private var standing = createStanding()
+
     private val p = for
       _ <- self.setLayout(new BorderLayout())
-      canvas <- cnv
+      cnv <- canvas
       scrollPanel <- chartsPanel
       startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => controller.notifyStop())
@@ -93,19 +94,19 @@ object SimulationPanel:
       _ <- buttonsPanel.add(decVelocityButton)
       _ <- self.add(scrollPanel, BorderLayout.EAST)
       _ <- self.add(buttonsPanel, BorderLayout.SOUTH)
-      _ <- mainPanel.add(canvas, BorderLayout.NORTH)
+      _ <- mainPanel.add(cnv, BorderLayout.NORTH)
       _ <- mainPanel.add(s, BorderLayout.CENTER)
       _ <- self.add(mainPanel, BorderLayout.WEST)
-      _ <- initTrack(canvas)
+      _ <- initTrack(cnv)
       _ <- render()
     yield ()
     p.runAsyncAndForget
 
     override def render(): Unit = SwingUtilities.invokeLater { () =>
       val p = for
-        canvas <- cnv
-        _ <- canvas.invalidate()
-        _ <- canvas.repaint()
+        cnv <- canvas
+        _ <- cnv.invalidate()
+        _ <- cnv.repaint()
       yield ()
       p.runSyncUnsafe()
     }
