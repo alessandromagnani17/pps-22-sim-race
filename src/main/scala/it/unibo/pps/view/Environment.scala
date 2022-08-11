@@ -38,13 +38,11 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     track.getSectors().foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
-  private def drawStraigth(s: Sector.Straight, g: Graphics): Unit =
-    val p0 = s.drawingParams.p0External
-    val p1 = s.drawingParams.p1External
-    val p2 = s.drawingParams.p0Internal
-    val p3 = s.drawingParams.p1Internal
-    g.drawLine(p0._1, p0._2, p1._1, p1._2)
-    g.drawLine(p2._1, p2._2, p3._1, p3._2)
+  private def drawStraigth(s: Sector.Straight, g: Graphics): Unit = s.drawingParams match {
+    case DrawingStraightParams(p0External, p1External, p0Internal, p1Internal) =>
+      g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
+      g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
+  }
 
   private def drawTurn(t: Sector.Turn, g: Graphics): Unit =
     val externalRadius = t.drawingParams.center euclideanDistance t.drawingParams.startPointE
