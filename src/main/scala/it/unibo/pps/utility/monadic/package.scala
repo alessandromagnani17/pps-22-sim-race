@@ -7,7 +7,7 @@ package object monadic:
   /** Method that wraps a generic computation into a Monix Task
     *
     * @param e
-    *   Represent a generic and possible async/lazy computation
+    *   Represents a generic and possible async/lazy computation
     * @return
     *   A Task that wraps the given computation
     *
