@@ -15,6 +15,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val initialPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
 
+  def _simulationPanel = simulationPanel
+
   private lazy val frame: Task[JFrame] =
     for
       fr <- new JFrame("Racing Simulator")
@@ -53,7 +55,6 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
-  
+
   def updateCars(cars: List[Car]): Unit =
     simulationPanel.render(cars)
-

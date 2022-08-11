@@ -28,7 +28,8 @@ object ViewModule:
         gui.displaySimulationPanel(track)
 
       override def updateCars(cars: List[Car]): Unit =
-        gui.updateCars(cars)
+        gui._simulationPanel.render(cars)
+  //gui.updateCars(cars)
 
   trait Interface extends Provider with Component:
     self: Requirements =>
