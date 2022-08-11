@@ -35,6 +35,7 @@ trait SimulationPanel extends JPanel:
 
   /** Method for rendering the new snapshot of the simulation */
   def render(): Unit
+  def renderTrack(track: Track): Unit
   def updateStanding(newStanding: Standing): Unit
 
 object SimulationPanel:
@@ -100,7 +101,6 @@ object SimulationPanel:
       _ <- mainPanel.add(cnv, BorderLayout.NORTH)
       _ <- mainPanel.add(s, BorderLayout.CENTER)
       _ <- self.add(mainPanel, BorderLayout.WEST)
-      _ <- initTrack(cnv)
       _ <- render()
     yield ()
     p.runAsyncAndForget
@@ -114,7 +114,15 @@ object SimulationPanel:
       p.runSyncUnsafe()
     }
 
-    //"1) Ferrari - 2) Mercedes - 3) RedBull - 4) McLaren"
+    override def renderTrack(track: Track): Unit = SwingUtilities.invokeLater{ () =>
+      val p = for
+        cnv <- canvas
+        _ <- cnv.track = track
+        _ <- cnv.invalidate()
+        _ <- cnv.repaint()
+      yield ()
+      p.runSyncUnsafe()
+    }
 
     override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
       val p = for
@@ -141,12 +149,3 @@ object SimulationPanel:
     private def createChart(title: String, xLabel: String, yLabel: String, serieName: String): Task[LineChart] =
       for chart <- LineChart(title, xLabel, yLabel, serieName)
       yield chart
-
-    //TODO - Da togliere
-    private def initTrack(c: Enviroment): Unit =
-      val trackBuilder = TrackBuilder()
-      c.track = trackBuilder.createBaseTrack()
-
-    //TODO - Da togliere
-    private def createStanding(): Task[JLabel] =
-      new JLabel("1) Ferrari - 2) Mercedes - 3) RedBull - 4) McLaren")
