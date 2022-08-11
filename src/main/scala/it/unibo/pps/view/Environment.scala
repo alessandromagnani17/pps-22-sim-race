@@ -5,6 +5,8 @@ import it.unibo.pps.model.{Sector, Track}
 import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2._
+import scala.{Tuple2 => Point2d}
+import it.unibo.pps.view.ViewConstants.*
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
 
@@ -48,13 +50,12 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     case DrawingTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
-      drawSingleTurn(externalRadius, center._1, center._2, 2 * externalRadius, direction, g)
-      drawSingleTurn(internalRadius, center._1, center._2, 2 * internalRadius, direction, g)
+      drawSingleTurn(externalRadius, center, 2 * externalRadius, direction, g)
+      drawSingleTurn(internalRadius, center, 2 * internalRadius, direction, g)
   }
 
-  private def drawSingleTurn(radius: Int, x: Int, y: Int, diameter: Int, direction: Int, g: Graphics): Unit =
-    val x0 = x - radius
-    val y0 = y - radius
-    val startAngle = 270
-    val endAngle = 180 * direction
-    g.drawArc(x0, y0, diameter, diameter, startAngle, endAngle)
+  private def drawSingleTurn(radius: Int, center: Point2d[Int, Int], diameter: Int, direction: Int, g: Graphics): Unit =
+    center match {
+      case Point2d(x, y) =>
+        g.drawArc(x - radius, y - radius, diameter, diameter, TURN_START_ANGLE, TURN_END_ANGLE * direction)
+    }
