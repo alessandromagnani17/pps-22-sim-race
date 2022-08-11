@@ -36,18 +36,10 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
 
-  def displaySimulationPanel(track: Track): Unit = SwingUtilities.invokeLater { () =>
-    val s = Standing(
-      List(
-        Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 100), Color.CYAN)),
-        Car("Mercedes", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 200), Color.RED)),
-        Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 300), Color.BLUE)),
-        Car("McLaren", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 400), Color.GREEN))
-      )
-    )
+  def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for
       fr <- frame
-      _ <- simulationPanel.updateStanding(s)
+      _ <- simulationPanel.updateStanding(standing)
       _ <- simulationPanel.renderTrack(track)
       _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(simulationPanel)
@@ -55,6 +47,3 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
-
-  def updateCars(cars: List[Car]): Unit =
-    simulationPanel.render(cars)

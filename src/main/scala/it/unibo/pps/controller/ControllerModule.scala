@@ -54,9 +54,8 @@ object ControllerModule:
         context.view.updateDisplayedCar(currentCarIndex, tyresType)
 
       def displaySimulationPanel(): Unit =
-        context.view.displaySimulationPanel(context.model._track)
+        context.view.displaySimulationPanel(context.model._track, context.model._standing)
         context.view.updateCars(context.model._cars)
-  
 
   trait Interface extends Provider with Component:
     self: Requirements =>
