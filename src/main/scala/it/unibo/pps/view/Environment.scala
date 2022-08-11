@@ -44,25 +44,13 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
   }
 
-  private def drawTurn(t: Sector.Turn, g: Graphics): Unit =
-    val externalRadius = t.drawingParams.center euclideanDistance t.drawingParams.startPointE
-    val interalRadius = t.drawingParams.center euclideanDistance t.drawingParams.startPointI
-    drawSingleTurn(
-      externalRadius,
-      t.drawingParams.center._1,
-      t.drawingParams.center._2,
-      2 * externalRadius,
-      t.drawingParams.direction,
-      g
-    )
-    drawSingleTurn(
-      interalRadius,
-      t.drawingParams.center._1,
-      t.drawingParams.center._2,
-      2 * interalRadius,
-      t.drawingParams.direction,
-      g
-    )
+  private def drawTurn(t: Sector.Turn, g: Graphics): Unit = t.drawingParams match {
+    case DrawingTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction) =>
+      val externalRadius = center euclideanDistance startPointE
+      val internalRadius = center euclideanDistance startPointI
+      drawSingleTurn(externalRadius, center._1, center._2, 2 * externalRadius, direction, g)
+      drawSingleTurn(internalRadius, center._1, center._2, 2 * internalRadius, direction, g)
+  }
 
   private def drawSingleTurn(radius: Int, x: Int, y: Int, diameter: Int, direction: Int, g: Graphics): Unit =
     val x0 = x - radius
