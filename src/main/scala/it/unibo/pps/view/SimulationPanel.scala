@@ -29,12 +29,13 @@ import it.unibo.pps.view.ViewConstants.*
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import scala.language.implicitConversions
+import it.unibo.pps.model.Standing
 
 trait SimulationPanel extends JPanel:
 
   /** Method for rendering the new snapshot of the simulation */
   def render(): Unit
-  def updateStanding(newStanding: String): Unit
+  def updateStanding(newStanding: Standing): Unit
 
 object SimulationPanel:
 
@@ -75,7 +76,9 @@ object SimulationPanel:
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
       yield sp
 
-    private var standing = createStanding()
+    private lazy val standing =
+      for label <- new JLabel()
+      yield label
 
     private val p = for
       _ <- self.setLayout(new BorderLayout())
@@ -111,13 +114,22 @@ object SimulationPanel:
       p.runSyncUnsafe()
     }
 
-    override def updateStanding(newStanding: String): Unit = SwingUtilities.invokeLater { () =>
+    //"1) Ferrari - 2) Mercedes - 3) RedBull - 4) McLaren"
+
+    override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
       val p = for
         s <- standing
-        _ <- s.setText(newStanding)
+        _ <- s.setText(getPrintableStanding(newStanding))
       yield ()
       p.runSyncUnsafe()
     }
+
+    private def getPrintableStanding(newStanding: Standing): String =
+      newStanding._standing
+        .map(_.name)
+        .zipWithIndex
+        .map((car, index) => (car, index + 1))
+        .foldLeft("")((prev: String, t: Tuple2[String, Int]) => prev + s"${t._2}) ${t._1}    ")
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for

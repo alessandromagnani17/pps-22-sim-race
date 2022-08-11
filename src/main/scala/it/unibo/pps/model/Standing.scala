@@ -9,9 +9,9 @@ trait Standing:
   def overtake(): Unit
 
 object Standing:
-  def apply(standing: List[car]): Standing = new StadingImpl(standing)
+  def apply(standing: List[Car]): Standing = new StadingImpl(standing)
 
-  private class StadingImpl(standing: List[car]) extends Standing:
+  private class StadingImpl(standing: List[Car]) extends Standing:
 
     override def _standing: List[Car] = standing
     override def overtake(): Unit = ???

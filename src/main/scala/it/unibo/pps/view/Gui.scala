@@ -6,6 +6,7 @@ import monix.eval.Task
 import java.awt.{Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.model.{Standing, Car, Tyre, Driver}
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
@@ -34,8 +35,17 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def updateDisplayedCar(carIndex: Int, tyresType: String): Unit = initialPanel.updateDisplayedCar(carIndex, tyresType)
 
   def displaySimulationPanel(): Unit = SwingUtilities.invokeLater { () =>
+    val s = Standing(
+      List(
+        Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200),
+        Car("Mercedes", Tyre.SOFT, Driver(0, 0), 200),
+        Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200),
+        Car("McLaren", Tyre.SOFT, Driver(0, 0), 200)
+      )
+    )
     val p = for
       fr <- frame
+      _ <- simulationPanel.updateStanding(s)
       _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(simulationPanel)
       _ <- fr.revalidate()
