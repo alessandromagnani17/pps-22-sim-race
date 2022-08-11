@@ -1,6 +1,14 @@
 package it.unibo.pps.model
 
-case class Car(name: String, var tyre: Tyre, driver: Driver, var maxSpeed: Int)
+import it.unibo.pps.view.DrawingCarParams
+
+case class Car(name: String,
+               var tyre: Tyre, 
+               driver: Driver,
+               var maxSpeed: Int, 
+               drawingCarParams: DrawingCarParams)
+
+
 /*
 trait Car:
   def getName(): String

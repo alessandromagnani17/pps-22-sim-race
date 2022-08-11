@@ -3,38 +3,26 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 
 import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingUtilities,
-  WindowConstants
-}
+import javax.swing.{BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Sector, Track, TrackBuilder}
+import it.unibo.pps.model.{Car, Sector, Standing, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
 import it.unibo.pps.view.ViewConstants.*
+
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import scala.language.implicitConversions
-import it.unibo.pps.model.Standing
 
 trait SimulationPanel extends JPanel:
 
   /** Method for rendering the new snapshot of the simulation */
-  def render(): Unit
+  def render(cars: List[Car]): Unit
   def renderTrack(track: Track): Unit
   def updateStanding(newStanding: Standing): Unit
 
@@ -101,13 +89,14 @@ object SimulationPanel:
       _ <- mainPanel.add(cnv, BorderLayout.NORTH)
       _ <- mainPanel.add(s, BorderLayout.CENTER)
       _ <- self.add(mainPanel, BorderLayout.WEST)
-      _ <- render()
+      //_ <- render()
     yield ()
     p.runAsyncAndForget
 
-    override def render(): Unit = SwingUtilities.invokeLater { () =>
+    override def render(cars: List[Car]): Unit = SwingUtilities.invokeLater { () =>
       val p = for
         cnv <- canvas
+        _ <- cnv.cars = cars
         _ <- cnv.invalidate()
         _ <- cnv.repaint()
       yield ()

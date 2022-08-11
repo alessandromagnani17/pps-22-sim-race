@@ -3,7 +3,7 @@ package it.unibo.pps.view
 import it.unibo.pps.controller.ControllerModule
 import monix.eval.Task
 
-import java.awt.{Component, Toolkit}
+import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.model.{Car, Driver, Standing, Track, Tyre}
@@ -37,10 +37,10 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def displaySimulationPanel(track: Track): Unit = SwingUtilities.invokeLater { () =>
     val s = Standing(
       List(
-        Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200),
-        Car("Mercedes", Tyre.SOFT, Driver(0, 0), 200),
-        Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200),
-        Car("McLaren", Tyre.SOFT, Driver(0, 0), 200)
+        Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 100), Color.CYAN)),
+        Car("Mercedes", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 200), Color.RED)),
+        Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 300), Color.BLUE)),
+        Car("McLaren", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((100, 400), Color.GREEN))
       )
     )
     val p = for
@@ -53,4 +53,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
+  
+  def updateCars(cars: List[Car]): Unit =
+    simulationPanel.render(cars)
 

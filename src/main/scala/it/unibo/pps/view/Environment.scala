@@ -7,10 +7,12 @@ import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2._
 import scala.{Tuple2 => Point2d}
 import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.model.Car
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
 
   var track: Track = Track()
+  var cars: List[Car] = List.empty
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
@@ -18,6 +20,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
 
     // ---------------- Metodo 1 per disegnare le macchine --------------------------------------------
     //Variabili relative alle macchine
+    /*
     var intW = (w * 0.5).toInt
     var intH = (h * 0.2).toInt + 2
     var carDiameter = 12
@@ -28,6 +31,10 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.fillOval(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
     g.setColor(Color.RED)
     g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
+    g.setColor(Color.BLACK)
+    */
+
+    cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
     g.setColor(Color.BLACK)
 
     //------------------------------------------------------------------------------------------------
@@ -59,3 +66,10 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
       case Point2d(x, y) =>
         g.drawArc(x - radius, y - radius, diameter, diameter, TURN_START_ANGLE, TURN_END_ANGLE * direction)
     }
+
+  private def drawCar(position: Point2d[Int, Int], color: Color, g:Graphics): Unit =
+    //var intW = (w * 0.5).toInt
+    //var intH = (h * 0.2).toInt + 2
+    g.setColor(color)
+    g.fillOval(position._1, position._2, CAR_DIAMETER, CAR_DIAMETER)
+

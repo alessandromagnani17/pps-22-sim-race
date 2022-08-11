@@ -12,3 +12,4 @@ object ViewConstants:
   val CHART_PANEL_HEIGHT = (FRAME_HEIGHT * 0.7).toInt
   val TURN_START_ANGLE = 270
   val TURN_END_ANGLE = 180
+  val CAR_DIAMETER = 12

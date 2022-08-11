@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import scala.{Tuple2 => Point2d}
+import java.awt.Color
 
 /** Params needed to render a Straight sector: a straight is composed by two lines, one external and one internal
   * @param p0External
@@ -39,4 +40,16 @@ case class DrawingTurnParams(
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
     direction: Int
+)
+
+/** Parames needed to render a car
+ *
+ * @param position
+ *   The position of the car
+ * @param color
+ *   The color of the car
+ */
+case class DrawingCarParams(
+    position: Point2d[Int, Int],
+    color: Color
 )
