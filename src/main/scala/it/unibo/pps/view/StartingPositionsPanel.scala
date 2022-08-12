@@ -38,8 +38,6 @@ object StartingPositionsPanel:
         label <- JLabel(carNames(index))
         _ <- label.setName(index.toString)
         _ <- label.setPreferredSize(Dimension(width, labelHeight))
-        _ <- label.setHorizontalAlignment(SwingConstants.CENTER)
-        _ <- label.setVerticalAlignment(SwingConstants.CENTER)
         _ <- label.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.BLACK))
       yield label
 
@@ -48,7 +46,8 @@ object StartingPositionsPanel:
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(width, height))
         _ <- panel.setLayout(FlowLayout())
-        _ <- addLabelsToPanel(labelList, panel)
+        _ <- panel.setBackground(Color.RED)
+        //_ <- addLabelsToPanel(labelList, panel)
         _ <- panel.setVisible(true)
       yield panel
 

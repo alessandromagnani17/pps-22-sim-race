@@ -33,7 +33,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       fr <- new JFrame(title)
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
-      _ <- fr.setResizable(false)
+      _ <- fr.setResizable(true)
       _ <- fr.setDefaultCloseOperation(closeOperation)
       _ <- fr.setVisible(true)
     yield fr
