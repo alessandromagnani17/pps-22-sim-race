@@ -11,6 +11,7 @@ object ControllerModule:
     def getCurrentCar(): Car
     def updateParametersPanel(): Unit
     def updateDisplayedCar(tyre: Tyre): Unit
+    def getCurrentCarIndex(): Int
     def setCurrentCarIndex(index: Int): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
@@ -33,6 +34,8 @@ object ControllerModule:
 
       def notifyStart(): Unit = ???
 
+      override def getCurrentCarIndex(): Int = currentCarIndex
+      
       def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
       def setTyre(tyre: Tyre): Unit = cars(currentCarIndex).tyre = tyre

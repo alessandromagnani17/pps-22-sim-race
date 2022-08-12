@@ -24,12 +24,11 @@ object CarSelectionPanel:
       extends CarSelectionPanel:
     self =>
     private val imageLoader = ImageLoader()
-    private var currentCarIndex = 0
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val numCars = 4
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-    private val carSelectedLabel = createLabel(s"Car selected: ${carNames(currentCarIndex)}")
+    private val carSelectedLabel = createLabel(s"Car selected: ${carNames(0)}")
     private val topArrowButton = createArrowButton(
       "/arrows/arrow-up.png",
       e => if (e + 1) == numCars then 0.toString else (e + 1).toString
@@ -38,19 +37,17 @@ object CarSelectionPanel:
       "/arrows/arrow-bottom.png",
       e => if (e - 1) < 0 then (numCars - 1).toString else (e - 1).toString
     )
-    private val labelImage = createLabelImage("/cars/0-hard.png", "0")
+    private val labelImage = createLabelImage("/cars/0-hard.png")
     private val carSelectionPanel = createPanelAndAddAllComponents()
 
-    controller.setCurrentCarIndex(currentCarIndex)
     carSelectionPanel foreach (e => self.add(e))
 
     def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
       labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-${tyre.toString.toLowerCase}.png")))
 
-    private def createLabelImage(filename: String, name: String): Task[JLabel] =
+    private def createLabelImage(filename: String): Task[JLabel] =
       for
         label <- JLabel(imageLoader.load(filename))
-        _ <- label.setName(name)
         _ <- label.setPreferredSize(Dimension(width, (height * 0.35).toInt))
         _ <- label.setVerticalAlignment(SwingConstants.CENTER)
       yield label
@@ -70,13 +67,11 @@ object CarSelectionPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener { e =>
-          val nextIndex = calcIndex(currentCarIndex)
+          val nextIndex = calcIndex(controller.getCurrentCarIndex())
           controller.setCurrentCarIndex(nextIndex.toInt)
           updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre)
           controller.updateParametersPanel()
-          currentCarIndex = nextIndex.toInt
-          println("Indice car preso dal name -->" + labelImage.foreach(e => println("è+++" + e.getName)))
-          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(currentCarIndex)}"))
+          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(controller.getCurrentCarIndex())}"))
         }
       yield button
 
