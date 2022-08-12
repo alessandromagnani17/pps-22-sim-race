@@ -40,6 +40,8 @@ object CarSelectionPanel:
     private val labelImage = createLabelImage("/cars/0-hard.png")
     private val carSelectionPanel = createPanelAndAddAllComponents()
 
+    private val positionsButton = createButton("Set up the Starting Positions")
+
     carSelectionPanel foreach (e => self.add(e))
 
     def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
@@ -75,6 +77,13 @@ object CarSelectionPanel:
         }
       yield button
 
+    private def createButton(text: String): Task[JButton] =
+      for
+        button <- JButton(text)
+        _ <- button.setPreferredSize(Dimension((width * 0.4).toInt, (height * 0.1).toInt))
+        _ <- button.addActionListener(e => controller.displaySimulationPanel())
+      yield button
+
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
@@ -84,9 +93,14 @@ object CarSelectionPanel:
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
+        positionsButton <- positionsButton
+        paddingLabel <- JLabel()
+        _ <- paddingLabel.setPreferredSize(Dimension(width, (height * 0.1).toInt))
         _ <- panel.add(carSelectedLabel)
         _ <- panel.add(topArrowButton)
         _ <- panel.add(labelImage)
         _ <- panel.add(bottomArrowButton)
+        _ <- panel.add(paddingLabel)
+        _ <- panel.add(positionsButton)
         _ <- panel.setVisible(true)
       yield panel
