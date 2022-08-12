@@ -18,6 +18,7 @@ object ControllerModule:
     def setAttack(attack: Int): Unit
     def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
+    def displayStartingPositionsPanel(): Unit
 
   trait Provider:
     val controller: Controller
@@ -63,6 +64,9 @@ object ControllerModule:
 
       override def displaySimulationPanel(): Unit =
         context.view.displaySimulationPanel()
+
+      override def displayStartingPositionsPanel(): Unit =
+        context.view.displayStartingPositionsPanel()
 
   trait Interface extends Provider with Component:
     self: Requirements =>

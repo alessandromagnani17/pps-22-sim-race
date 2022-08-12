@@ -81,7 +81,7 @@ object CarSelectionPanel:
       for
         button <- JButton(text)
         _ <- button.setPreferredSize(Dimension((width * 0.4).toInt, (height * 0.1).toInt))
-        _ <- button.addActionListener(e => controller.displaySimulationPanel())
+        _ <- button.addActionListener(e => controller.displayStartingPositionsPanel())
       yield button
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =

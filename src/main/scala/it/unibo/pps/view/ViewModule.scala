@@ -7,6 +7,7 @@ object ViewModule:
   trait View:
     def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
     def displaySimulationPanel(): Unit
+    def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
 
   trait Provider:
@@ -24,6 +25,9 @@ object ViewModule:
 
       override def displaySimulationPanel(): Unit =
         gui.displaySimulationPanel()
+
+      override def displayStartingPositionsPanel(): Unit =
+        gui.displayStartingPositionsPanel()
 
       override def updateParametersPanel(): Unit =
         gui.updateParametersPanel()
