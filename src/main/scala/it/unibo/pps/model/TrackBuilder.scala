@@ -1,9 +1,14 @@
 package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.view.{DrawingStraightParams, DrawingTurnParams}
+import it.unibo.pps.view.{DrawingCarParams, DrawingStraightParams, DrawingTurnParams}
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
+
+//import it.unibo.pps.model.InitialPitch //-----------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+import java.awt.Color
+import java.awt.geom.Point2D
 
 given Conversion[String, Term] = Term.createTerm(_)
 given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
@@ -69,8 +74,31 @@ object TrackBuilder:
       yield turn
       result.toList
 
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
+    /*
+    private def createInitialPitch(l: List[String]): List[Object] =
+      val d = DrawingCarParams(
+        (l(1), l(2)),
+        Color.BLUE
+      )
+      InitialPitch.listOfPitches = List(l(0), d)
+      
+
+    private def loadInitialPitch(): List[Object] =
+      val l = List("ID", "X_POSITION", "Y_POSITION")
+      val result = for
+        s <- engine(
+          "straight(id(ID), positions(X_POSITION, Y_POSITION)"
+        )
+        x = Scala2P.extractTermsToListOfStrings(s, l)
+        positions = createInitialPitch(x)
+      yield positions
+      result.toList
+    */
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
     override def createBaseTrack(): Track =
       val track = Track()
       loadStraights().foreach(track.addSector(_))
       loadTurns().foreach(track.addSector(_))
+    //  loadInitialPitch() //-----------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
       track

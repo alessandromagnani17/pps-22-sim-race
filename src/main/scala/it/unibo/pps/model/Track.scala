@@ -15,3 +15,5 @@ object Track:
     override def getSectors(): List[Sector] = sectors
     override def addSector(sector: Sector): Unit =
       sectors = sectors :+ sector
+    
+    
