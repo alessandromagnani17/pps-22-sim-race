@@ -15,13 +15,13 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
+  controller.createCars()
+
   private val mainPanel = MainPanel(width, height, controller)
   private val simulationPanel = SimulationPanel(width, height, controller)
   private val startingPositionsPanel = StartingPositionsPanel((width * 0.4).toInt, (height * 0.4).toInt, controller)
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame = createFrame("starting-positions", (width * 0.4).toInt, (height * 0.4).toInt, WindowConstants.HIDE_ON_CLOSE)
-
-  controller.createCars()
 
   private val p =
     for

@@ -45,7 +45,6 @@ object CarSelectionPanel:
 
     def updateDisplayedCar(): Unit =
       labelImage.foreach(e => e.setIcon(imageLoader.load(controller.getCurrentCar().path)))
-      //labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-${tyre.toString.toLowerCase}.png")))
 
     private def createLabelImage(filename: String): Task[JLabel] =
       for

@@ -10,6 +10,8 @@ object ControllerModule:
     def notifyStart(): Unit
     def createCars(): Unit
     def getCurrentCar(): Car
+    def getCar(index: Int): Car
+    def getCars(): List[Car]
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def getCurrentCarIndex(): Int
@@ -40,6 +42,10 @@ object ControllerModule:
       override def notifyStart(): Unit = ???
 
       override def getCurrentCarIndex(): Int = currentCarIndex
+
+      def getCar(index: Int): Car = cars(index)
+
+      def getCars(): List[Car] = cars
 
       override def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
