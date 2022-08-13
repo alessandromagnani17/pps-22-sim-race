@@ -3,6 +3,7 @@ package it.unibo.pps.controller
 import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.{Car, Driver, ModelModule, Tyre}
 import it.unibo.pps.view.ViewModule
+import it.unibo.pps.view.main_panel.ImageLoader
 
 object ControllerModule:
   trait Controller:
@@ -10,9 +11,10 @@ object ControllerModule:
     def createCars(): Unit
     def getCurrentCar(): Car
     def updateParametersPanel(): Unit
-    def updateDisplayedCar(tyre: Tyre): Unit
+    def updateDisplayedCar(): Unit
     def getCurrentCarIndex(): Int
     def setCurrentCarIndex(index: Int): Unit
+    def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
     def setAttack(attack: Int): Unit
@@ -28,6 +30,8 @@ object ControllerModule:
   trait Component:
     context: Requirements =>
     class ControllerImpl extends Controller:
+
+      private val imageLoader = ImageLoader()
       private val numCars = 4
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var currentCarIndex = 0
@@ -38,6 +42,8 @@ object ControllerModule:
       override def getCurrentCarIndex(): Int = currentCarIndex
 
       override def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
+
+      override def setPath(path: String): Unit = cars(currentCarIndex).path = path
 
       override def setTyre(tyre: Tyre): Unit = cars(currentCarIndex).tyre = tyre
 
@@ -55,12 +61,12 @@ object ControllerModule:
       override def createCars(): Unit =
         val l = for
           index <- 0 until numCars
-          car = Car(carNames(index), Tyre.HARD, Driver(1,1), 200)
+          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200)
         yield car
         cars = l.toList
 
-      override def updateDisplayedCar(tyre: Tyre): Unit =
-        context.view.updateDisplayedCar(currentCarIndex, tyre)
+      override def updateDisplayedCar(): Unit =
+        context.view.updateDisplayedCar()
 
       override def displaySimulationPanel(): Unit =
         context.view.displaySimulationPanel()

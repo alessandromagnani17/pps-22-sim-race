@@ -15,7 +15,7 @@ import javax.imageio.ImageIO
 import javax.swing.*
 
 trait MainPanel extends JPanel:
-  def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
+  def updateDisplayedCar(): Unit
   def updateParametersPanel(): Unit
 
 
@@ -35,8 +35,8 @@ object MainPanel:
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
-      carSelectionPanel.updateDisplayedCar(carIndex, tyre)
+    def updateDisplayedCar(): Unit =
+      carSelectionPanel.updateDisplayedCar()
 
     def updateParametersPanel(): Unit =
       paramsSelectionPanel.updateParametersPanel()

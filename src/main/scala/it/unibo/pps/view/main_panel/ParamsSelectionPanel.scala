@@ -115,9 +115,9 @@ object ParamsSelectionPanel:
               case b if button.getText.equals(f.getText) =>
                 f.setBackground(colorSelected)
                 f.setOpaque(true)
-                controller.updateDisplayedCar(matcher.matcher(f.getName))
-                //controller.getCurrentCar().tyre = tyre
                 controller.setTyre(tyre)
+                controller.setPath(s"/cars/${controller.getCurrentCarIndex()}-${controller.getCurrentCar().tyre.toString.toLowerCase}.png")
+                controller.updateDisplayedCar()
               case _ => f.setBackground(colorNotSelected)
             })
           )

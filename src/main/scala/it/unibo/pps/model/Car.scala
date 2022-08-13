@@ -1,6 +1,8 @@
 package it.unibo.pps.model
 
-case class Car(name: String, var tyre: Tyre, driver: Driver, var maxSpeed: Int)
+import javax.swing.Icon
+
+case class Car(var path: String, name: String, var tyre: Tyre, driver: Driver, var maxSpeed: Int)
 /*
 trait Car:
   def getName(): String

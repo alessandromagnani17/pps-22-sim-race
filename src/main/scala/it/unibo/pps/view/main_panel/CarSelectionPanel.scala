@@ -13,7 +13,7 @@ import java.util
 import javax.swing.*
 
 trait CarSelectionPanel extends JPanel:
-  def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
+  def updateDisplayedCar(): Unit
 
 object CarSelectionPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): CarSelectionPanel =
@@ -43,8 +43,9 @@ object CarSelectionPanel:
 
     carSelectionPanel foreach (e => self.add(e))
 
-    def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
-      labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-${tyre.toString.toLowerCase}.png")))
+    def updateDisplayedCar(): Unit =
+      labelImage.foreach(e => e.setIcon(imageLoader.load(controller.getCurrentCar().path)))
+      //labelImage.foreach(e => e.setIcon(imageLoader.load(s"/cars/$carIndex-${tyre.toString.toLowerCase}.png")))
 
     private def createLabelImage(filename: String): Task[JLabel] =
       for
@@ -70,7 +71,8 @@ object CarSelectionPanel:
         _ <- button.addActionListener { e =>
           val nextIndex = calcIndex(controller.getCurrentCarIndex())
           controller.setCurrentCarIndex(nextIndex.toInt)
-          updateDisplayedCar(nextIndex.toInt, controller.getCurrentCar().tyre)
+          controller.getCurrentCar().path = s"/cars/$nextIndex-${controller.getCurrentCar().tyre.toString.toLowerCase}.png"
+          updateDisplayedCar()
           controller.updateParametersPanel()
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(controller.getCurrentCarIndex())}"))
         }

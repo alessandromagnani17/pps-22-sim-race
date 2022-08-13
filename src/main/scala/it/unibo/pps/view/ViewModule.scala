@@ -5,7 +5,7 @@ import it.unibo.pps.model.Tyre
 
 object ViewModule:
   trait View:
-    def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit
+    def updateDisplayedCar(): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
@@ -20,8 +20,8 @@ object ViewModule:
     class ViewImpl extends View:
       val gui = new Gui(1296, 810, context.controller)
 
-      override def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit =
-        gui.updateDisplayedCar(carIndex, tyre)
+      override def updateDisplayedCar(): Unit =
+        gui.updateDisplayedCar()
 
       override def displaySimulationPanel(): Unit =
         gui.displaySimulationPanel()
