@@ -32,19 +32,19 @@ object StartingPositionsPanel:
 
     //private val labelList = createLabels()
     private val labelHeight = (height - (height * 0.22).toInt) / numCars
+    println("LAbel --> " + labelHeight)
     private val startingPositionsPanel = createPanelAndAddAllComponents()
     startingPositionsPanel foreach (e => self.add(e))
 
     private def prova(): scala.collection.mutable.Map[Int, (Task[JPanel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
       val map: Map[Int, (Task[JPanel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = scala.collection.mutable.Map.empty
       for i <- 0 until numCars do
-        map += (i -> (createPanel2(Dimension(width, labelHeight)), createImageLabel(i), createLabel(carNames(i)), createButton("/arrows/arrow-up.png"), createButton("/arrows/arrow-bottom.png")))
+        map += (i -> (createPanel2(Dimension(width, labelHeight)), createImageLabel(i), createLabel(s"${i + 1}: ${carNames(i)}"), createButton("/arrows/arrow-up.png"), createButton("/arrows/arrow-bottom.png")))
       map
 
     private def createImageLabel(index: Int): Task[JLabel] =
       for
-        label <- JLabel(imageLoader.load(controller.getCar(index).path))
-        _ <- label.setPreferredSize(Dimension(40, 40))
+        label <- JLabel(imageLoader.load(s"/cars/miniatures/$index.png"))
       yield label
 
     private def createButton(path: String): Task[JButton] =
@@ -58,40 +58,23 @@ object StartingPositionsPanel:
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(dim)
-        //_ <- panel.setBackground(Color.YELLOW)
-        //_ <- panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 5))
       yield panel
 
     private def createPanel2(dim: Dimension): Task[JPanel] =
       for
         panel <- JPanel()
+        _ <- panel.setLayout(FlowLayout())
         _ <- panel.setSize(dim)
-        //_ <- panel.setBackground(Color.YELLOW)
-        _ <- panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 5))
+        _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
+        //_ <- panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 5))
       yield panel
 
     private def createLabel(text: String): Task[JLabel] =
       for
         label <- JLabel(text)
-        _ <- label.setBorder(BorderFactory.createLineBorder(Color.GREEN, 6))
+        //_ <- label.setBorder(BorderFactory.createLineBorder(Color.GREEN, 6))
         _ <- label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
-
-    /*private def createLabels(): List[Task[JLabel]] =
-      val labels = for
-        index <- 0 until numCars
-        label = createLabel(index)
-      yield label
-      labels.toList
-
-    private def createLabel(index: Int): Task[JLabel] =
-      for
-        label <- JLabel(carNames(index))
-        _ <- label.setName(index.toString)
-        _ <- label.setPreferredSize(Dimension(width, labelHeight))
-        _ <- label.setHorizontalAlignment(SwingConstants.CENTER)
-        _ <- label.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.BLACK))
-      yield label*/
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
@@ -99,42 +82,37 @@ object StartingPositionsPanel:
         _ <- println(s"Creato panel di width: $width e height: $height")
         _ <- panel.setPreferredSize(Dimension(width, height))
         //_ <- panel.setLayout(null)
-        _ <- panel.setBackground(Color.RED)
+        //_ <- panel.setBackground(Color.RED)
         //_ <- addLabelsToPanel(labelList, panel)
         topLabel <- topLabel
+        _ <- topLabel.setPreferredSize(Dimension(width, (height * 0.15).toInt))
         positionPanel <- positionPanel
 
-        // Aggiungo solo la prima label di prova
-        pan <- positions(0)._1
-        label <- positions(0)._3
-        img <- positions(0)._2
-        _ <- pan.add(label)
-        _ <- pan.add(img)
+        _ <- positions.foreach(e => addToPanel(e._2, positionPanel))
 
-        lab1 <- positions(1)._1
-
-        _ <- positionPanel.add(pan)
-        _ <- positionPanel.add(lab1)
 
         _ <- panel.add(topLabel)
         _ <- panel.add(positionPanel)
-        /*_ <- positions.foreach(e => addToPanel(e._2, positionPanel))
-        _ <- panel.add(topLabel)
-        _ <- panel.add(positionPanel)*/
         _ <- panel.setVisible(true)
       yield panel
 
-    private def addToPanel(elem: (Task[JPanel], Task[JLabel], Task[JButton], Task[JButton]), posPanel: JPanel): Task[Unit] =
+    private def addToPanel(elem: (Task[JPanel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton]), posPanel: JPanel): Task[Unit] =
       val p = for
         panel <- elem._1
-        label <- elem._2
-        /*b1 <- elem._3
-        b2 <- elem._4
+        img <- elem._2
+        label <- elem._3
+        b1 <- elem._4
+        b2 <- elem._5
+        _ <- label.setPreferredSize(Dimension((width * 0.15).toInt, (height * 0.15).toInt))
+        _ <- img.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.15).toInt))
+        _ <- img.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- label.setHorizontalAlignment(SwingConstants.LEFT)
+        _ <- b1.setHorizontalAlignment(SwingConstants.RIGHT)
+        _ <- b2.setHorizontalAlignment(SwingConstants.RIGHT)
         _ <- panel.add(label)
+        _ <- panel.add(img)
         _ <- panel.add(b1)
-        _ <- panel.add(b2)*/
-        l <- JLabel("provetta")
-        _ <- panel.add(l)
+        _ <- panel.add(b2)
         _ <- posPanel.add(panel)
       yield ()
       p.runSyncUnsafe()
