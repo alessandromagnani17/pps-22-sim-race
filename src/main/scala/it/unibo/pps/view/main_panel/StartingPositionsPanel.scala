@@ -41,7 +41,7 @@ object StartingPositionsPanel:
       val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = scala.collection.mutable.Map.empty
       for i <- 0 until numCars do
         map += (i -> (createLabel(s"/cars/miniatures/$i.png", Dimension((width * 0.3).toInt, (height * 0.15).toInt), SwingConstants.CENTER, true),
-          createLabel(s"${i + 1}. ", Dimension((width * 0.03).toInt, labelHeight), SwingConstants.LEFT,false),
+          createLabel(s"${i + 1}. ", Dimension((width * 0.05).toInt, labelHeight), SwingConstants.LEFT,false),
           createLabel(s"${carNames(i)}", Dimension((width * 0.13).toInt, labelHeight), SwingConstants.LEFT, false),
           createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
           createButton(i, "/arrows/arrow-bottom.png", e => if e == (numCars - 1) then e else e + 1)))
