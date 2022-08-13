@@ -1,11 +1,12 @@
 package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
+
 import it.unibo.pps.view.{DrawingCarParams, DrawingStraightParams, DrawingTurnParams}
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
 
-//import it.unibo.pps.model.InitialPitch //-----------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+import it.unibo.pps.model.InitialPitch.listOfPitches //---------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 import java.awt.Color
 import java.awt.geom.Point2D
@@ -74,31 +75,39 @@ object TrackBuilder:
       yield turn
       result.toList
 
-    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
-    /*
-    private def createInitialPitch(l: List[String]): List[Object] =
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+    private def createInitialPitch(l: List[String]): InitialPitch.listOfPitches =
       val d = DrawingCarParams(
         (l(1), l(2)),
         Color.BLUE
       )
-      InitialPitch.listOfPitches = List(l(0), d)
+      InitialPitch.listOfPitches(l(0), d)
       
 
-    private def loadInitialPitch(): List[Object] =
+    private def loadInitialPitch(): List[InitialPitch.listOfPitches] =
       val l = List("ID", "X_POSITION", "Y_POSITION")
       val result = for
         s <- engine(
-          "straight(id(ID), positions(X_POSITION, Y_POSITION)"
+          "initialPitch(id(ID), positions(X_POSITION, Y_POSITION))"
         )
         x = Scala2P.extractTermsToListOfStrings(s, l)
         positions = createInitialPitch(x)
       yield positions
       result.toList
-    */
-    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
     override def createBaseTrack(): Track =
       val track = Track()
       loadStraights().foreach(track.addSector(_))
       loadTurns().foreach(track.addSector(_))
-    //  loadInitialPitch() //-----------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<< 
+      loadInitialPitch().foreach(track.addPitches(_)) //--------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+      println("0) -- "+track.getPitches().apply(0))
+      println("1) -- "+track.getPitches().apply(1))
+      println("2) -- "+track.getPitches().apply(2))
+      println("3) -- "+track.getPitches().apply(3)) 
+    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+
       track

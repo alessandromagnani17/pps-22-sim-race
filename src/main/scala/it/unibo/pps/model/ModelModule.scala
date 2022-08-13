@@ -21,11 +21,14 @@ object ModelModule:
       private val cars = List(
         
         /*
-        Qui la mia idea era di mettere questo dentro al parametro di drawing params per andare a prendere le diverse coordinate,
-        o comunque, invece di metterlo all'interno dei parametri, chiamare il foreach sulla lista di pitches (postazioni), 
-        per arrivare alle diverse coordinate
+        Se provi a runnare il programma, in console si vede la stampa che ho messo dentro createBaseTruck(), dove si vede
+        che la lettura da file viene fatta bene.
+        La mia idea era poi di mettere qui sotto, magari dentro a drawingCarParams, qualcosa come:
+       
+        track.getPitches().apply(0) 
         
-        InitialPitch.listOfPitches. ...
+        In modo prendere i valori di ogni postazione, per le 4 postazioni
+          
         */
         
         Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((453, 115), Color.CYAN)),
