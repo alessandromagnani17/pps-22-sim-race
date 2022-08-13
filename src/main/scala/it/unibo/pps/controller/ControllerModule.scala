@@ -9,6 +9,7 @@ object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def createCars(): Unit
+    def getStartingPositions(): scala.collection.mutable.Map[Int, String]
     def getCurrentCar(): Car
     def getCar(index: Int): Car
     def getCars(): List[Car]
@@ -23,6 +24,7 @@ object ControllerModule:
     def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
+    def invertPosition(prevIndex: Int, nextIndex: Int): Unit
 
   trait Provider:
     val controller: Controller
@@ -38,14 +40,22 @@ object ControllerModule:
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var currentCarIndex = 0
       private var cars: List[Car] = List.empty
+      private val startingPositions: scala.collection.mutable.Map[Int, String] = scala.collection.mutable.Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
       override def notifyStart(): Unit = ???
 
+      override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
+        val support = startingPositions(prevIndex)
+        startingPositions(prevIndex) = startingPositions(nextIndex)
+        startingPositions(nextIndex) = support
+
+      override def getStartingPositions(): scala.collection.mutable.Map[Int, String] = startingPositions
+
       override def getCurrentCarIndex(): Int = currentCarIndex
 
-      def getCar(index: Int): Car = cars(index)
+      override def getCar(index: Int): Car = cars(index)
 
-      def getCars(): List[Car] = cars
+      override def getCars(): List[Car] = cars
 
       override def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
 
