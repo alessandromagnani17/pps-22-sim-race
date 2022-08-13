@@ -4,7 +4,7 @@ import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.utility.Matcher
-import it.unibo.pps.view.{ImageLoader, ParamsSelectionPanel}
+import it.unibo.pps.view.main_panel.{ImageLoader, ParamsSelectionPanel}
 import monix.eval.{Task, TaskLift}
 import monix.execution.Scheduler.Implicits.global
 
@@ -112,8 +112,8 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
             e.foreach(f => { f.getText match
-              case b if button.getText.equals(f.getText) => 
-                f.setBackground(colorSelected) 
+              case b if button.getText.equals(f.getText) =>
+                f.setBackground(colorSelected)
                 f.setOpaque(true)
                 controller.updateDisplayedCar(matcher.matcher(f.getName))
                 //controller.getCurrentCar().tyre = tyre

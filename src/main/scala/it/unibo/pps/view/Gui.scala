@@ -2,6 +2,9 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.{Car, Driver, Tyre}
+import it.unibo.pps.view.main_panel.MainPanel
+import it.unibo.pps.view.main_panel.StartingPositionsPanel
+import it.unibo.pps.view.simulation_panel.SimulationPanel
 import monix.eval.Task
 
 import java.awt.{Component, Toolkit}

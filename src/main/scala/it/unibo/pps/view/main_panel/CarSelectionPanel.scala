@@ -3,7 +3,7 @@ package it.unibo.pps.view.main_panel
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.view.{CarSelectionPanel, ImageLoader}
+import it.unibo.pps.view.main_panel.{CarSelectionPanel, ImageLoader}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 

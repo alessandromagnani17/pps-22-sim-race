@@ -4,7 +4,7 @@ import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.{Sector, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.charts.LineChart
-import it.unibo.pps.view.{Enviroment, SimulationPanel}
+import it.unibo.pps.view.simulation_panel.{Enviroment, SimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import org.jfree.chart.ChartPanel

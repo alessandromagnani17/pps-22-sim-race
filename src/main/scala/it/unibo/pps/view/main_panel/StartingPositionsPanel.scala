@@ -2,7 +2,7 @@ package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.view.StartingPositionsPanel
+import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
