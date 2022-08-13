@@ -22,6 +22,8 @@ object StartingPositionsPanel:
 
     // mettere costante
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
+    private val carNames2: Map[String, Int] = Map("Ferrari" -> 0, "Mercedes" -> 1, "Red Bull" -> 2, "McLaren" -> 3)
+
     private val imageLoader = ImageLoader()
     private val topLabelHeight = (height * 0.15).toInt
     private val numCars = 4
@@ -35,11 +37,12 @@ object StartingPositionsPanel:
 
     startingPositionsPanel foreach (e => self.add(e))
 
-    private def createMap(): scala.collection.mutable.Map[Int, (Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
-      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = scala.collection.mutable.Map.empty
+    private def createMap(): scala.collection.mutable.Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
+      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = scala.collection.mutable.Map.empty
       for i <- 0 until numCars do
         map += (i -> (createLabel(s"/cars/miniatures/$i.png", Dimension((width * 0.3).toInt, (height * 0.15).toInt), SwingConstants.CENTER, true),
-          createLabel(s"${i + 1}: ${carNames(i)}", Dimension((width * 0.15).toInt, labelHeight), SwingConstants.LEFT, false),
+          createLabel(s"${i + 1}. ", Dimension((width * 0.03).toInt, labelHeight), SwingConstants.LEFT,false),
+          createLabel(s"${carNames(i)}", Dimension((width * 0.13).toInt, labelHeight), SwingConstants.LEFT, false),
           createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
           createButton(i, "/arrows/arrow-bottom.png", e => if e == (numCars - 1) then e else e + 1)))
       map
@@ -58,61 +61,30 @@ object StartingPositionsPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setHorizontalAlignment(SwingConstants.RIGHT)
         _ <- button.addActionListener { e =>
-
           val nextIndex = calcIndex(index)
-
           controller.invertPosition(index, nextIndex)
-
-
-          // Controller --> 1 -> Ferrari | 2 -> Mercedes
-          // 1 - Ferrari
-          // 2 - Mercedes
-
-          // Invertiamo premendo il basso di Ferrari
-
-          // Controller diventa --> 1 -> Mercedes | 2 -> Ferrari
-
-          // index è 0 mentre nextIndex è 1
-
-
-          // 1 - Mercedes
-          // 2 - Ferrari
-          
-          println("index -> " + index + "| next index -> " + nextIndex)
-
-          positions.get(index).get(1).foreach(e => e.setText(s"${index + 1}: ${carNames(nextIndex)}"))
-          positions.get(nextIndex).get(1).foreach(e => e.setText(s"${nextIndex + 1}: ${carNames(index)}"))
-
-
-
-
-
-
-
-
-
-
-          //positions.get(nextIndex).get(0).foreach(e => e.setIcon(imageLoader.load(s"/cars/miniatures/${controller.getStartingPositions().find(_._2)}.png")))
-          //positions.get(index).get(0).foreach(e => e.setIcon(imageLoader.load(s"/cars/miniatures/$nextIndex.png")))
-
-
-          //s"${i + 1}: ${carNames(i)}"
-
-          //positions.get(nextIndex).get(1).foreach(e => e.setText("prova"))
-
-
-
-          // sotto..
-
-          /*val nextIndex = calcIndex(controller.getCurrentCarIndex())
-          controller.setCurrentCarIndex(nextIndex.toInt)
-          controller.getCurrentCar().path = s"/cars/$nextIndex-${controller.getCurrentCar().tyre.toString.toLowerCase}.png"
-          updateDisplayedCar()
-          controller.updateParametersPanel()
-          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(controller.getCurrentCarIndex())}"))*/
-          println("Premuto")
+          invertLabelsAndImages(index, nextIndex)
         }
       yield button
+
+
+    private def invertLabelsAndImages(prevIndex: Int, nextIndex: Int): Unit =
+      var nextLabelSupport = ""
+      var prevLabelSupport = ""
+
+      val p = for
+        nextLabel <- positions.get(nextIndex).get(2)
+        nextLabelSupport = nextLabel.getText
+        prevLabel <- positions.get(prevIndex).get(2)
+        prevLabelSupport = prevLabel.getText
+        nextImage <- positions.get(nextIndex).get(0)
+        prevImage <- positions.get(prevIndex).get(0)
+        _ <- nextLabel.setText(prevLabelSupport)
+        _ <- prevLabel.setText(nextLabelSupport)
+        _ <- nextImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames2(prevLabelSupport)}.png"))
+        _ <- prevImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames2(nextLabelSupport)}.png"))
+      yield ()
+      p.runSyncUnsafe()
 
     private def createPanel(dim: Dimension): Task[JPanel] =
       for
@@ -132,15 +104,17 @@ object StartingPositionsPanel:
         _ <- panel.setVisible(true)
       yield panel
 
-    private def addToPanel(elem: (Task[JLabel], Task[JLabel], Task[JButton], Task[JButton]), posPanel: JPanel): Task[Unit] =
+    private def addToPanel(elem: (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton]), posPanel: JPanel): Task[Unit] =
       val p = for
         panel <- JPanel()
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
         img <- elem._1
-        label <- elem._2
-        b1 <- elem._3
-        b2 <- elem._4
-        _ <- panel.add(label)
+        label1 <- elem._2
+        label2 <- elem._3
+        b1 <- elem._4
+        b2 <- elem._5
+        _ <- panel.add(label1)
+        _ <- panel.add(label2)
         _ <- panel.add(img)
         _ <- panel.add(b1)
         _ <- panel.add(b2)
