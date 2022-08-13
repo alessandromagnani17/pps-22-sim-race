@@ -1,17 +1,18 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.{CarSelectionPanel, MainPanel, ParamsSelectionPanel, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
-import java.io.File
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
-import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
+import java.awt.*
+import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, SwingConstants}
+import javax.swing.*
 
 trait MainPanel extends JPanel:
   def updateDisplayedCar(carIndex: Int, tyre: Tyre): Unit

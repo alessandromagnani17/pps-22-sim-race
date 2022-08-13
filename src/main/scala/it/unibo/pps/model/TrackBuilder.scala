@@ -1,8 +1,9 @@
 package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.view.{DrawingStraightParams, DrawingTurnParams}
+import it.unibo.pps.view.DrawingTurnParams
 import it.unibo.pps.prolog.Scala2P
+import it.unibo.pps.view.simulation_panel.{DrawingStraightParams, DrawingTurnParams}
 import monix.eval.Task
 
 given Conversion[String, Term] = Term.createTerm(_)

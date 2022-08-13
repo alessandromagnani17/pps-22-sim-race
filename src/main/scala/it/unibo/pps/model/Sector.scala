@@ -2,8 +2,7 @@ package it.unibo.pps.model
 
 import scala.Tuple2 as Point2d
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.view.DrawingStraightParams
-import it.unibo.pps.view.DrawingTurnParams
+import it.unibo.pps.view.simulation_panel.{DrawingStraightParams, DrawingTurnParams}
 
 enum Sector:
   case Straight(id: Int, drawingParams: DrawingStraightParams)

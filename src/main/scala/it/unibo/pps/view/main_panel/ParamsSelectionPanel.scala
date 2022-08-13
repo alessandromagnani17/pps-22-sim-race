@@ -1,16 +1,16 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.utility.Matcher
+import it.unibo.pps.view.{ImageLoader, ParamsSelectionPanel}
 import monix.eval.{Task, TaskLift}
-
-import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
-import javax.swing.{BorderFactory, DefaultListCellRenderer, ImageIcon, JButton, JComboBox, JLabel, JList, JPanel, JSlider, SwingConstants}
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, GridBagConstraints, GridBagLayout, LayoutManager}
+import javax.swing.*
 
 trait ParamsSelectionPanel extends JPanel:
   def updateParametersPanel(): Unit

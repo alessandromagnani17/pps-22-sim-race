@@ -1,10 +1,10 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.model.{Sector, Track}
+import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
-import it.unibo.pps.utility.PimpScala.RichTuple2._
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
 

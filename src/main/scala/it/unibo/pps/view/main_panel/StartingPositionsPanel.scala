@@ -1,12 +1,13 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.StartingPositionsPanel
 import monix.eval.Task
+import monix.execution.Scheduler.Implicits.global
 
 import java.awt.{Color, Dimension, FlowLayout, GridBagConstraints, GridBagLayout}
-import javax.swing.{BorderFactory, JButton, JLabel, JPanel, SwingConstants}
-import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import monix.execution.Scheduler.Implicits.global
+import javax.swing.*
 
 trait StartingPositionsPanel extends JPanel
 

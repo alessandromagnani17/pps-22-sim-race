@@ -1,12 +1,13 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.{ImageLoader, StartSimulationPanel}
 import monix.eval.Task
+import monix.execution.Scheduler.Implicits.global
 
 import java.awt.{Color, Dimension, FlowLayout}
-import javax.swing.{BorderFactory, ImageIcon, JButton, JLabel, JPanel, SwingConstants}
-import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import monix.execution.Scheduler.Implicits.global
+import javax.swing.*
 
 trait StartSimulationPanel extends JPanel
 

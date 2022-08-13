@@ -1,6 +1,6 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.simulation_panel
 
-import scala.{Tuple2 => Point2d}
+import scala.Tuple2 as Point2d
 
 /** Params needed to render a Straight sector: a straight is composed by two lines, one external and one internal
   * @param p0External

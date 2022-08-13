@@ -1,35 +1,20 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
-
-import java.awt.{BorderLayout, Color, Component, Dimension, Graphics}
-import javax.swing.{
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingUtilities,
-  WindowConstants
-}
-import monix.eval.Task
-import monix.execution.Scheduler.Implicits.global
-import it.unibo.pps.view.charts.LineChart
-import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Sector, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
+import it.unibo.pps.view.charts.LineChart
+import it.unibo.pps.view.{Enviroment, SimulationPanel}
+import monix.eval.Task
+import monix.execution.Scheduler.Implicits.global
+import org.jfree.chart.ChartPanel
 
 import java.awt.event.{ActionEvent, ActionListener}
-import scala.concurrent.duration.FiniteDuration
+import java.awt.*
+import javax.swing.*
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.language.{implicitConversions, postfixOps}
 import scala.math.atan2
-
-import concurrent.duration.{Duration, DurationInt, FiniteDuration}
-import scala.language.postfixOps
-import scala.language.implicitConversions
 
 trait SimulationPanel extends JPanel:
 

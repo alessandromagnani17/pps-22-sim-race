@@ -6,8 +6,8 @@ import monix.eval.Task
 import java.awt.image.BufferedImage
 import java.awt.{Component, GridBagConstraints}
 import javax.swing.{JButton, JComboBox, JFrame, JLabel, JPanel, JScrollPane}
-import it.unibo.pps.view.Enviroment
 import it.unibo.pps.view.charts.LineChart
+import it.unibo.pps.view.simulation_panel.Enviroment
 import org.jfree.chart.ChartPanel
 
 object GivenConversion:
