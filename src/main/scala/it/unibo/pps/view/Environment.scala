@@ -11,8 +11,11 @@ import it.unibo.pps.model.Car
 
 class Enviroment(val w: Int, val h: Int) extends JPanel:
 
-  var track: Track = Track()
-  var cars: List[Car] = List.empty
+  private var track: Track = Track()
+  private var cars: List[Car] = List.empty
+
+  def track_=(t: Track): Unit = track = t
+  def cars_=(c: List[Car]): Unit = cars = c
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
@@ -36,8 +39,6 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
 
     cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
     g.setColor(Color.BLACK)
-
-    //------------------------------------------------------------------------------------------------
 
     def sketcher(e: Sector) = e match {
       case s: Sector.Straight => drawStraigth(s, g)
@@ -68,7 +69,5 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     }
 
   private def drawCar(position: Point2d[Int, Int], color: Color, g: Graphics): Unit =
-    //var intW = (w * 0.5).toInt
-    //var intH = (h * 0.2).toInt + 2
     g.setColor(color)
     g.fillOval(position._1, position._2, CAR_DIAMETER, CAR_DIAMETER)
