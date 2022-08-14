@@ -32,7 +32,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.RED)
     g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
     g.setColor(Color.BLACK)
-    */
+     */
 
     cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
     g.setColor(Color.BLACK)
@@ -44,7 +44,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
       case t: Sector.Turn => drawTurn(t, g)
     }
 
-    track.getSectors().foreach(sketcher(_))
+    track._sectors().foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit = s.drawingParams match {
@@ -67,9 +67,8 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
         g.drawArc(x - radius, y - radius, diameter, diameter, TURN_START_ANGLE, TURN_END_ANGLE * direction)
     }
 
-  private def drawCar(position: Point2d[Int, Int], color: Color, g:Graphics): Unit =
+  private def drawCar(position: Point2d[Int, Int], color: Color, g: Graphics): Unit =
     //var intW = (w * 0.5).toInt
     //var intH = (h * 0.2).toInt + 2
     g.setColor(color)
     g.fillOval(position._1, position._2, CAR_DIAMETER, CAR_DIAMETER)
-
