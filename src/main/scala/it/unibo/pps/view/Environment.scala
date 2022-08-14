@@ -44,7 +44,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
       case t: Sector.Turn => drawTurn(t, g)
     }
 
-    track._sectors().foreach(sketcher(_))
+    track.sectors.foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Sector.Straight, g: Graphics): Unit = s.drawingParams match {
