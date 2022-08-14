@@ -20,10 +20,7 @@ object StartingPositionsPanel:
     extends StartingPositionsPanel:
     self =>
 
-    // mettere costante
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-    private val carNames2: Map[String, Int] = Map("Ferrari" -> 0, "Mercedes" -> 1, "Red Bull" -> 2, "McLaren" -> 3)
-
     private val imageLoader = ImageLoader()
     private val topLabelHeight = (height * 0.15).toInt
     private val numCars = 4
@@ -67,7 +64,6 @@ object StartingPositionsPanel:
         }
       yield button
 
-
     private def invertLabelsAndImages(prevIndex: Int, nextIndex: Int): Unit =
       var nextLabelSupport = ""
       var prevLabelSupport = ""
@@ -81,8 +77,8 @@ object StartingPositionsPanel:
         prevImage <- positions.get(prevIndex).get(0)
         _ <- nextLabel.setText(prevLabelSupport)
         _ <- prevLabel.setText(nextLabelSupport)
-        _ <- nextImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames2(prevLabelSupport)}.png"))
-        _ <- prevImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames2(nextLabelSupport)}.png"))
+        _ <- nextImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(prevLabelSupport)).get._1}.png"))
+        _ <- prevImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(nextLabelSupport)).get._1}.png"))
       yield ()
       p.runSyncUnsafe()
 

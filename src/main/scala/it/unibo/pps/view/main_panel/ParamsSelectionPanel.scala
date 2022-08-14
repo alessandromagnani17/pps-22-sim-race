@@ -95,8 +95,7 @@ object ParamsSelectionPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
           if comparator(controller.getCurrentCar().maxSpeed) then
-            //controller.getCurrentCar().maxSpeed = function(controller.getCurrentCar().maxSpeed, 10)
-            controller.setMaxSpeed(function(controller.getCurrentCar().maxSpeed, 10)) // VEDERE SE PASSARE FUNZIONE O NO
+            controller.setMaxSpeed(function(controller.getCurrentCar().maxSpeed, 10))
             speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
         })
       yield button
@@ -148,11 +147,9 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener { e =>
           if isAttack then
             updateStar(starAttackButtons, button.getName.toInt)
-            //controller.getCurrentCar().driver.attack = button.getName.toInt
             controller.setAttack(button.getName.toInt)
           else
             updateStar(starDefenseButtons, button.getName.toInt)
-            //controller.getCurrentCar().driver.defense = button.getName.toInt
             controller.setDefense(button.getName.toInt)
         }
       yield button
