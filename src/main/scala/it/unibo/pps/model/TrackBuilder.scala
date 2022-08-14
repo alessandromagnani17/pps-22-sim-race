@@ -1,12 +1,10 @@
 package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
-
-import it.unibo.pps.view.{DrawingCarParams, DrawingStraightParams, DrawingTurnParams}
+import it.unibo.pps.view.{DrawingCarParams, DrawingStartingPointParams, DrawingStraightParams, DrawingTurnParams}
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
-
-import it.unibo.pps.model.InitialPitch.listOfPitches //---------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+import it.unibo.pps.model.StartingPoint
 
 import java.awt.Color
 import java.awt.geom.Point2D
@@ -76,15 +74,13 @@ object TrackBuilder:
       result.toList
 
     //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
-    private def createInitialPitch(l: List[String]): InitialPitch.listOfPitches =
-      val d = DrawingCarParams(
-        (l(1), l(2)),
-        Color.BLUE
+    private def createInitialPitch(l: List[String]): StartingPoint =
+      val d = DrawingStartingPointParams(
+        (l(1), l(2))
       )
-      InitialPitch.listOfPitches(l(0), d)
-      
+      StartingPoint(l(0), d)
 
-    private def loadInitialPitch(): List[InitialPitch.listOfPitches] =
+    private def loadInitialPitch(): List[StartingPoint] =
       val l = List("ID", "X_POSITION", "Y_POSITION")
       val result = for
         s <- engine(
@@ -96,18 +92,19 @@ object TrackBuilder:
       result.toList
     //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
     override def createBaseTrack(): Track =
       val track = Track()
       loadStraights().foreach(track.addSector(_))
       loadTurns().foreach(track.addSector(_))
-      loadInitialPitch().foreach(track.addPitches(_)) //--------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+      loadInitialPitch().foreach(
+        track.addStartingPoint(_)
+      ) //--------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
-      println("0) -- "+track.getPitches().apply(0))
-      println("1) -- "+track.getPitches().apply(1))
-      println("2) -- "+track.getPitches().apply(2))
-      println("3) -- "+track.getPitches().apply(3)) 
-    //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+      //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
+      println("0) -- " + track._startingGrid.apply(0))
+      println("1) -- " + track._startingGrid.apply(1))
+      println("2) -- " + track._startingGrid.apply(2))
+      println("3) -- " + track._startingGrid.apply(3))
+      //----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       track
