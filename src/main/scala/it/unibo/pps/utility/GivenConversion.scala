@@ -1,5 +1,6 @@
 package it.unibo.pps.utility
 
+import alice.tuprolog.{Term, Theory}
 import monix.eval.Task
 
 import java.awt.image.BufferedImage
@@ -28,3 +29,10 @@ object GivenConversion:
     given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
+
+  object TrackBuilderGivenConversion:
+    given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
+    given Conversion[String, Term] = Term.createTerm(_)
+    given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
+    given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
+    given Conversion[String, Int] = Integer.parseInt(_)

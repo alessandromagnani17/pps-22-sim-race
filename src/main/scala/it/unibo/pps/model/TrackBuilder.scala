@@ -1,15 +1,11 @@
 package it.unibo.pps.model
 
+import it.unibo.pps.utility.GivenConversion.TrackBuilderGivenConversion.given
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.view.{DrawingCarParams, DrawingStartingPointParams, DrawingStraightParams, DrawingTurnParams}
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
 import it.unibo.pps.model.StartingPoint
-
-given Conversion[String, Term] = Term.createTerm(_)
-given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
-given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
-given Conversion[String, Int] = Integer.parseInt(_)
 
 trait TrackBuilder:
 
@@ -25,8 +21,6 @@ object TrackBuilder:
     new TrackBuilderImpl()
 
   private class TrackBuilderImpl() extends TrackBuilder:
-
-    given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 
     private val engine = Scala2P.createEngine("/prolog/basetrack.pl")
 
