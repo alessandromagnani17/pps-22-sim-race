@@ -60,9 +60,15 @@ object SimulationPanel:
       for
         p <- new JPanel()
         _ <- p.setLayout(new BoxLayout(p, 1))
-        chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity", "Velocity")
-        chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel", "Fuel")
-        chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation", "Degradation")
+        chartVel <- createChart("Mean velocity", "Virtual Time", "Velocity")
+        chartFuel <- createChart("Mean fuel", "Virtual Time", "Fuel")
+        chartTyres <- createChart("Tyres degradation", "Virtual Time", "Degradation")
+        _ <- chartFuel.addSerie("Leclerc")
+        _ <- chartFuel.addSerie("Sainz")
+        _ <- chartFuel.addValue(1, 2, "Leclerc")
+        _ <- chartFuel.addValue(3, 5, "Leclerc")
+        _ <- chartFuel.addValue(2, 4, "Sainz")
+        _ <- chartFuel.addValue(6, 8, "Sainz")
         chartVelP <- chartVel.wrapToPanel()
         chartFuelP <- chartFuel.wrapToPanel()
         chartTyresP <- chartTyres.wrapToPanel()
@@ -146,6 +152,6 @@ object SimulationPanel:
         _ <- jb.addActionListener(listener)
       yield jb
 
-    private def createChart(title: String, xLabel: String, yLabel: String, serieName: String): Task[LineChart] =
-      for chart <- LineChart(title, xLabel, yLabel, serieName)
+    private def createChart(title: String, xLabel: String, yLabel: String): Task[LineChart] =
+      for chart <- LineChart(title, xLabel, yLabel)
       yield chart
