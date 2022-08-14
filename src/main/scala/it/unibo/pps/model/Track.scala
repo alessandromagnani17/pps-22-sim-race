@@ -3,11 +3,8 @@ package it.unibo.pps.model
 trait Track:
   def getSectors(): List[Sector]
   def addSector(sector: Sector): Unit
-
-  //-----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<
-  def _startingPoints(): List[StartingPoint]
+  def _startingGrid(): List[StartingPoint]
   def addStartingPoint(startingPoint: StartingPoint): Unit
-//-----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<
 
 object Track:
   def apply(): Track =
@@ -16,14 +13,11 @@ object Track:
   private class TrackImpl() extends Track:
 
     private var sectors: List[Sector] = List.empty
-    private var startingPoints: List[StartingPoint] = List.empty
+    private var startingGrid: List[StartingPoint] = List.empty
 
     override def getSectors(): List[Sector] = sectors
     override def addSector(sector: Sector): Unit =
       sectors = sectors :+ sector
-
-    //-----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<
-    override def getPitches(): List[StartingPoint] = startingPoints
+    override def _startingGrid(): List[StartingPoint] = startingGrid
     override def addPitches(startingPoint: StartingPoint): Unit =
-      startingPoints = startingPoints :+ startingPoint
-//-----------------------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<
+      startingGrid = startingGrid :+ startingPoint
