@@ -28,16 +28,17 @@ object StartSimulationPanel:
     private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 20, _ - 1)
     private val lapsSelectedLabel =
       createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
-    private val startButton = createButton("Start Simulation")
+    private val startingPositionsButton = createButton("Set up the Starting Positions", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displayStartingPositionsPanel())
+    private val startButton = createButton("Start Simulation", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displaySimulationPanel())
     private val startSimulationPanel = createPanelAndAddAllComponents()
 
     startSimulationPanel foreach (e => self.add(e))
 
-    private def createButton(text: String): Task[JButton] =
+    private def createButton(text: String, dim: Dimension, action: () => Unit): Task[JButton] =
       for
         button <- JButton(text)
-        _ <- button.setPreferredSize(Dimension((width * 0.2).toInt, (height * 0.2).toInt))
-        _ <- button.addActionListener(e => controller.displaySimulationPanel())
+        _ <- button.setPreferredSize(dim)
+        _ <- button.addActionListener(e => action())
       yield button
 
     private def createLabel(text: String, dim: Dimension, pos: Int): Task[JLabel] =
@@ -69,17 +70,22 @@ object StartSimulationPanel:
         leftArrowButton <- leftArrowButton
         rightArrowButton <- rightArrowButton
         lapsSelectedLabel <- lapsSelectedLabel
+        startingPositionsButton <- startingPositionsButton
         startButton <- startButton
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
+        paddingLabel2 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(width, (height * 0.03).toInt))
         _ <- paddingLabel1.setPreferredSize(Dimension(width, (height * 0.03).toInt))
+        _ <- paddingLabel2.setPreferredSize(Dimension(width, (height * 0.01).toInt))
         _ <- panel.add(paddingLabel)
         _ <- panel.add(lapsLabel)
         _ <- panel.add(leftArrowButton)
         _ <- panel.add(lapsSelectedLabel)
         _ <- panel.add(rightArrowButton)
         _ <- panel.add(paddingLabel1)
+        _ <- panel.add(startingPositionsButton)
+        _ <- panel.add(paddingLabel2)
         _ <- panel.add(startButton)
         _ <- panel.setVisible(true)
       yield panel
