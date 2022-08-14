@@ -7,9 +7,9 @@ import java.awt.Color
 
 object ModelModule:
   trait Model:
-    def _track: Track
-    def _cars: List[Car]
-    def _standing: Standing
+    def track: Track
+    def cars: List[Car]
+    def standing: Standing
 
   trait Provider:
     val model: Model
@@ -17,29 +17,22 @@ object ModelModule:
   trait Component:
     class ModelImpl extends Model:
 
-      private val track = TrackBuilder().createBaseTrack()
-      private val cars = List(
-        
-        /*
-        Se provi a runnare il programma, in console si vede la stampa che ho messo dentro createBaseTruck(), dove si vede
-        che la lettura da file viene fatta bene.
-        La mia idea era poi di mettere qui sotto, magari dentro a drawingCarParams, qualcosa come:
-       
-        track.getPitches().apply(0) 
-        
-        In modo prendere i valori di ogni postazione, per le 4 postazioni
-          
-        */
-        
+      private val _track = TrackBuilder().createBaseTrack()
+
+      /*TODO - Le macchine non vanno create così ma i parametri vanno inseriti usando quelli presi da initial panel
+        TODO - le posizioni di partenza devono essere quelle dello starting point corrispondente
+        TODO - in base all'ordine di partenza scelto dall'utente
+       */
+      private val _cars = List(
         Car("Ferrari", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((453, 115), Color.CYAN)),
         Car("Mercedes", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((473, 129), Color.RED)),
         Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((493, 142), Color.BLUE)),
         Car("McLaren", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((513, 155), Color.GREEN))
       )
-      private val standig: Standing = Standing(cars)
+      private val _standig: Standing = Standing(cars)
 
-      override def _cars: List[Car] = cars
-      override def _track: Track = track
-      override def _standing: Standing = standig
+      override def cars: List[Car] = _cars
+      override def track: Track = _track
+      override def standing: Standing = _standig
 
   trait Interface extends Provider with Component
