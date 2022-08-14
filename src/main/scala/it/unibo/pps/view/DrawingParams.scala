@@ -56,7 +56,7 @@ case class DrawingCarParams(
     color: Color
 ) extends DrawingParams
 
-/** Parames needed to render a car
+/** Parames needed to render a StartingPoint
   *
   * @param position
   *   The position of the car
