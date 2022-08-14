@@ -18,9 +18,9 @@ turn(id(2), center(725, 283), startPointE(725, 113), startPointI(725, 170), endP
 turn(id(4), center(181, 283), startPointE(181, 113), startPointI(181, 170), endPointE(181, 453), endPointI(181, 396), direction(-1)).
 
 
-%initialPitch(id, x_position, y_position)
-%Query: initialPitch(id(ID), positions(X, Y)).
-initialPitch(id(1), positions(453, 115)).
-initialPitch(id(2), positions(473, 129)).
-initialPitch(id(3), positions(493, 142)).
-initialPitch(id(4), positions(513, 155)).
+%startingPoint(id, x_position, y_position)
+%Query: startingPoint(id(ID), position(X, Y)).
+startingPoint(id(1), position(453, 115)).
+startingPoint(id(2), position(473, 129)).
+startingPoint(id(3), position(493, 142)).
+startingPoint(id(4), position(513, 155)).
