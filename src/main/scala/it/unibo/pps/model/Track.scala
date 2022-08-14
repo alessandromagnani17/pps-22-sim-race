@@ -2,8 +2,8 @@ package it.unibo.pps.model
 
 trait Track:
   def sectors: List[Sector]
-  def addSector(sector: Sector): Unit
   def startingGrid: List[StartingPoint]
+  def addSector(sector: Sector): Unit
   def addStartingPoint(startingPoint: StartingPoint): Unit
 
 object Track:

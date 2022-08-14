@@ -13,9 +13,9 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
   private val initialPanel = MainPanel(width, height, controller)
-  private val simulationPanel = SimulationPanel(width, height, controller)
+  private val _simulationPanel = SimulationPanel(width, height, controller)
 
-  def _simulationPanel = simulationPanel
+  def simulationPanel = _simulationPanel
 
   private lazy val frame: Task[JFrame] =
     for
@@ -39,10 +39,10 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for
       fr <- frame
-      _ <- simulationPanel.updateStanding(standing)
-      _ <- simulationPanel.renderTrack(track)
+      _ <- _simulationPanel.updateStanding(standing)
+      _ <- _simulationPanel.renderTrack(track)
       _ <- fr.getContentPane().removeAll()
-      _ <- fr.getContentPane().add(simulationPanel)
+      _ <- fr.getContentPane().add(_simulationPanel)
       _ <- fr.revalidate()
     yield ()
     p.runSyncUnsafe()
