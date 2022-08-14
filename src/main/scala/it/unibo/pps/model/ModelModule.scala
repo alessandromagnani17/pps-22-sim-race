@@ -29,10 +29,10 @@ object ModelModule:
         Car("Red Bull", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((493, 142), Color.BLUE)),
         Car("McLaren", Tyre.SOFT, Driver(0, 0), 200, DrawingCarParams((513, 155), Color.GREEN))
       )
-      private val _standig: Standing = Standing(cars)
+      private val _standing: Standing = Standing(cars)
 
       override def cars: List[Car] = _cars
       override def track: Track = _track
-      override def standing: Standing = _standig
+      override def standing: Standing = _standing
 
   trait Interface extends Provider with Component
