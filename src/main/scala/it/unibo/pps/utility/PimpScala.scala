@@ -12,3 +12,11 @@ object PimpScala:
     extension (p0: Tuple2[Int, Int])
       def euclideanDistance(p1: Tuple2[Int, Int]): Int =
         ((p1._1 - p0._1) ** 2 + (p1._2 - p0._2) ** 2).root
+
+  object RichOption:
+    extension [A](o: Option[A])
+      /** Method that applies a consumer to the Option
+        *
+        * If the Option is empty it does nothing
+        */
+      def -->(consumer: A => Unit): Unit = o foreach consumer

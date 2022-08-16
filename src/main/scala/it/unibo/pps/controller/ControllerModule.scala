@@ -4,6 +4,12 @@ import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.{Car, Driver, ModelModule, Tyre}
 import it.unibo.pps.view.ViewModule
 import it.unibo.pps.view.main_panel.ImageLoader
+import monix.execution.Scheduler.Implicits.global
+import monix.execution.Cancelable
+import it.unibo.pps.utility.PimpScala.RichOption.*
+import it.unibo.pps.view.simulation_panel.DrawingCarParams
+
+import java.awt.Color
 
 object ControllerModule:
   trait Controller:
@@ -16,6 +22,7 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def getCurrentCarIndex(): Int
+    def notifyStop(): Unit
     def setCurrentCarIndex(index: Int): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
@@ -25,6 +32,8 @@ object ControllerModule:
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+    def notifyDecreseSpeed(): Unit
+    def notifyIncreaseSpeed(): Unit
 
   trait Provider:
     val controller: Controller
@@ -42,7 +51,15 @@ object ControllerModule:
       private var cars: List[Car] = List.empty
       private val startingPositions: scala.collection.mutable.Map[Int, String] = scala.collection.mutable.Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
-      override def notifyStart(): Unit = ???
+      override def notifyStart(): Unit = stopFuture = Some(
+        context.simulationEngine
+          .simulationStep()
+          .loopForever
+          .runAsync {
+            case Left(exp) => global.reportFailure(exp)
+            case _ =>
+          }
+      )
 
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
         val support = startingPositions(prevIndex)
@@ -61,6 +78,18 @@ object ControllerModule:
 
       override def setPath(path: String): Unit = cars(currentCarIndex).path = path
 
+      private var stopFuture: Option[Cancelable] = None
+
+      override def notifyStop(): Unit =
+        stopFuture --> (_.cancel())
+        stopFuture = None
+
+      override def notifyDecreseSpeed(): Unit =
+        context.simulationEngine.decreaseSpeed()
+
+      override def notifyIncreaseSpeed(): Unit =
+        context.simulationEngine.increaseSpeed()
+
       override def setTyre(tyre: Tyre): Unit = cars(currentCarIndex).tyre = tyre
 
       override def setMaxSpeed(speed: Int): Unit = cars(currentCarIndex).maxSpeed = speed
@@ -77,7 +106,7 @@ object ControllerModule:
       override def createCars(): Unit =
         val l = for
           index <- 0 until numCars
-          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200)
+          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, DrawingCarParams((453, 115), Color.CYAN))
         yield car
         cars = l.toList
 
@@ -85,7 +114,8 @@ object ControllerModule:
         context.view.updateDisplayedCar()
 
       override def displaySimulationPanel(): Unit =
-        context.view.displaySimulationPanel()
+        context.view.displaySimulationPanel(context.model.track, context.model.standing)
+        context.view.updateCars(context.model.cars)
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
