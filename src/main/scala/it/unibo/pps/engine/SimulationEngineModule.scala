@@ -1,6 +1,6 @@
 package it.unibo.pps.engine
 
-import it.unibo.pps.model.{ModelModule, Snapshot, Car}
+import it.unibo.pps.model.{Car, ModelModule, Snapshot}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -9,7 +9,8 @@ import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuratio
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.utility.monadic.*
-import it.unibo.pps.utility.GivenConversion.ModelConversion.given
+import it.unibo.pps.utility.GivenConversion.ModelConversion
+import it.unibo.pps.view.simulation_panel.DrawingCarParams
 
 object SimulationEngineModule:
   trait SimulationEngine:
@@ -60,16 +61,17 @@ object SimulationEngineModule:
           time <- io(snapshot.time)
           cars <- io(snapshot.cars)
           // TODO - implementare un movimento sensato
-          _ <- io(
-            cars.foreach(car =>
-              car.drawingCarParams.position = (car.drawingCarParams.position._1 + 2, car.drawingCarParams.position._2)
-            )
-          )
-          newSnap <- io(Snapshot(cars, time + 1))
+          newCars = for
+            car <- cars
+            oldPosition = car.drawingCarParams.position
+            p = (oldPosition._1 + 2, oldPosition._2)
+            d = DrawingCarParams(p, car.drawingCarParams.color)
+          yield Car(car.path, car.name, car.tyre, car.driver, car.maxSpeed, car.velocity, d)
+          newSnap <- io(Snapshot(newCars.toList, time + 1))
         yield newSnap
 
       private def getLastSnapshot(): Task[Snapshot] =
-        context.model.getLastSnapshot()
+        io(context.model.getLastSnapshot())
 
       private def updateCharts(): Task[Unit] =
         for _ <- io(println("Updating charts...."))
