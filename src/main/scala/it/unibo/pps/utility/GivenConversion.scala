@@ -1,6 +1,6 @@
 package it.unibo.pps.utility
 
-import it.unibo.pps.model.Car
+import it.unibo.pps.model.{Car, Snapshot}
 import alice.tuprolog.{Term, Theory}
 import monix.eval.Task
 
@@ -16,6 +16,7 @@ object GivenConversion:
   sealed trait CommonConversion:
     given Conversion[Unit, Task[Unit]] = Task(_)
     given Conversion[Int, Task[Int]] = Task(_)
+    given Conversion[Double, Task[Double]] = Task(_)
 
   object GuiConversion extends CommonConversion:
     given Conversion[JFrame, Task[JFrame]] = Task(_)
@@ -30,7 +31,11 @@ object GivenConversion:
     given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
+
+
+  object ModelConversion extends CommonConversion:
     given Conversion[Car, Task[Car]] = Task(_)
+    given Conversion[Snapshot, Task[Snapshot]] = Task(_)
 
 
   object TrackBuilderGivenConversion:
