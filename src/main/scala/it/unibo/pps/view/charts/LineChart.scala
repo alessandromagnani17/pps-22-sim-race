@@ -6,11 +6,12 @@ import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 
 import scala.collection.immutable.HashMap
 import it.unibo.pps.utility.PimpScala.RichOption.*
+import it.unibo.pps.utility.PimpScala.RichHashMap.*
 
 /** Scala facade for a 2D JFreeChart Line Chart */
 trait LineChart:
 
-  /** Method that add a point in the chart
+  /** Method that adds a point in the chart
     * @param x
     *   X value of the point
     * @param y
@@ -18,7 +19,7 @@ trait LineChart:
     * @param serie
     *   The name of the serie to add the new data to
     */
-  def addValue(x: Double, y: Double, serie: String): Unit
+  def addValue(x: Double, y: Double, series: String): Unit
 
   /** Method that wraps the chart into a panel */
   def wrapToPanel(): ChartPanel
@@ -27,7 +28,7 @@ trait LineChart:
     * @param name
     *   The name of the new serie
     */
-  def addSerie(name: String): Unit
+  def addSeries(name: String): Unit
 
 object LineChart:
 
@@ -38,17 +39,17 @@ object LineChart:
     private val chart = createChart()
     private var series: HashMap[String, XYSeries] = HashMap.empty
 
-    override def addValue(x: Double, y: Double, serie: String): Unit =
-      series.get(serie) --> (_.add(x, y))
+    override def addValue(x: Double, y: Double, seriesName: String): Unit =
+      series ?--> (seriesName, _.add(x, y))
       chart.getXYPlot.setDataset(mkDataset())
 
     override def wrapToPanel(): ChartPanel = ChartPanel(chart)
 
-    override def addSerie(name: String): Unit = series = series + (name -> XYSeries(name))
+    override def addSeries(name: String): Unit = series = series + (name -> XYSeries(name))
 
     private def mkDataset(): XYSeriesCollection =
       val dataset = XYSeriesCollection()
-      series.foreach((n, s) => dataset.addSeries(s))
+      series.foreach((_, s) => dataset.addSeries(s))
       dataset
 
     private def createChart(): JFreeChart =

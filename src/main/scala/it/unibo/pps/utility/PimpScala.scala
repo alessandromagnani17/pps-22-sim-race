@@ -1,5 +1,6 @@
 package it.unibo.pps.utility
 
+import scala.collection.immutable.HashMap
 object PimpScala:
 
   object RichInt:
@@ -15,8 +16,17 @@ object PimpScala:
 
   object RichOption:
     extension [A](o: Option[A])
-      /** Method that applies a consumer to the Option
+      /** Method that applies a consumer to the [[Option]]
         *
         * If the Option is empty it does nothing
         */
       def -->(consumer: A => Unit): Unit = o foreach consumer
+
+  object RichHashMap:
+    import RichOption.*
+    extension [A, B](h: HashMap[A, B])
+      /** Method that applies a consumer to the element of the [[HashMap]] pointed by the specified key
+        *
+        * If the element doesn't exists it does nothing
+        */
+      def ?-->(key: A, consumer: B => Unit): Unit = h.get(key) --> consumer
