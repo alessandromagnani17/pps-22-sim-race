@@ -11,6 +11,7 @@ object ModelModule:
     def cars: List[Car]
     def standing: Standing
     def getLastSnapshot(): Snapshot
+    def addSnapshot(snapshot: Snapshot): Unit
 
   trait Provider:
     val model: Model
@@ -31,11 +32,14 @@ object ModelModule:
         Car("/cars/3-hard.png", "McLaren", Tyre.SOFT, Driver(0, 0), 200, 0, DrawingCarParams((513, 155), Color.GREEN))
       )
       private val _standing: Standing = Standing(cars)
+
+      /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
       private var history: List[Snapshot] = List(Snapshot(_cars, 0))
 
       override def cars: List[Car] = _cars
       override def track: Track = _track
       override def standing: Standing = _standing
       override def getLastSnapshot(): Snapshot = history.last
+      override def addSnapshot(snapshot: Snapshot): Unit = history = history :+ snapshot
 
   trait Interface extends Provider with Component

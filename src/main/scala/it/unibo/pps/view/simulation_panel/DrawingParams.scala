@@ -52,7 +52,7 @@ case class DrawingTurnParams(
   *   The color of the car
   */
 case class DrawingCarParams(
-    position: Point2d[Int, Int],
+    var position: Point2d[Int, Int],
     color: Color
 ) extends DrawingParams
 
