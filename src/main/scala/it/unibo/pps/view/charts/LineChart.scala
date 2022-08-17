@@ -16,7 +16,7 @@ trait LineChart:
     *   X value of the point
     * @param y
     *   Y value of the point
-    * @param serie
+    * @param series
     *   The name of the serie to add the new data to
     */
   def addValue(x: Double, y: Double, series: String): Unit

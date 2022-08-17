@@ -16,6 +16,7 @@ import it.unibo.pps.view.simulation_panel.DrawingCarParams
 given Conversion[String, Term] = Term.createTerm(_)
 given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
 given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
+given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 
 object SimulationEngineModule:
   trait SimulationEngine:
@@ -66,17 +67,16 @@ object SimulationEngineModule:
         for
           time <- io(snapshot.time)
           cars <- io(snapshot.cars)
-          // TODO - implementare un movimento sensato
           newCars = for
             car <- cars
-            oldPosition = car.drawingCarParams.position
-            oldVel = car.velocity
-            oltTime = snapshot.time
-            newX = calcWithProlog(oldPosition._1, oltTime + 1, oldVel)
-            p = (newX, oldPosition._2)
-            d = DrawingCarParams(p, car.drawingCarParams.color)
-          yield Car(car.path, car.name, car.tyre, car.driver, car.maxSpeed, car.velocity, d)
-          newSnap <- io(Snapshot(newCars.toList, time + 1))
+            position = car.drawingCarParams.position
+            velocity = car.velocity
+            time = snapshot.time
+            newX = calcWithProlog(position._1, time + 1, velocity)
+            newPosition = (newX, position._2)
+            d = DrawingCarParams(newPosition, car.drawingCarParams.color)
+          yield car.copy(drawingCarParams = d)
+          newSnap <- io(Snapshot(newCars, time + 1))
         yield newSnap
 
       private def calcWithProlog(x: Int, time: Int, velocity: Double): Int =
