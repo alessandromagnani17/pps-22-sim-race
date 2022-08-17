@@ -1,7 +1,7 @@
 package it.unibo.pps.controller
 
 import it.unibo.pps.engine.SimulationEngineModule
-import it.unibo.pps.model.{Car, Driver, ModelModule, Tyre}
+import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Tyre}
 import it.unibo.pps.view.ViewModule
 import it.unibo.pps.view.main_panel.ImageLoader
 import monix.execution.Scheduler.Implicits.global
@@ -49,6 +49,7 @@ object ControllerModule:
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var currentCarIndex = 0
       private var cars: List[Car] = List.empty
+      private var history: List[Snapshot] = List.empty
       private val startingPositions: scala.collection.mutable.Map[Int, String] = scala.collection.mutable.Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
       override def notifyStart(): Unit = stopFuture = Some(

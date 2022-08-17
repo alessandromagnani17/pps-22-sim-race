@@ -46,7 +46,8 @@ object SimulationEngineModule:
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
-        for _ <- io(println("Updating cars.... " + speedManager._simulationSpeed))
+        for
+          _ <- io(println("Updating cars.... " + speedManager._simulationSpeed))
         yield ()
 
       private def updateCharts(): Task[Unit] =
