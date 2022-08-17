@@ -26,7 +26,6 @@ object StartingPositionsPanel:
     private val numCars = 4
     private val labelHeight = ((height * 0.75).toInt - topLabelHeight) / numCars
     private val colorNotSelected = Color(238, 238, 238)
-    private val colorSelected = Color(79, 195, 247)
     private val topLabel = createLabel("Imposta la griglia di partenza", Dimension(width, topLabelHeight), SwingConstants.CENTER, false)
     private val positionPanel = createPanel(Dimension(width, height - (height * 0.22).toInt))
     private val positions = createMap()
@@ -40,8 +39,10 @@ object StartingPositionsPanel:
         map += (i -> (createLabel(s"/cars/miniatures/$i.png", Dimension((width * 0.3).toInt, (height * 0.15).toInt), SwingConstants.CENTER, true),
           createLabel(s"${i + 1}. ", Dimension((width * 0.05).toInt, labelHeight), SwingConstants.LEFT,false),
           createLabel(s"${carNames(i)}", Dimension((width * 0.13).toInt, labelHeight), SwingConstants.LEFT, false),
-          createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
-          createButton(i, "/arrows/arrow-bottom.png", e => if e == (numCars - 1) then e else e + 1)))
+          if i == 0 then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+          else createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
+          if i == (numCars - 1) then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+          else createButton(i, "/arrows/arrow-bottom.png", e => if e == (numCars - 1) then e else e + 1)))
       map
 
     private def createLabel(text: String, dim: Dimension, horizontal: Int, isImage: Boolean): Task[JLabel] =
@@ -109,11 +110,14 @@ object StartingPositionsPanel:
         label2 <- elem._3
         b1 <- elem._4
         b2 <- elem._5
+        l <- JLabel(imageLoader.load("/arrows/blank_background.png"))
         _ <- panel.add(label1)
         _ <- panel.add(label2)
         _ <- panel.add(img)
+        _ <- if label1.getText.equals("4. ") then panel.add(l)
         _ <- panel.add(b1)
         _ <- panel.add(b2)
+        _ <- if label1.getText.equals("1. ") then panel.add(l)
         _ <- posPanel.add(panel)
       yield ()
       p.runSyncUnsafe()
