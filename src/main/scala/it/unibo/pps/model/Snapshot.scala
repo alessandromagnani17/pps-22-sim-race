@@ -1,3 +1,3 @@
 package it.unibo.pps.model
 
-case class Snapshot(car: Car, time: Int)
+case class Snapshot(cars: List[Car], time: Int)

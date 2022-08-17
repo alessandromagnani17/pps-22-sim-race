@@ -49,7 +49,6 @@ object ControllerModule:
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var currentCarIndex = 0
       private var cars: List[Car] = List.empty
-      private var history: List[Snapshot] = List.empty
       private val startingPositions: scala.collection.mutable.Map[Int, String] = scala.collection.mutable.Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
       override def notifyStart(): Unit = stopFuture = Some(
@@ -107,7 +106,7 @@ object ControllerModule:
       override def createCars(): Unit =
         val l = for
           index <- 0 until numCars
-          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, DrawingCarParams((453, 115), Color.CYAN))
+          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, 0, DrawingCarParams((453, 115), Color.CYAN))
         yield car
         cars = l.toList
 
