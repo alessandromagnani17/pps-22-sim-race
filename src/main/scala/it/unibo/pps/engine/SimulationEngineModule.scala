@@ -8,6 +8,7 @@ import monix.execution.Scheduler
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
+import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
@@ -28,6 +29,7 @@ object SimulationEngineModule:
     class SimulationEngineImpl extends SimulationEngine:
 
       private val speedManager = SpeedManager()
+      private val engine = Scala2P.createEngine("/prolog/movements.pl")
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
