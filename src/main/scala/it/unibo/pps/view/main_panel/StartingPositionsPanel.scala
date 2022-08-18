@@ -26,7 +26,7 @@ object StartingPositionsPanel:
     private val numCars = 4
     private val labelHeight = ((height * 0.75).toInt - topLabelHeight) / numCars
     private val colorNotSelected = Color(238, 238, 238)
-    private val topLabel = createLabel("Imposta la griglia di partenza", Dimension(width, topLabelHeight), SwingConstants.CENTER, false)
+    private val topLabel = createLabel("Sets the order of the starting grid: ", Dimension(width, topLabelHeight), SwingConstants.CENTER, false)
     private val positionPanel = createPanel(Dimension(width, height - (height * 0.22).toInt))
     private val positions = createMap()
     private val startingPositionsPanel = createPanelAndAddAllComponents()

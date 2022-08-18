@@ -14,12 +14,16 @@ import java.awt.Color
 object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
+    def createCars(): Unit
+    def getStartingPositions(): scala.collection.mutable.Map[Int, String]
+    def getCurrentCar(): Car
+    def getCar(index: Int): Car
+    def getCars(): List[Car]
+    def updateParametersPanel(): Unit
+    def updateDisplayedCar(): Unit
+    def getCurrentCarIndex(): Int
     def notifyStop(): Unit
-    def notifyDecreseSpeed(): Unit
-    def notifyIncreaseSpeed(): Unit
-    def currentCar: Car
-    def currentCarIndex: Int
-    def currentCarIndex_=(index: Int): Unit
+    def setCurrentCarIndex(index: Int): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
@@ -27,9 +31,9 @@ object ControllerModule:
     def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
-    def updateParametersPanel(): Unit
-    def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+    def notifyDecreseSpeed(): Unit
+    def notifyIncreaseSpeed(): Unit
 
   trait Provider:
     val controller: Controller
@@ -43,7 +47,9 @@ object ControllerModule:
       private val imageLoader = ImageLoader()
       private val numCars = 4
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
-      private var stopFuture: Option[Cancelable] = None
+      private var currentCarIndex = 0
+      private var cars: List[Car] = List.empty
+      private val startingPositions: scala.collection.mutable.Map[Int, String] = scala.collection.mutable.Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
       override def notifyStart(): Unit = stopFuture = Some(
         context.simulationEngine
@@ -55,6 +61,25 @@ object ControllerModule:
           }
       )
 
+      override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
+        val support = startingPositions(prevIndex)
+        startingPositions(prevIndex) = startingPositions(nextIndex)
+        startingPositions(nextIndex) = support
+
+      override def getStartingPositions(): scala.collection.mutable.Map[Int, String] = startingPositions
+
+      override def getCurrentCarIndex(): Int = currentCarIndex
+
+      override def getCar(index: Int): Car = cars(index)
+
+      override def getCars(): List[Car] = cars
+
+      override def setCurrentCarIndex(index: Int): Unit = currentCarIndex = index
+
+      override def setPath(path: String): Unit = cars(currentCarIndex).path = path
+
+      private var stopFuture: Option[Cancelable] = None
+
       override def notifyStop(): Unit =
         stopFuture --> (_.cancel())
         stopFuture = None
@@ -65,39 +90,40 @@ object ControllerModule:
       override def notifyIncreaseSpeed(): Unit =
         context.simulationEngine.increaseSpeed()
 
-      override def currentCar: Car = context.model.cars(context.model.currentCarIndex)
+      override def setTyre(tyre: Tyre): Unit = cars(currentCarIndex).tyre = tyre
 
-      override def currentCarIndex: Int = context.model.currentCarIndex
+      override def setMaxSpeed(speed: Int): Unit = cars(currentCarIndex).maxSpeed = speed
 
-      override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
+      override def setAttack(attack: Int): Unit = cars(currentCarIndex).driver.attack = attack
 
-      override def setPath(path: String): Unit = context.model.cars(context.model.currentCarIndex).path = path
+      override def setDefense(defense: Int): Unit = cars(currentCarIndex).driver.defense = defense
 
-      override def setTyre(tyre: Tyre): Unit = context.model.cars(context.model.currentCarIndex).tyre = tyre
-
-      override def setMaxSpeed(speed: Int): Unit = context.model.cars(context.model.currentCarIndex).maxSpeed = speed
-
-      override def setAttack(attack: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.attack = attack
-
-      override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense = defense
-
-      override def displaySimulationPanel(): Unit =
-        context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.cars)
-
-      override def displayStartingPositionsPanel(): Unit =
-        context.view.displayStartingPositionsPanel()
+      override def getCurrentCar(): Car = cars(currentCarIndex)
 
       override def updateParametersPanel(): Unit =
         context.view.updateParametersPanel()
 
+      override def createCars(): Unit =
+        val pos = List((453, 115), (473, 129), (493, 142), (513, 155))
+        val colors = List(Color.CYAN, Color.RED, Color.BLUE, Color.GREEN)
+
+        val l = for
+          index <- 0 until numCars
+          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, 0, DrawingCarParams(pos(index), colors(index)))
+        yield car
+        context.model.setCars(l.toList)
+        cars = l.toList
+
       override def updateDisplayedCar(): Unit =
         context.view.updateDisplayedCar()
 
-      override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
-        val support = context.model.startingPositions(prevIndex)
-        context.model.startingPositions(prevIndex) = context.model.startingPositions(nextIndex)
-        context.model.startingPositions(nextIndex) = support
+      override def displaySimulationPanel(): Unit =
+        context.view.displaySimulationPanel(context.model.track, context.model.standing)
+        context.model.setCars(cars)
+        context.view.updateCars(context.model.cars)
+
+      override def displayStartingPositionsPanel(): Unit =
+        context.view.displayStartingPositionsPanel()
 
   trait Interface extends Provider with Component:
     self: Requirements =>
