@@ -20,7 +20,7 @@ object ParamsSelectionPanel:
     ParamsSelectionPanelImpl(width, height, controller)
 
   private class ParamsSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-      extends ParamsSelectionPanel:
+    extends ParamsSelectionPanel:
     self =>
     private val imageLoader = ImageLoader()
     private val matcher = Matcher()
@@ -75,28 +75,28 @@ object ParamsSelectionPanel:
 
     def updateParametersPanel(): Unit =
       tyresButtons.foreach(e => e.foreach(b => {
-        if b.getName.equals(controller.getCurrentCar().tyre.toString) then
+        if b.getName.equals(controller.currentCar.tyre.toString) then
           b.setBackground(colorSelected); b.setOpaque(true)
         else
           b.setBackground(colorNotSelected)
       }))
-      speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
-      updateStar(starAttackButtons, controller.getCurrentCar().driver.attack)
-      updateStar(starDefenseButtons, controller.getCurrentCar().driver.defense)
+      speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
+      updateStar(starAttackButtons, controller.currentCar.driver.attack)
+      updateStar(starDefenseButtons, controller.currentCar.driver.defense)
 
     private def createArrowButton(
-        path: String,
-        comparator: Int => Boolean,
-        function: (Int, Int) => Int
-    ): Task[JButton] =
+                                   path: String,
+                                   comparator: Int => Boolean,
+                                   function: (Int, Int) => Int
+                                 ): Task[JButton] =
       for
         button <- JButton(imageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
-          if comparator(controller.getCurrentCar().maxSpeed) then
-            controller.setMaxSpeed(function(controller.getCurrentCar().maxSpeed, 10))
-            speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
+          if comparator(controller.currentCar.maxSpeed) then
+            controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
+            speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
         })
       yield button
 
@@ -115,7 +115,7 @@ object ParamsSelectionPanel:
                 f.setBackground(colorSelected)
                 f.setOpaque(true)
                 controller.setTyre(tyre)
-                controller.setPath(s"/cars/${controller.getCurrentCarIndex()}-${controller.getCurrentCar().tyre.toString.toLowerCase}.png")
+                controller.setPath(s"/cars/${controller.currentCarIndex}-${controller.currentCar.tyre.toString.toLowerCase}.png")
                 controller.updateDisplayedCar()
               case _ => f.setBackground(colorNotSelected)
             })
@@ -124,8 +124,8 @@ object ParamsSelectionPanel:
       yield button
 
     private def createSkillsStarButtons(
-        isAttack: Boolean
-    ): List[Task[JButton]] =
+                                         isAttack: Boolean
+                                       ): List[Task[JButton]] =
       val buttons = for
         index <- 1 until 6
         button = createStarButton(index.toString, isAttack)
@@ -133,9 +133,9 @@ object ParamsSelectionPanel:
       buttons.toList
 
     private def createStarButton(
-        name: String,
-        isAttack: Boolean
-    ): Task[JButton] =
+                                  name: String,
+                                  isAttack: Boolean
+                                ): Task[JButton] =
       for
         button <-
           if name.equals("1") then JButton(imageLoader.load(fileNameSelected))
@@ -155,9 +155,9 @@ object ParamsSelectionPanel:
       yield button
 
     private def updateStar(
-        list: List[Task[JButton]],
-        index: Int
-    ): Unit =
+                            list: List[Task[JButton]],
+                            index: Int
+                          ): Unit =
       list.foreach(e =>
         e.foreach(f =>
           if f.getName.toInt <= index then f.setIcon(imageLoader.load(fileNameSelected))

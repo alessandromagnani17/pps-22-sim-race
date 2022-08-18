@@ -20,7 +20,7 @@ object CarSelectionPanel:
     CarSelectionPanelImpl(width, height, controller)
 
   private class CarSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-      extends CarSelectionPanel:
+    extends CarSelectionPanel:
     self =>
     private val imageLoader = ImageLoader()
     private val colorNotSelected = Color(238, 238, 238)
@@ -42,7 +42,7 @@ object CarSelectionPanel:
     carSelectionPanel foreach (e => self.add(e))
 
     def updateDisplayedCar(): Unit =
-      labelImage.foreach(e => e.setIcon(imageLoader.load(controller.getCurrentCar().path)))
+      labelImage.foreach(e => e.setIcon(imageLoader.load(controller.currentCar.path)))
 
     private def createLabel(text: String, dimension: Dimension, vertical: Int, horizontal: Int, isImage: Boolean): Task[JLabel] =
       for
@@ -59,12 +59,12 @@ object CarSelectionPanel:
         _ <- button.setBackground(colorNotSelected)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener { e =>
-          val nextIndex = calcIndex(controller.getCurrentCarIndex())
-          controller.setCurrentCarIndex(nextIndex.toInt)
-          controller.getCurrentCar().path = s"/cars/$nextIndex-${controller.getCurrentCar().tyre.toString.toLowerCase}.png"
+          val nextIndex = calcIndex(controller.currentCarIndex)
+          controller.currentCarIndex = nextIndex.toInt
+          controller.currentCar.path = s"/cars/$nextIndex-${controller.currentCar.tyre.toString.toLowerCase}.png"
           updateDisplayedCar()
           controller.updateParametersPanel()
-          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(controller.getCurrentCarIndex())}"))
+          carSelectedLabel.foreach(e => e.setText(s"Car selected: ${carNames(controller.currentCarIndex)}"))
         }
       yield button
 
