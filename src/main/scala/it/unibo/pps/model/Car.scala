@@ -10,7 +10,7 @@ case class Car(
     driver: Driver,
     var maxSpeed: Int,
     var velocity: Double,
-    drawingCarParams: DrawingCarParams
+    var drawingCarParams: DrawingCarParams
 )
 
 /*

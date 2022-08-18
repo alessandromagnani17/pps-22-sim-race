@@ -85,7 +85,7 @@ object ControllerModule:
         context.model.updateStanding()
         context.model.initSnapshot()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.cars)
+        context.view.updateCars(context.model.standing._standing)
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
@@ -97,9 +97,13 @@ object ControllerModule:
         context.view.updateDisplayedCar()
 
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
-        val support = context.model.startingPositions(prevIndex)
+        val car = context.model.startingPositions(prevIndex)
         context.model.startingPositions(prevIndex) = context.model.startingPositions(nextIndex)
-        context.model.startingPositions(nextIndex) = support
+        context.model.startingPositions(nextIndex) = car
+
+        val position = context.model.startingPositions(prevIndex).drawingCarParams.position
+        context.model.startingPositions(prevIndex).drawingCarParams.position = context.model.startingPositions(nextIndex).drawingCarParams.position
+        context.model.startingPositions(nextIndex).drawingCarParams.position = position
 
   trait Interface extends Provider with Component:
     self: Requirements =>
