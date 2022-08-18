@@ -75,14 +75,14 @@ object ParamsSelectionPanel:
 
     def updateParametersPanel(): Unit =
       tyresButtons.foreach(e => e.foreach(b => {
-        if b.getName.equals(controller.getCurrentCar().tyre.toString) then
+        if b.getName.equals(controller.currentCar.tyre.toString) then
           b.setBackground(colorSelected); b.setOpaque(true)
         else
           b.setBackground(colorNotSelected)
       }))
-      speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
-      updateStar(starAttackButtons, controller.getCurrentCar().driver.attack)
-      updateStar(starDefenseButtons, controller.getCurrentCar().driver.defense)
+      speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
+      updateStar(starAttackButtons, controller.currentCar.driver.attack)
+      updateStar(starDefenseButtons, controller.currentCar.driver.defense)
 
     private def createArrowButton(
         path: String,
@@ -94,9 +94,9 @@ object ParamsSelectionPanel:
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
-          if comparator(controller.getCurrentCar().maxSpeed) then
-            controller.setMaxSpeed(function(controller.getCurrentCar().maxSpeed, 10))
-            speedSelectedLabel.foreach(e => e.setText(controller.getCurrentCar().maxSpeed.toString))
+          if comparator(controller.currentCar.maxSpeed) then
+            controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
+            speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
         })
       yield button
 
@@ -115,7 +115,7 @@ object ParamsSelectionPanel:
                 f.setBackground(colorSelected)
                 f.setOpaque(true)
                 controller.setTyre(tyre)
-                controller.setPath(s"/cars/${controller.getCurrentCarIndex()}-${controller.getCurrentCar().tyre.toString.toLowerCase}.png")
+                controller.setPath(s"/cars/${controller.currentCarIndex}-${controller.currentCar.tyre.toString.toLowerCase}.png")
                 controller.updateDisplayedCar()
               case _ => f.setBackground(colorNotSelected)
             })
