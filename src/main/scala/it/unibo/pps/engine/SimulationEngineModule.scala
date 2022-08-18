@@ -1,10 +1,12 @@
 package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
+import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.{Car, ModelModule, Snapshot}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
+
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
@@ -12,6 +14,7 @@ import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
 
 given Conversion[String, Term] = Term.createTerm(_)
 given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
@@ -27,7 +30,7 @@ object SimulationEngineModule:
   trait Provider:
     val simulationEngine: SimulationEngine
 
-  type Requirements = ViewModule.Provider with ModelModule.Provider
+  type Requirements = ViewModule.Provider with ModelModule.Provider with ControllerModule.Provider
 
   trait Component:
     context: Requirements =>
@@ -64,24 +67,34 @@ object SimulationEngineModule:
         yield ()
 
       private def updatePositions(snapshot: Snapshot): Task[Snapshot] =
+
         for
           time <- io(snapshot.time)
           cars <- io(snapshot.cars)
           newCars = for
             car <- cars
             position = car.drawingCarParams.position
-            velocity = car.velocity
+            //velocity = car.velocity
             time = snapshot.time
-            newX = calcWithProlog(position._1, time + 1, velocity)
+            newX = calcWithProlog(car,position._1, time + 1, car.velocity)
             newPosition = (newX, position._2)
             d = DrawingCarParams(newPosition, car.drawingCarParams.color)
           yield car.copy(drawingCarParams = d)
           newSnap <- io(Snapshot(newCars, time + 1))
         yield newSnap
 
-      private def calcWithProlog(x: Int, time: Int, velocity: Double): Int =
-        val acceleration =
+      private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
+        println("ENTRO ---------2222-------")
+        val acceleration = //(2 * (725 - car.drawingCarParams.position._1)) / (time * time)
           2 //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
+
+        println("X iniziale: "+x)
+        println("Tempo: "+time)
+        println("Velocità: " + velocity)
+
+        println("MaxVel: "+car.maxSpeed)
+
+        car.velocity = acceleration * time
         engine(s"computeNewPosition($x, $velocity, $time, $acceleration, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
           .toSeq

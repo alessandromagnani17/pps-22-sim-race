@@ -104,10 +104,14 @@ object ControllerModule:
         context.view.updateParametersPanel()
 
       override def createCars(): Unit =
+        val pos = List((453, 115), (473, 129), (493, 142), (513, 155))
+        val colors = List(Color.CYAN, Color.RED, Color.BLUE, Color.GREEN)
+
         val l = for
           index <- 0 until numCars
-          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, 0, DrawingCarParams((453, 115), Color.CYAN))
+          car = Car(s"/cars/$index-hard.png", carNames(index), Tyre.HARD, Driver(1,1), 200, 0, DrawingCarParams(pos(index), colors(index)))
         yield car
+        context.model.setCars(l.toList)
         cars = l.toList
 
       override def updateDisplayedCar(): Unit =
@@ -115,6 +119,7 @@ object ControllerModule:
 
       override def displaySimulationPanel(): Unit =
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
+        context.model.setCars(cars)
         context.view.updateCars(context.model.cars)
 
       override def displayStartingPositionsPanel(): Unit =
