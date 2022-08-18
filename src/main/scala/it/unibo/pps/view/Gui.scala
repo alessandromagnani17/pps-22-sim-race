@@ -15,7 +15,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-  controller.createCars()
+  //controller.createCars()
 
   private val mainPanel = MainPanel(width, height, controller)
   private val _simulationPanel = SimulationPanel(width, height, controller)
