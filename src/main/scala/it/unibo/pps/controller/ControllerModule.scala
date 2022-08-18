@@ -82,8 +82,9 @@ object ControllerModule:
       override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense = defense
 
       override def displaySimulationPanel(): Unit =
-        context.view.displaySimulationPanel(context.model.track, context.model.standing)
+        context.model.updateStanding()
         context.model.initSnapshot()
+        context.view.displaySimulationPanel(context.model.track, context.model.standing)
         context.view.updateCars(context.model.cars)
 
       override def displayStartingPositionsPanel(): Unit =
