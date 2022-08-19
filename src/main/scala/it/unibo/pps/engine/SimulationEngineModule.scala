@@ -84,17 +84,17 @@ object SimulationEngineModule:
         yield newSnap
 
       private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
-        println("ENTRO ---------2222-------")
-        val acceleration = //(2 * (725 - car.drawingCarParams.position._1)) / (time * time)
-          2 //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
+        val acceleration = (2 * (725 - car.drawingCarParams.position._1)) / (time * time)
+          //2 //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
 
         println("X iniziale: "+x)
         println("Tempo: "+time)
         println("Velocità: " + velocity)
-
         println("MaxVel: "+car.maxSpeed)
 
+        if car.velocity <
         car.velocity = acceleration * time
+
         engine(s"computeNewPosition($x, $velocity, $time, $acceleration, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
           .toSeq

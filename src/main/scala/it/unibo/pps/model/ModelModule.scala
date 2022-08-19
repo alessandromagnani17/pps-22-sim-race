@@ -25,11 +25,7 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackBuilder().createBaseTrack()
-
-      /*TODO - Le macchine non vanno create così ma i parametri vanno inseriti usando quelli presi da initial panel
-        TODO - le posizioni di partenza devono essere quelle dello starting point corrispondente
-        TODO - in base all'ordine di partenza scelto dall'utente
-       */
+      
       private val _cars = List(
         Car("/cars/0-hard.png", "Ferrari", Tyre.SOFT, Driver(1, 1), 200, 0, DrawingCarParams((453, 115), Color.RED)),
         Car("/cars/1-hard.png", "Mercedes", Tyre.SOFT, Driver(1, 1), 200, 0, DrawingCarParams((473, 129), Color.CYAN)),
