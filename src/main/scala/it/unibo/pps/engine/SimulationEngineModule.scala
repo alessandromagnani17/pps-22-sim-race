@@ -84,16 +84,40 @@ object SimulationEngineModule:
         yield newSnap
 
       private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
-        val acceleration = (2 * (725 - car.drawingCarParams.position._1)) / (time * time)
-          //2 //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
 
+        var inizio = 453
+        var start = car.drawingCarParams.position._1
+
+        if time == 1 then
+           start = 454
+
+        val acceleration = (2 * (start - inizio)) / (time * time)
+           //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
+
+        /*
         println("X iniziale: "+x)
         println("Tempo: "+time)
         println("Velocità: " + velocity)
         println("MaxVel: "+car.maxSpeed)
+        */
 
-        if car.velocity <
-        car.velocity = acceleration * time
+        if time == 1 then
+          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/sec, assumendo che 1km = 1000pixel e 1h = 3600sec
+
+        println("car.velocity: "+car.velocity + " -- " + car.name)
+        println("acceleration: "+acceleration)
+        println("time: "+time)
+
+        val newVelocity = (car.velocity + (acceleration * time))
+
+        //println("PRIMA - newVelocity: "+newVelocity+" COMPARATO CON maxSpeed: "+car.maxSpeed)
+        //println("PRIMA - car.Velocity: "+car.velocity)
+
+        if newVelocity < car.maxSpeed then
+          car.velocity = newVelocity
+
+        //println("DOPO - car.Velocity: "+car.velocity)
+
 
         engine(s"computeNewPosition($x, $velocity, $time, $acceleration, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
