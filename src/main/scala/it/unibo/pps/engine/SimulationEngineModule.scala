@@ -85,41 +85,25 @@ object SimulationEngineModule:
 
       private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
 
-        val inizio = 453
+
+        val inizio = 253
         var start = car.drawingCarParams.position._1
-
-        if time == 1 then
-           start = 454
-
+        if time == 1 then start = 254 // Perchè la prima volta con la differenza verrebbe 0 e dopo l'accel. rimarrebbe a 0
         //val acceleration = (2 * (start - inizio)) / (time * time) + 10
-           //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
-
-        /*
-        println("X iniziale: "+x)
-        println("Tempo: "+time)
-        println("Velocità: " + velocity)
-        println("MaxVel: "+car.maxSpeed)
-        */
 
         // Accelerazione macchine di formula 1 --> 11 m/s^2
 
+        // Questa conversione se la lasceremo così sarà da spostare (magari prima di disegnare le macchina convertiamo tutte
+        // le maxSpeed di tutte le macchine)
         if time == 1 then
-          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/sec, assumendo che 1km = 1000pixel e 1h = 3600sec
+          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
 
-        if car.name.equals("Ferrari") then
-          println("car.velocity: "+car.actualSpeed + " -- " + car.name)
-          println("acceleration: "+car.acceleration+ "pixel/s^2")
-          println("time: "+time)
-
+        // Questa formula dovrebbe essere giusta ma da problemi
         val newVelocity = car.actualSpeed + (car.acceleration * time)
 
-
-
+        // Controllo per evitare che la velocià superi quella massima
         if newVelocity < car.maxSpeed then
           car.actualSpeed = newVelocity
-
-        //println("DOPO - car.Velocity: "+car.velocity)
-
 
         val newP = engine(s"computeNewPosition($x, $velocity, $time, ${car.acceleration}, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
@@ -128,15 +112,16 @@ object SimulationEngineModule:
           .toDouble
           .toInt
 
-        if car.name.equals("Ferrari") then println("nuova posizione -> " + newP)
-
-        // Tempo = 1s
-        // Accelerazione = car.acceleration
-        // Velocità = car.actualSpeed
-        // Spostamento = ???
+        if car.name.equals("Ferrari") then
+          println("car.velocity: "+car.actualSpeed + " -- " + car.name)
+          println("acceleration: "+car.acceleration+ "pixel/s^2")
+          println("time: "+time)
+          println("nuova posizione -> " + newP)
 
         //car.drawingCarParams.position._1 + 5
-        newP
+        (car.drawingCarParams.position._1 + car.acceleration).toInt // Facendo così viene bello visivamente ma il calcolo non è basato sulle formule
+        // newP
+
 
       private def getLastSnapshot(): Task[Snapshot] =
         io(context.model.getLastSnapshot())
