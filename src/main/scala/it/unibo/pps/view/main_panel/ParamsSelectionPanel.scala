@@ -96,6 +96,7 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener(e => {
           if comparator(controller.currentCar.maxSpeed) then
             controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
+            controller.incrementAcceleration()
             speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
         })
       yield button
@@ -105,7 +106,7 @@ object ParamsSelectionPanel:
         button <- JButton(text, imageLoader.load(fileName))
         _ <- button.setName(tyre.toString)
         _ <-
-          if tyre.equals(Tyre.HARD) then { button.setBackground(colorSelected); button.setOpaque(true) }
+          if tyre.equals(Tyre.SOFT) then { button.setBackground(colorSelected); button.setOpaque(true) }
           else button.setBackground(colorNotSelected)
         _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
         _ <- button.addActionListener(e => {

@@ -48,8 +48,8 @@ object SimulationEngineModule:
       override def simulationStep(): Task[Unit] =
         for
           _ <- moveCars()
-          _ <- updateStanding()
-          _ <- updateCharts()
+          //_ <- updateStanding()
+          //_ <- updateCharts()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
         yield ()
@@ -76,7 +76,7 @@ object SimulationEngineModule:
             position = car.drawingCarParams.position
             //velocity = car.velocity
             time = snapshot.time
-            newX = calcWithProlog(car,position._1, time + 1, car.velocity)
+            newX = calcWithProlog(car,position._1, time + 1, car.actualSpeed)
             newPosition = (newX, position._2)
             d = DrawingCarParams(newPosition, car.drawingCarParams.color)
           yield car.copy(drawingCarParams = d)
@@ -85,13 +85,13 @@ object SimulationEngineModule:
 
       private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
 
-        var inizio = 453
+        val inizio = 453
         var start = car.drawingCarParams.position._1
 
         if time == 1 then
            start = 454
 
-        val acceleration = (2 * (start - inizio)) / (time * time)
+        //val acceleration = (2 * (start - inizio)) / (time * time) + 10
            //TODO - ora è in pixel/s^2 --> bisogna mettere a posto le unità di misura (la vel è in km/h)
 
         /*
@@ -101,30 +101,42 @@ object SimulationEngineModule:
         println("MaxVel: "+car.maxSpeed)
         */
 
+        // Accelerazione macchine di formula 1 --> 11 m/s^2
+
         if time == 1 then
           car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/sec, assumendo che 1km = 1000pixel e 1h = 3600sec
 
-        println("car.velocity: "+car.velocity + " -- " + car.name)
-        println("acceleration: "+acceleration)
-        println("time: "+time)
+        if car.name.equals("Ferrari") then
+          println("car.velocity: "+car.actualSpeed + " -- " + car.name)
+          println("acceleration: "+car.acceleration+ "pixel/s^2")
+          println("time: "+time)
 
-        val newVelocity = (car.velocity + (acceleration * time))
+        val newVelocity = car.actualSpeed + (car.acceleration * time)
 
-        //println("PRIMA - newVelocity: "+newVelocity+" COMPARATO CON maxSpeed: "+car.maxSpeed)
-        //println("PRIMA - car.Velocity: "+car.velocity)
+
 
         if newVelocity < car.maxSpeed then
-          car.velocity = newVelocity
+          car.actualSpeed = newVelocity
 
         //println("DOPO - car.Velocity: "+car.velocity)
 
 
-        engine(s"computeNewPosition($x, $velocity, $time, $acceleration, Np)")
+        val newP = engine(s"computeNewPosition($x, $velocity, $time, ${car.acceleration}, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
           .toSeq
           .head
           .toDouble
           .toInt
+
+        if car.name.equals("Ferrari") then println("nuova posizione -> " + newP)
+
+        // Tempo = 1s
+        // Accelerazione = car.acceleration
+        // Velocità = car.actualSpeed
+        // Spostamento = ???
+
+        //car.drawingCarParams.position._1 + 5
+        newP
 
       private def getLastSnapshot(): Task[Snapshot] =
         io(context.model.getLastSnapshot())
@@ -139,7 +151,7 @@ object SimulationEngineModule:
 
       private def updateView(): Task[Unit] =
         for
-          _ <- io(println("Updating view...."))
+          //_ <- io(println("Updating view...."))
           cars <- io(context.model.getLastSnapshot().cars)
           _ <- io(context.view.updateCars(cars))
         yield ()
