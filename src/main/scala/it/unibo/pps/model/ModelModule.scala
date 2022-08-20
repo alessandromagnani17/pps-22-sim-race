@@ -2,6 +2,7 @@ package it.unibo.pps.model
 
 import it.unibo.pps.model.Car
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import scala.collection.mutable.Map
 
 import java.awt.Color
 
@@ -9,7 +10,7 @@ object ModelModule:
   trait Model:
     def track: Track
     def cars: List[Car]
-    def startingPositions: scala.collection.mutable.Map[Int, Car]
+    def startingPositions: Map[Int, Car]
     def currentCarIndex: Int
     def standing: Standing
     def getLastSnapshot(): Snapshot
@@ -39,11 +40,11 @@ object ModelModule:
 
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
-      private val _startingPositions: scala.collection.mutable.Map[Int, Car] = scala.collection.mutable.Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
+      private val _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
 
       override def currentCarIndex: Int = _currentCarIndex
       override def cars: List[Car] = _cars
-      override def startingPositions: scala.collection.mutable.Map[Int, Car] = _startingPositions
+      override def startingPositions: Map[Int, Car] = _startingPositions
       override def track: Track = _track
       override def standing: Standing = _standing
       override def getLastSnapshot(): Snapshot = history.last

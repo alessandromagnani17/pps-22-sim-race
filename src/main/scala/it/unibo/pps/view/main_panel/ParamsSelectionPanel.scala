@@ -96,7 +96,6 @@ object ParamsSelectionPanel:
         _ <- button.addActionListener(e => {
           if comparator(controller.currentCar.maxSpeed) then
             controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
-            controller.incrementAcceleration()
             speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
         })
       yield button

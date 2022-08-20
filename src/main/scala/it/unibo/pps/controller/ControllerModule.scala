@@ -30,7 +30,6 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
-    def incrementAcceleration(): Unit
 
   trait Provider:
     val controller: Controller
@@ -105,9 +104,6 @@ object ControllerModule:
         val position = context.model.startingPositions(prevIndex).drawingCarParams.position
         context.model.startingPositions(prevIndex).drawingCarParams.position = context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
-
-      override def incrementAcceleration(): Unit =
-        context.model.cars(context.model.currentCarIndex).acceleration = context.model.cars(context.model.currentCarIndex).acceleration + 0.1
 
   trait Interface extends Provider with Component:
     self: Requirements =>

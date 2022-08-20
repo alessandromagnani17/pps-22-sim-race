@@ -95,32 +95,27 @@ object SimulationEngineModule:
 
         // Questa conversione se la lasceremo così sarà da spostare (magari prima di disegnare le macchina convertiamo tutte
         // le maxSpeed di tutte le macchine)
-        if time == 1 then
-          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
+        if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
 
-        // Questa formula dovrebbe essere giusta ma da problemi
-        val newVelocity = car.actualSpeed + (car.acceleration * time)
 
-        // Controllo per evitare che la velocià superi quella massima
-        if newVelocity < car.maxSpeed then
-          car.actualSpeed = newVelocity
+        val newVelocity = engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, Ns)")
+          .map(Scala2P.extractTermToString(_, "Ns"))
+          .toSeq
+          .head
+          .toDouble
+          .toInt
 
-        val newP = engine(s"computeNewPosition($x, $velocity, $time, ${car.acceleration}, Np)")
+        if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
+
+        engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
           .toSeq
           .head
           .toDouble
           .toInt
 
-        if car.name.equals("Ferrari") then
-          println("car.velocity: "+car.actualSpeed + " -- " + car.name)
-          println("acceleration: "+car.acceleration+ "pixel/s^2")
-          println("time: "+time)
-          println("nuova posizione -> " + newP)
+        //(car.drawingCarParams.position._1 + car.acceleration).toInt // Facendo così viene bello visivamente ma il calcolo non è basato sulle formule
 
-        //car.drawingCarParams.position._1 + 5
-        (car.drawingCarParams.position._1 + car.acceleration).toInt // Facendo così viene bello visivamente ma il calcolo non è basato sulle formule
-        // newP
 
 
       private def getLastSnapshot(): Task[Snapshot] =
