@@ -28,10 +28,10 @@ object ModelModule:
       private val _track = TrackBuilder().createBaseTrack()
       
       private val _cars = List(
-        Car("/cars/0-hard.png", "Ferrari", Tyre.SOFT, Driver(1, 1), 200, 0, 2, DrawingCarParams((253, 115), Color.RED)),
-        Car("/cars/1-hard.png", "Mercedes", Tyre.SOFT, Driver(1, 1), 200, 0, 2, DrawingCarParams((273, 129), Color.CYAN)),
-        Car("/cars/2-hard.png", "Red Bull", Tyre.SOFT, Driver(1, 1), 200, 0, 2, DrawingCarParams((293, 142), Color.BLUE)),
-        Car("/cars/3-hard.png", "McLaren", Tyre.SOFT, Driver(1, 1), 200, 0, 2, DrawingCarParams((313, 155), Color.GREEN))
+        Car("/cars/0-hard.png", "Ferrari", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((253, 115), Color.RED)),
+        Car("/cars/1-hard.png", "Mercedes", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((273, 129), Color.CYAN)),
+        Car("/cars/2-hard.png", "Red Bull", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((293, 142), Color.BLUE)),
+        Car("/cars/3-hard.png", "McLaren", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((313, 155), Color.GREEN))
       )
 
       private var _standing: Standing = Standing(cars)

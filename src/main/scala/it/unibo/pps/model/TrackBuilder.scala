@@ -7,6 +7,7 @@ import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
 import it.unibo.pps.model.StartingPoint
 
+
 trait TrackBuilder:
 
   /** Method that loads a base track from a prolog file
@@ -33,7 +34,7 @@ object TrackBuilder:
       )
       track
 
-    private def loadStraights(): List[Sector.Straight] =
+    private def loadStraights(): List[Straight] =
       val l = List("ID", "X0_E", "Y0_E", "X1_E", "Y1_E", "X0_I", "Y0_I", "X1_I", "Y1_I")
       for
         s <- engine(
@@ -43,7 +44,7 @@ object TrackBuilder:
         straight = mkStraight(x)
       yield straight
 
-    private def loadTurns(): List[Sector.Turn] =
+    private def loadTurns(): List[Turn] =
       val l = List("ID", "X", "Y", "X0_E", "Y0_E", "X0_I", "Y0_I", "X1_E", "Y1_E", "X1_I", "Y1_I", "D")
       for
         s <- engine(
@@ -63,7 +64,7 @@ object TrackBuilder:
         startingPoint = mkStartingPoint(x)
       yield startingPoint
 
-    private def mkStraight(l: List[String]): Sector.Straight = l match {
+    private def mkStraight(l: List[String]): Straight = l match {
       case List(id, xP0Ex, yP0Ex, xP1Ex, yP1Ex, xP0In, yP0In, xP1In, yP1In) =>
         val d = DrawingStraightParams(
           (xP0Ex, yP0Ex),
@@ -71,10 +72,10 @@ object TrackBuilder:
           (xP0In, yP0In),
           (xP1In, yP1In)
         )
-        Sector.Straight(id, d)
+        Straight(id, d)
     }
 
-    private def mkTurn(l: List[String]): Sector.Turn = l match {
+    private def mkTurn(l: List[String]): Turn = l match {
       case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction) =>
         val d = DrawingTurnParams(
           (x_center, y_center),
@@ -84,7 +85,7 @@ object TrackBuilder:
           (x_EP_I, y_EP_I),
           direction
         )
-        Sector.Turn(id, d)
+        Turn(id, d)
     }
 
     private def mkStartingPoint(l: List[String]): StartingPoint = l match {

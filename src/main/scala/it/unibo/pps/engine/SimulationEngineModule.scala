@@ -86,18 +86,12 @@ object SimulationEngineModule:
       private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
 
 
-        val inizio = 253
-        var start = car.drawingCarParams.position._1
-        if time == 1 then start = 254 // Perchè la prima volta con la differenza verrebbe 0 e dopo l'accel. rimarrebbe a 0
-        //val acceleration = (2 * (start - inizio)) / (time * time) + 10
-
         // Accelerazione macchine di formula 1 --> 11 m/s^2
 
         // Questa conversione se la lasceremo così sarà da spostare (magari prima di disegnare le macchina convertiamo tutte
         // le maxSpeed di tutte le macchine)
         if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-
-
+        
         val newVelocity = engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, Ns)")
           .map(Scala2P.extractTermToString(_, "Ns"))
           .toSeq
@@ -107,12 +101,14 @@ object SimulationEngineModule:
 
         if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
 
-        engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
+        val newP = engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
           .map(Scala2P.extractTermToString(_, "Np"))
           .toSeq
           .head
           .toDouble
           .toInt
+
+        if newP > 725 then 725 else newP
 
         //(car.drawingCarParams.position._1 + car.acceleration).toInt // Facendo così viene bello visivamente ma il calcolo non è basato sulle formule
 

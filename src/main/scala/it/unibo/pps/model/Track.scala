@@ -1,10 +1,12 @@
 package it.unibo.pps.model
 
+
 trait Track:
   def sectors: List[Sector]
   def startingGrid: List[StartingPoint]
   def addSector(sector: Sector): Unit
   def addStartingPoint(startingPoint: StartingPoint): Unit
+  def nextSector(actualSector: Sector): Sector
 
 object Track:
   def apply(): Track =
@@ -21,3 +23,5 @@ object Track:
     override def startingGrid: List[StartingPoint] = _startingGrid
     override def addStartingPoint(startingPoint: StartingPoint): Unit =
       _startingGrid = _startingGrid :+ startingPoint
+    override def nextSector(actualSector: Sector): Sector = _sectors.filter(e => e.id == (actualSector.id + 1)).head
+

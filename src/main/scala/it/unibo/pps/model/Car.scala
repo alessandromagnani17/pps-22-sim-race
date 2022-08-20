@@ -11,6 +11,7 @@ case class Car(
   var maxSpeed: Int,
   var actualSpeed: Double,
   var acceleration: Double,
+  var actualSector: Sector,
   var drawingCarParams: DrawingCarParams
 )
 
