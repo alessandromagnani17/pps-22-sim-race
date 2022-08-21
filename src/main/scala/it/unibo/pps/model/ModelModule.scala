@@ -26,12 +26,56 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackBuilder().createBaseTrack()
-      
+
       private val _cars = List(
-        Car("/cars/0-hard.png", "Ferrari", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((253, 115), Color.RED)),
-        Car("/cars/1-hard.png", "Mercedes", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((273, 129), Color.CYAN)),
-        Car("/cars/2-hard.png", "Red Bull", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((293, 142), Color.BLUE)),
-        Car("/cars/3-hard.png", "McLaren", Tyre.SOFT, Driver(1, 1), 200, 0, 2, _track.sectors.head, DrawingCarParams((313, 155), Color.GREEN))
+        Car(
+          "/cars/0-hard.png",
+          "Ferrari",
+          Tyre.SOFT,
+          Driver(1, 1),
+          200,
+          0,
+          2,
+          _track.sectors.head,
+          168,
+          DrawingCarParams((253, 115), Color.RED)
+        ),
+        Car(
+          "/cars/1-hard.png",
+          "Mercedes",
+          Tyre.SOFT,
+          Driver(1, 1),
+          200,
+          0,
+          2,
+          _track.sectors.head,
+          154,
+          DrawingCarParams((273, 129), Color.CYAN)
+        ),
+        Car(
+          "/cars/2-hard.png",
+          "Red Bull",
+          Tyre.SOFT,
+          Driver(1, 1),
+          200,
+          0,
+          2,
+          _track.sectors.head,
+          141,
+          DrawingCarParams((293, 142), Color.BLUE)
+        ),
+        Car(
+          "/cars/3-hard.png",
+          "McLaren",
+          Tyre.SOFT,
+          Driver(1, 1),
+          200,
+          0,
+          2,
+          _track.sectors.head,
+          128,
+          DrawingCarParams((313, 155), Color.GREEN)
+        )
       )
 
       private var _standing: Standing = Standing(cars)
@@ -50,7 +94,7 @@ object ModelModule:
       override def getLastSnapshot(): Snapshot = history.last
       override def addSnapshot(snapshot: Snapshot): Unit = history = history :+ snapshot
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
-      override def initSnapshot(): Unit = addSnapshot(Snapshot(cars,0))
+      override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
 
   trait Interface extends Provider with Component

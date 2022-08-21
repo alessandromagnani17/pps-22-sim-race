@@ -8,7 +8,7 @@ import it.unibo.pps.view.simulation_panel.{DrawingStraightParams, DrawingTurnPar
   case Straight(id: Int, drawingParams: DrawingStraightParams)
   case Turn(id: Int, drawingParams: DrawingTurnParams)*/
 
-trait Sector:
+sealed trait Sector:
   def id: Int
 
 case class Straight(_id: Int, drawingParams: DrawingStraightParams) extends Sector:
