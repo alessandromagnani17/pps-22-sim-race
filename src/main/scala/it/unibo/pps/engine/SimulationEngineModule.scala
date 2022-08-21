@@ -7,6 +7,7 @@ import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
 
+import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
@@ -15,6 +16,12 @@ import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
+import it.unibo.pps.utility.PimpScala.RichInt.*
+import it.unibo.pps.utility.PimpScala.RichTuple2.*
+import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.simulation_panel.DrawingTurnParams
+
+import scala.collection.immutable.HashMap
 
 given Conversion[String, Term] = Term.createTerm(_)
 given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
@@ -38,6 +45,8 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val engine = Scala2P.createEngine("/prolog/movements.pl")
+      //private var time0 = 1
+      private var times0: HashMap[String, Int] = HashMap.empty
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -67,52 +76,67 @@ object SimulationEngineModule:
         yield ()
 
       private def updatePositions(snapshot: Snapshot): Task[Snapshot] =
-
         for
-          time <- io(snapshot.time)
+          time <- io(snapshot.time + 1)
           cars <- io(snapshot.cars)
           newCars = for
             car <- cars
             position = car.drawingCarParams.position
-            //velocity = car.velocity
-            time = snapshot.time
-            newX = calcWithProlog(car,position._1, time + 1, car.actualSpeed)
-            newPosition = (newX, position._2)
+            newPosition = calcWithProlog(car, position._1, time, car.actualSpeed)
             d = DrawingCarParams(newPosition, car.drawingCarParams.color)
           yield car.copy(drawingCarParams = d)
-          newSnap <- io(Snapshot(newCars, time + 1))
+          newSnap <- io(Snapshot(newCars, time))
         yield newSnap
 
-      private def calcWithProlog(car:Car, x: Int, time: Int, velocity: Double): Int =
+      private def calcWithProlog(car: Car, x: Int, time: Int, velocity: Double): Tuple2[Int, Int] =
+        if car.drawingCarParams.position._1 < 725 then
+          if time == 1 then
+            car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
 
+          val newVelocity = engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, Ns)")
+            .map(Scala2P.extractTermToString(_, "Ns"))
+            .toSeq
+            .head
+            .toDouble
+            .toInt
 
-        // Accelerazione macchine di formula 1 --> 11 m/s^2
+          if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
 
-        // Questa conversione se la lasceremo così sarà da spostare (magari prima di disegnare le macchina convertiamo tutte
-        // le maxSpeed di tutte le macchine)
-        if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-        
-        val newVelocity = engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, Ns)")
-          .map(Scala2P.extractTermToString(_, "Ns"))
-          .toSeq
-          .head
-          .toDouble
-          .toInt
+          val newP = engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
+            .map(Scala2P.extractTermToString(_, "Np"))
+            .toSeq
+            .head
+            .toDouble
+            .toInt
+          if newP >= 725 then
+            times0 = times0 + (car.name -> time)
+            (725, car.drawingCarParams.position._2)
+          else (newP, car.drawingCarParams.position._2)
+        else
+          readLine()
+          val t0 = times0.get(car.name).get
+          //val omega_t = 0 + car.acceleration * (time - t0)
+          val teta_t = 0.5 * car.acceleration * (time ** 2) / 360
+          val r = car.radius
+          println(s"car: ${car.name} --- teta: $teta_t ---")
+          val newX = 725 + r * Math.sin(teta_t)
+          val newY = 283 - r * Math.cos(teta_t)
+          val np = (newX.toInt, newY.toInt)
+          checkBounds(np, (725, 283), 170)
 
-        if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
-
-        val newP = engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
-          .map(Scala2P.extractTermToString(_, "Np"))
-          .toSeq
-          .head
-          .toDouble
-          .toInt
-
-        if newP > 725 then 725 else newP
-
-        //(car.drawingCarParams.position._1 + car.acceleration).toInt // Facendo così viene bello visivamente ma il calcolo non è basato sulle formule
-
-
+      private def checkBounds(p3: (Int, Int), center: (Int, Int), r: Int): (Int, Int) =
+        var dx = (p3._1 + 12, p3._2) euclideanDistance center
+        var dy = (p3._1, p3._2 + 12) euclideanDistance center
+        println(s"difference x: $dx")
+        println(s"difference y: $dy")
+        if dx - r < 0 then dx = r
+        if dy - r < 0 then dy = r
+        if dx >= r || dy >= r then
+          println("Cheeeek Bounds")
+          (p3._1 - (dx - r), p3._2 - (dy - r))
+        else
+          println(s"point position: $p3")
+          p3
 
       private def getLastSnapshot(): Task[Snapshot] =
         io(context.model.getLastSnapshot())
