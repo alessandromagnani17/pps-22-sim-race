@@ -20,6 +20,10 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
+
+    g.setColor(Color.BLUE)
+    g.drawLine(500, 0, 500, 300)
+
     g.setColor(Color.BLACK)
     // ---------------- Metodo 1 per disegnare le macchine --------------------------------------------
     //Variabili relative alle macchine
