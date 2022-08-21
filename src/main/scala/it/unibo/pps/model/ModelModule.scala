@@ -27,7 +27,7 @@ object ModelModule:
 
       private val _track = TrackBuilder().createBaseTrack()
 
-      private val _cars = List(
+      private var _cars: List[Car] = List(
         Car(
           "/cars/0-hard.png",
           "Ferrari",
@@ -100,5 +100,4 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
-
   trait Interface extends Provider with Component

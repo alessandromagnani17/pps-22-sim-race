@@ -77,9 +77,11 @@ object ControllerModule:
 
       override def setMaxSpeed(speed: Int): Unit = context.model.cars(context.model.currentCarIndex).maxSpeed = speed
 
-      override def setAttack(attack: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.attack = attack
+      override def setAttack(attack: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.attack =
+        attack
 
-      override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense = defense
+      override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense =
+        defense
 
       override def displaySimulationPanel(): Unit =
         context.model.updateStanding()
@@ -102,7 +104,8 @@ object ControllerModule:
         context.model.startingPositions(nextIndex) = car
 
         val position = context.model.startingPositions(prevIndex).drawingCarParams.position
-        context.model.startingPositions(prevIndex).drawingCarParams.position = context.model.startingPositions(nextIndex).drawingCarParams.position
+        context.model.startingPositions(prevIndex).drawingCarParams.position =
+          context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
 
   trait Interface extends Provider with Component:
