@@ -115,13 +115,6 @@ object SimulationEngineModule:
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration, i))
         yield (newP, car.drawingCarParams.position._2)
-      /*val x = car.drawingCarParams.position._1
-        if time == 1 then
-          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-        val newVelocity = movementsManager.newVelocityStraight(car, time, car.acceleration)
-        if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
-        val newP = movementsManager.newPositionStraight(x, velocity, time, car.acceleration)
-        (newP, car.drawingCarParams.position._2)*/
 
       private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
         for
@@ -140,18 +133,7 @@ object SimulationEngineModule:
               else (newP, car.drawingCarParams.position._2)
           })
         yield p
-      /*val x = car.drawingCarParams.position._1
-        if time == 1 then
-          car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-        val newVelocity = movementsManager.newVelocityStraight(car, time, 1)
-        if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
-        val newP = movementsManager.newPositionStraight(x, velocity, time, 1)
-        if newP >= 725 then
-          times0 = times0 + (car.name -> 0)
-          //(725, car.drawingCarParams.position._2)
-          turn(car, time, velocity)
-        else (newP, car.drawingCarParams.position._2)
-       */
+
       private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] =
         d match {
           case DrawingTurnParams(center, _, _, _, _, direction, _) =>
@@ -160,7 +142,6 @@ object SimulationEngineModule:
             val teta_t = 0.5 * car.acceleration * (t0 ** 2)
             times0(car.name) = times0(car.name) + 1
             val r = car.radius
-            println(s"${car.name} ------ $center")
             var newX = 0.0
             var newY = 0.0
             var np = (0, 0)
@@ -168,24 +149,28 @@ object SimulationEngineModule:
               newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
               newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
               np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, (725, 283), 170, direction)
+              np = checkBounds(np, center, 170, direction)
             else
               newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
               newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
               np = (newX.toInt, newY.toInt)
-            //println(newX + " " + newY)
+              np = checkBounds(np, center, 170, direction)
             np
 
         }
 
       private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
-        var dx = (p._1 + (12 * direction), p._2) euclideanDistance center
-        var dy = (p._1, p._2 + (12 * direction)) euclideanDistance center
+        var dx = 0
+        var dy = 0
+        if direction == 1 then
+          dx = (p._1 + 12, p._2) euclideanDistance center
+          dy = (p._1, p._2 + 12) euclideanDistance center
+        else
+          dx = (p._1 - 12, p._2) euclideanDistance center
+          dy = (p._1, p._2 + 12) euclideanDistance center
         if dx - r < 0 then dx = r
         if dy - r < 0 then dy = r
-        if dx >= r || dy >= r then
-          println("Check bounds")
-          (p._1 - (dx - r), p._2 - (dy - r))
+        if dx >= r || dy >= r then (p._1 - (dx - r), p._2 - (dy - r))
         else p
 
       private def updateCharts(): Task[Unit] =

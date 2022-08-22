@@ -53,13 +53,13 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
     g.drawRect(0, 0, w, h)
 
   private def drawStraigth(s: Straight, g: Graphics): Unit = s.drawingParams match {
-    case DrawingStraightParams(p0External, p1External, p0Internal, p1Internal, endX) =>
+    case DrawingStraightParams(p0External, p1External, p0Internal, p1Internal, _) =>
       g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
   }
 
   private def drawTurn(t: Turn, g: Graphics): Unit = t.drawingParams match {
-    case DrawingTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction) =>
+    case DrawingTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction, _) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
       drawSingleTurn(externalRadius, center, 2 * externalRadius, direction, g)
