@@ -1,6 +1,6 @@
 %x0 + v * t + 0.5 * acc * t^2
 
-computeNewPositionForStraight(Coord, Vel, Time, Acc, Np) :- pow(Time, 2, TimeSquared), Np is Coord + ((Vel * Time + 0.5 * Acc * TimeSquared) / 40).
+computeNewPositionForStraight(Coord, Vel, Time, Acc, I, Np) :- pow(Time, 2, TimeSquared), Np is Coord + (((Vel * Time + 0.5 * Acc * TimeSquared) / 40) * I).
 
 computeNewVelocity(Speed, Acc, Time, Ns) :- Ns is Speed + (Acc * Time).
 
