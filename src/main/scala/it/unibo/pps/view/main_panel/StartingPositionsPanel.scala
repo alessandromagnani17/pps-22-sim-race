@@ -34,7 +34,7 @@ object StartingPositionsPanel:
     startingPositionsPanel foreach (e => self.add(e))
 
     private def createMap(): scala.collection.mutable.Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
-      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = scala.collection.mutable.Map.empty
+      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = Map.empty
       for i <- 0 until numCars do
         map += (i -> (createLabel(s"/cars/miniatures/$i.png", Dimension((width * 0.3).toInt, (height * 0.15).toInt), SwingConstants.CENTER, true),
           createLabel(s"${i + 1}. ", Dimension((width * 0.05).toInt, labelHeight), SwingConstants.LEFT,false),

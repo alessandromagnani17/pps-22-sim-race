@@ -100,4 +100,5 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
+
   trait Interface extends Provider with Component

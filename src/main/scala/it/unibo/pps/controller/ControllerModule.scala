@@ -1,7 +1,7 @@
 package it.unibo.pps.controller
 
 import it.unibo.pps.engine.SimulationEngineModule
-import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Tyre}
+import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Standing, Tyre}
 import it.unibo.pps.view.ViewModule
 import it.unibo.pps.view.main_panel.ImageLoader
 import monix.execution.Scheduler.Implicits.global
@@ -10,6 +10,8 @@ import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
 
 import java.awt.Color
+import scala.collection.mutable
+import scala.collection.mutable.Map
 
 object ControllerModule:
   trait Controller:
@@ -17,6 +19,7 @@ object ControllerModule:
     def notifyStop(): Unit
     def notifyDecreseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
+    def startingPositions: Map[Int, Car]
     def currentCar: Car
     def currentCarIndex: Int
     def currentCarIndex_=(index: Int): Unit
@@ -64,6 +67,8 @@ object ControllerModule:
 
       override def notifyIncreaseSpeed(): Unit =
         context.simulationEngine.increaseSpeed()
+
+      override def startingPositions: mutable.Map[Int, Car] = context.model.startingPositions
 
       override def currentCar: Car = context.model.cars(context.model.currentCarIndex)
 
