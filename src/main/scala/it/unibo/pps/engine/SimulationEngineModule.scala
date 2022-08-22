@@ -24,6 +24,7 @@ import scala.collection.mutable.HashMap
 import it.unibo.pps.model.Phase
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
+given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
 
 object SimulationEngineModule:
   trait SimulationEngine:
@@ -65,7 +66,7 @@ object SimulationEngineModule:
 
       private def moveCars(): Task[Unit] =
         for
-          lastSnap <- getLastSnapshot()
+          lastSnap <- io(context.model.getLastSnapshot())
           newSnap <- updatePositions(lastSnap)
           _ <- io(context.model.addSnapshot(newSnap))
         yield ()
@@ -77,15 +78,13 @@ object SimulationEngineModule:
           newCars = for
             car <- cars
             position = car.drawingCarParams.position
-            newPosition = calcWithProlog(car, time, car.actualSpeed)
+            newPosition = findNewPosition(car, time, car.actualSpeed)
             d = DrawingCarParams(newPosition, car.drawingCarParams.color)
           yield car.copy(drawingCarParams = d)
           newSnap <- io(Snapshot(newCars, time))
         yield newSnap
 
-      given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
-
-      private def calcWithProlog(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
+      private def findNewPosition(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => acc(car, time, velocity)
           case Phase.Deceleration => dec(car, time, velocity)
@@ -108,8 +107,21 @@ object SimulationEngineModule:
         val newP = movementsManager.newPositionStraight(x, velocity, time, car.acceleration)
         (newP, car.drawingCarParams.position._2)*/
 
-      private def dec(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
-        val x = car.drawingCarParams.position._1
+      private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
+        for
+          x <- io(car.drawingCarParams.position._1)
+          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
+          newVelocity <- io(movementsManager.newVelocityStraight(car, time, 1))
+          _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
+          newP <- io(movementsManager.newPositionStraight(x, velocity, time, 1))
+          p <- io(
+            if newP >= 725 then
+              times0 = times0 + (car.name -> 0)
+              turn(car, time, velocity)
+            else (newP, car.drawingCarParams.position._2)
+          )
+        yield p
+      /*val x = car.drawingCarParams.position._1
         if time == 1 then
           car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
         val newVelocity = movementsManager.newVelocityStraight(car, time, 1)
@@ -117,9 +129,10 @@ object SimulationEngineModule:
         val newP = movementsManager.newPositionStraight(x, velocity, time, 1)
         if newP >= 725 then
           times0 = times0 + (car.name -> 0)
-          (725, car.drawingCarParams.position._2)
+          //(725, car.drawingCarParams.position._2)
+          turn(car, time, velocity)
         else (newP, car.drawingCarParams.position._2)
-
+       */
       private def turn(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
         val x = car.drawingCarParams.position._1
         val t0 = times0.get(car.name).get
@@ -198,9 +211,6 @@ object SimulationEngineModule:
         if dy - r < 0 then dy = r
         if dx >= r || dy >= r then (p3._1 - (dx - r), p3._2 - (dy - r))
         else p3
-
-      private def getLastSnapshot(): Task[Snapshot] =
-        io(context.model.getLastSnapshot())
 
       private def updateCharts(): Task[Unit] =
         for _ <- io(println("Updating charts...."))

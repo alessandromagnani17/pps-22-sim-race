@@ -19,7 +19,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val _simulationPanel = SimulationPanel(width, height, controller)
   private val startingPositionsPanel = StartingPositionsPanel((width * 0.4).toInt, (height * 0.4).toInt, controller)
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
-  private val startingPositionsFrame = createFrame("starting-positions", (width * 0.35).toInt, (height * 0.45).toInt, WindowConstants.HIDE_ON_CLOSE)
+  private val startingPositionsFrame =
+    createFrame("starting-positions", (width * 0.35).toInt, (height * 0.45).toInt, WindowConstants.HIDE_ON_CLOSE)
 
   private lazy val p =
     for
@@ -28,7 +29,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       _ <- fr.setVisible(true)
     yield ()
   p.runSyncUnsafe()
-  
+
   def simulationPanel = _simulationPanel
 
   private def createFrame(title: String, width: Int, height: Int, closeOperation: Int): Task[JFrame] =
@@ -36,7 +37,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
       fr <- new JFrame(title)
       _ <- fr.setSize(width, height)
       _ <- fr.setLocationRelativeTo(null)
-      _ <- fr.setResizable(true)
+      _ <- fr.setResizable(false)
       _ <- fr.setDefaultCloseOperation(closeOperation)
       _ <- fr.setVisible(true)
     yield fr
@@ -66,5 +67,3 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
-
-
