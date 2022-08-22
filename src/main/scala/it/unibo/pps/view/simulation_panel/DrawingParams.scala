@@ -19,7 +19,8 @@ case class DrawingStraightParams(
     p0External: Point2d[Int, Int],
     p1External: Point2d[Int, Int],
     p0Internal: Point2d[Int, Int],
-    p1Internal: Point2d[Int, Int]
+    p1Internal: Point2d[Int, Int],
+    endX: Int
 ) extends DrawingParams
 
 /** Params needed to render a Turn sector: a turn is composed by two concentrics circumference arcs, one external and
@@ -41,7 +42,8 @@ case class DrawingTurnParams(
     startPointI: Point2d[Int, Int],
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
-    direction: Int
+    direction: Int,
+    endX: Int
 ) extends DrawingParams
 
 /** Parames needed to render a car

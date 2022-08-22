@@ -5,7 +5,7 @@ import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import it.unibo.pps.model.{Straight, Turn}
-
+/*
 class TestTrack extends AnyFlatSpec with Matchers:
 
   "An empty track" should "return an empty List" in {
@@ -40,3 +40,4 @@ class TestTrack extends AnyFlatSpec with Matchers:
       )
       .size shouldBe 2
   }
+ */

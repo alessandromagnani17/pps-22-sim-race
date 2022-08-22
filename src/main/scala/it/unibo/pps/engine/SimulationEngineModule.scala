@@ -3,10 +3,11 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, ModelModule, Snapshot}
+import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
+
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -14,14 +15,13 @@ import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.view.simulation_panel.{DrawingCarParams, DrawingParams, DrawingStraightParams, DrawingTurnParams}
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.view.simulation_panel.DrawingTurnParams
+
 import scala.collection.mutable.HashMap
-import it.unibo.pps.model.Phase
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
@@ -77,27 +77,43 @@ object SimulationEngineModule:
           cars <- io(snapshot.cars)
           newCars = for
             car <- cars
-            position = car.drawingCarParams.position
-            newPosition = findNewPosition(car, time, car.actualSpeed)
-            d = DrawingCarParams(newPosition, car.drawingCarParams.color)
+            newPosition = findNewPosition(car, time)
+            d = car.drawingCarParams.copy(position = newPosition)
           yield car.copy(drawingCarParams = d)
           newSnap <- io(Snapshot(newCars, time))
         yield newSnap
 
-      private def findNewPosition(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
+      private def findNewPosition(car: Car, time: Int): Tuple2[Int, Int] = car.actualSector match {
+        case Straight(_, _) => straightMovement(car, time)
+        case Turn(_, _) => turnMovement(car, time)
+      }
+
+      private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
-          case Phase.Acceleration => acc(car, time, velocity)
-          case Phase.Deceleration => dec(car, time, velocity)
-          case Phase.Ended => turn(car, time, velocity)
+          case Phase.Acceleration => acc(car, time, car.actualSpeed)
+          case Phase.Deceleration => dec(car, time, car.actualSpeed)
+          case Phase.Ended =>
+            car.actualSector = context.model.track.nextSector(car.actualSector)
+            turnMovement(car, time)
+        }
+
+      private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
+        car.actualSector.phase(car.drawingCarParams.position) match {
+          case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
+          case Phase.Ended =>
+            car.actualSector = context.model.track.nextSector(car.actualSector)
+            straightMovement(car, time)
+          case Phase.Deceleration => (0, 0)
         }
 
       private def acc(car: Car, time: Int, velocity: Double): Task[(Int, Int)] =
         for
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraight(car, time, car.acceleration))
+          newVelocity <- io(movementsManager.newVelocityStraightAcc(car, time, car.acceleration))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration))
+          i <- io(if car.actualSector.id == 1 then 1 else -1)
+          newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration, i))
         yield (newP, car.drawingCarParams.position._2)
       /*val x = car.drawingCarParams.position._1
         if time == 1 then
@@ -111,15 +127,18 @@ object SimulationEngineModule:
         for
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraight(car, time, 1))
+          newVelocity <- io(movementsManager.newVelocityStraightDec(car, time, 1))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, time, 1))
-          p <- io(
-            if newP >= 725 then
-              times0 = times0 + (car.name -> 0)
-              turn(car, time, velocity)
-            else (newP, car.drawingCarParams.position._2)
-          )
+          i <- io(if car.actualSector.id == 1 then 1 else -1)
+          newP <- io(movementsManager.newPositionStraight(x, velocity, time, 1, i))
+          p <- io(car.actualSector.drawingParams match {
+            case DrawingStraightParams(_, _, _, _, endX) =>
+              val d = (newP - endX) * i
+              if d >= 0 then
+                times0(car.name) = 0
+                (endX, car.drawingCarParams.position._2)
+              else (newP, car.drawingCarParams.position._2)
+          })
         yield p
       /*val x = car.drawingCarParams.position._1
         if time == 1 then
@@ -133,84 +152,41 @@ object SimulationEngineModule:
           turn(car, time, velocity)
         else (newP, car.drawingCarParams.position._2)
        */
-      private def turn(car: Car, time: Int, velocity: Double): Tuple2[Int, Int] =
-        val x = car.drawingCarParams.position._1
-        val t0 = times0.get(car.name).get
-        val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-        times0(car.name) = times0(car.name) + 1
-        val r = car.radius
-        val newX = 725 + r * Math.sin(Math.toRadians(teta_t))
-        val newY = 283 - r * Math.cos(Math.toRadians(teta_t))
-        val np = (newX.toInt, newY.toInt)
-        checkBounds(np, (725, 283), 170)
+      private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] =
+        d match {
+          case DrawingTurnParams(center, _, _, _, _, direction, _) =>
+            val x = car.drawingCarParams.position._1
+            val t0 = times0.get(car.name).get
+            val teta_t = 0.5 * car.acceleration * (t0 ** 2)
+            times0(car.name) = times0(car.name) + 1
+            val r = car.radius
+            println(s"${car.name} ------ $center")
+            var newX = 0.0
+            var newY = 0.0
+            var np = (0, 0)
+            if direction == 1 then
+              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
+              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
+              np = (newX.toInt, newY.toInt)
+              np = checkBounds(np, (725, 283), 170, direction)
+            else
+              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
+              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
+              np = (newX.toInt, newY.toInt)
+            //println(newX + " " + newY)
+            np
 
-      /*if car.drawingCarParams.position._1 < 725 then
-          if car.drawingCarParams.position._1 < 500 then
+        }
 
-            if time == 1 then
-              car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-
-            val newVelocity = engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time,  Ns)")
-              .map(Scala2P.extractTermToString(_, "Ns"))
-              .toSeq
-              .head
-              .toDouble
-              .toInt
-
-            if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
-
-            val newP = engine(s"computeNewPositionForStraight($x, $velocity, $time, ${car.acceleration}, Np)")
-              .map(Scala2P.extractTermToString(_, "Np"))
-              .toSeq
-              .head
-              .toDouble
-              .toInt
-
-            if newP >= 725 then (725, car.drawingCarParams.position._2)
-            else (newP, car.drawingCarParams.position._2)
-          else
-
-            if time == 1 then
-              car.maxSpeed = (car.maxSpeed / 3.6).toInt //pixel/s, assumendo che 1km = 1000pixel e 1h = 3600sec
-
-            val newVelocity = engine(s"computeNewVelocityDeceleration(${car.actualSpeed}, 1, $time, Ns)")
-              .map(Scala2P.extractTermToString(_, "Ns"))
-              .toSeq
-              .head
-              .toDouble
-              .toInt
-
-            if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity
-
-            val newP = engine(s"computeNewPositionForStraight($x, $velocity, $time, 1, Np)")
-              .map(Scala2P.extractTermToString(_, "Np"))
-              .toSeq
-              .head
-              .toDouble
-              .toInt
-
-            if newP >= 725 then
-              times0 = times0 + (car.name -> 0)
-              (725, car.drawingCarParams.position._2)
-            else (newP, car.drawingCarParams.position._2)
-        else
-          //readLine()
-          val t0 = times0.get(car.name).get
-          val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-          times0(car.name) = times0(car.name) + 1
-          val r = car.radius
-          val newX = 725 + r * Math.sin(Math.toRadians(teta_t))
-          val newY = 283 - r * Math.cos(Math.toRadians(teta_t))
-          val np = (newX.toInt, newY.toInt)
-          checkBounds(np, (725, 283), 170)
-       */
-      private def checkBounds(p3: (Int, Int), center: (Int, Int), r: Int): (Int, Int) =
-        var dx = (p3._1 + 12, p3._2) euclideanDistance center
-        var dy = (p3._1, p3._2 + 12) euclideanDistance center
+      private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
+        var dx = (p._1 + (12 * direction), p._2) euclideanDistance center
+        var dy = (p._1, p._2 + (12 * direction)) euclideanDistance center
         if dx - r < 0 then dx = r
         if dy - r < 0 then dy = r
-        if dx >= r || dy >= r then (p3._1 - (dx - r), p3._2 - (dy - r))
-        else p3
+        if dx >= r || dy >= r then
+          println("Check bounds")
+          (p._1 - (dx - r), p._2 - (dy - r))
+        else p
 
       private def updateCharts(): Task[Unit] =
         for _ <- io(println("Updating charts...."))
