@@ -26,6 +26,7 @@ trait SimulationPanel extends JPanel:
   /** Method for rendering the new snapshot of the simulation */
   def render(cars: List[Car]): Unit
   def renderTrack(track: Track): Unit
+  def updateDisplayedStanding(): Unit
   def updateStanding(newStanding: Standing): Unit
 
 object SimulationPanel:
@@ -89,6 +90,8 @@ object SimulationPanel:
     private def createPositions(): Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
       val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] = Map.empty
 
+      controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
+
       controller.startingPositions.foreach(e => {
         map += (e._1 -> (createLabel((e._1 + 1).toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
           createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
@@ -119,7 +122,7 @@ object SimulationPanel:
       scrollPanel <- chartsPanel
       startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => controller.notifyStop())
-      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
+      incVelocityButton <- createButton("+ Velocity", e => {controller.notifyIncreaseSpeed()})
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
       s <- standing
       buttonsPanel = new JPanel()
@@ -192,6 +195,14 @@ object SimulationPanel:
       yield ()
       p.runSyncUnsafe()
     }
+
+    override def updateDisplayedStanding(): Unit =
+      standingMap.foreach(e => {
+        e._2._2.foreach(f => f.setText(controller.startingPositions(e._1).name))
+        e._2._3.foreach(f => f.setBackground(controller.startingPositions(e._1).drawingCarParams.color))
+        e._2._4.foreach(f => f.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(controller.startingPositions(e._1).name)).get._1}.png")))
+        e._2._5.foreach(f => f.setText(controller.startingPositions(e._1).tyre.toString))
+      })
 
     override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
       val p = for

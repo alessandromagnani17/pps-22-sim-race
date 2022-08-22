@@ -8,6 +8,7 @@ import it.unibo.pps.view.ViewConstants.*
 object ViewModule:
   trait View:
     def updateDisplayedCar(): Unit
+    def updateDisplayedStanding(): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
     def displaySimulationPanel(track: Track, standing: Standing): Unit
@@ -25,6 +26,8 @@ object ViewModule:
 
       override def updateDisplayedCar(): Unit =
         gui.updateDisplayedCar()
+
+      override def updateDisplayedStanding(): Unit = gui.updateDisplayedStanding()
 
       override def displaySimulationPanel(track: Track, standing: Standing): Unit =
         gui.displaySimulationPanel(track, standing)

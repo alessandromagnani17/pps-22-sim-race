@@ -47,6 +47,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
 
+  def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
+
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for
       fr <- frame
