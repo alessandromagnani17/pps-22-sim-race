@@ -21,6 +21,9 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
 
+    g.setColor(Color.MAGENTA)
+    g.drawString("LAP: 1", 449, 60)
+
     g.setColor(Color.BLUE)
     g.drawLine(500, 0, 500, 300)
 
