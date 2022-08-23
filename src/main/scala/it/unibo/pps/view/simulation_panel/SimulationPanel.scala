@@ -2,8 +2,32 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
-import javax.swing.{BorderFactory, BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
+import java.awt.{
+  BorderLayout,
+  Color,
+  Component,
+  Dimension,
+  FlowLayout,
+  Graphics,
+  GridBagConstraints,
+  GridBagLayout,
+  GridLayout
+}
+import javax.swing.{
+  BorderFactory,
+  BoxLayout,
+  JButton,
+  JComponent,
+  JLabel,
+  JList,
+  JPanel,
+  JScrollPane,
+  JTable,
+  JTextArea,
+  SwingConstants,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
@@ -59,12 +83,12 @@ object SimulationPanel:
         chartTyres <- createChart("Degradation", "Virtual Time", "Degradation")
         _ <- chartFuel.addSeries("Ferrari")
         _ <- chartFuel.addSeries("Mercedes")
-        _ <- chartFuel.addValue(1, 2, "Ferrari")
-        _ <- chartFuel.addValue(3, 5, "Ferrari")
-        _ <- chartFuel.addValue(6, 4, "Ferrari")
-        _ <- chartFuel.addValue(2, 4, "Mercedes")
-        _ <- chartFuel.addValue(5, 8, "Mercedes")
-        _ <- chartFuel.addValue(6, 6, "Mercedes")
+        //_ <- chartFuel.addValue(1, 2, "Ferrari")
+        //_ <- chartFuel.addValue(3, 5, "Ferrari")
+        //_ <- chartFuel.addValue(6, 4, "Ferrari")
+        // _ <- chartFuel.addValue(2, 4, "Mercedes")
+        // _ <- chartFuel.addValue(5, 8, "Mercedes")
+        //_ <- chartFuel.addValue(6, 6, "Mercedes")
         chartVelP <- chartVel.wrapToPanel()
         chartFuelP <- chartFuel.wrapToPanel()
         chartTyresP <- chartTyres.wrapToPanel()
@@ -77,12 +101,14 @@ object SimulationPanel:
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED)
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
+        _ <- controller.registerCallback()
       yield sp
 
     private lazy val standingMap = createPositions()
 
     private lazy val standing =
-      for panel <- JPanel()
+      for
+        panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_PANEL_HEIGHT))
       yield panel
 
@@ -93,11 +119,15 @@ object SimulationPanel:
       //controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
 
       controller.startingPositions.foreach(e => {
-        map += (e._1 -> (createLabel((e._1 + 1).toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-          createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
+        map += (e._1 -> (createLabel(
+          (e._1 + 1).toString,
+          Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT),
+          false
+        ),
+        createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(s"/cars/miniatures/${e._1}.png", null, true),
+        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
       })
       map
 
@@ -113,13 +143,13 @@ object SimulationPanel:
       scrollPanel <- chartsPanel
       startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => controller.notifyStop())
-      incVelocityButton <- createButton("+ Velocity", e => {controller.notifyIncreaseSpeed()})
+      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
       s <- standing
       buttonsPanel = new JPanel()
-      _ <- buttonsPanel.setPreferredSize(Dimension(width,BUTTONS_PANEL_HEIGHT))
+      _ <- buttonsPanel.setPreferredSize(Dimension(width, BUTTONS_PANEL_HEIGHT))
       mainPanel = new JPanel()
-      _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT*0.9).toInt))
+      _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT * 0.9).toInt))
       _ <- buttonsPanel.add(startButton)
       _ <- buttonsPanel.add(stopButton)
       _ <- buttonsPanel.add(incVelocityButton)
@@ -133,7 +163,10 @@ object SimulationPanel:
     yield ()
     p.runAsyncAndForget
 
-    private def addToPanel(elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])), mainPanel: JPanel): Task[Unit] =
+    private def addToPanel(
+        elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])),
+        mainPanel: JPanel
+    ): Task[Unit] =
       val start = 0
       val p = for
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
@@ -188,18 +221,24 @@ object SimulationPanel:
     }
 
     override def updateDisplayedStanding(): Unit =
-      standingMap.foreach(e => {
+      standingMap.foreach { e =>
         e._2._2.foreach(f => f.setText(controller.startingPositions(e._1).name))
         e._2._3.foreach(f => f.setBackground(controller.startingPositions(e._1).drawingCarParams.color))
-        e._2._4.foreach(f => f.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(controller.startingPositions(e._1).name)).get._1}.png")))
+        e._2._4.foreach(f =>
+          f.setIcon(
+            imageLoader.load(
+              s"/cars/miniatures/${carNames.find(_._2.equals(controller.startingPositions(e._1).name)).get._1}.png"
+            )
+          )
+        )
         e._2._5.foreach(f => f.setText(controller.startingPositions(e._1).tyre.toString))
-      })
+      }
 
     override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
-      val p = for
-        s <- standing
+      val p =
+        for s <- standing
         //_ <- s.setText(getPrintableStanding(newStanding))
-      yield ()
+        yield ()
       p.runSyncUnsafe()
     }
 

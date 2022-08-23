@@ -45,7 +45,8 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
-      private var times0: HashMap[String, Int] = HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
+      private var times0: HashMap[String, Int] =
+        HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
       private var curvaFatta: Boolean = false
 
       override def decreaseSpeed(): Unit =
@@ -92,16 +93,13 @@ object SimulationEngineModule:
       }
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
-
-        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+        //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
 
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => acc(car, time, car.actualSpeed)
           case Phase.Deceleration => dec(car, time, car.actualSpeed)
           case Phase.Ended =>
-
-            if car.name == "Ferrari" then
-              println("---------- CURVA ----------")
+            if car.name == "Ferrari" then println("---------- CURVA ----------")
 
             car.actualSector = context.model.track.nextSector(car.actualSector)
             checkLap(car)
@@ -111,11 +109,10 @@ object SimulationEngineModule:
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
-        //println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
+      //println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
-
-        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+        //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
 
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
@@ -137,7 +134,7 @@ object SimulationEngineModule:
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, car.acceleration, i))
-          _ <- io(times0(car.name) = times0(car.name)+1)
+          _ <- io(times0(car.name) = times0(car.name) + 1)
         yield (newP, car.drawingCarParams.position._2)
 
       private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
@@ -156,7 +153,7 @@ object SimulationEngineModule:
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
-          _ <- io(times0(car.name) = times0(car.name)+1)
+          _ <- io(times0(car.name) = times0(car.name) + 1)
         yield p
 
       private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] =
@@ -200,7 +197,7 @@ object SimulationEngineModule:
 
       private def updateCharts(): Task[Unit] =
         for _ <- context.view.updateDisplayedStanding()
-          yield ()
+        yield ()
 
       private def updateStanding(): Task[Unit] =
         for
@@ -224,15 +221,25 @@ object SimulationEngineModule:
           e._1 match
             case Straight(id, _) =>
               if id == 1 then
-                e._2.sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
-              else e._2.sortWith(_.drawingCarParams.position._1 < _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
-            case Turn(id, _) =>
-              if id == 2 then e._2.sortWith(_.drawingCarParams.position._2 > _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+                e._2
+                  .sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1)
+                  .foreach(e => l1 = l1.concat(List(e)))
               else
-                e._2.sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+                e._2
+                  .sortWith(_.drawingCarParams.position._1 < _.drawingCarParams.position._1)
+                  .foreach(e => l1 = l1.concat(List(e)))
+            case Turn(id, _) =>
+              if id == 2 then
+                e._2
+                  .sortWith(_.drawingCarParams.position._2 > _.drawingCarParams.position._2)
+                  .foreach(e => l1 = l1.concat(List(e)))
+              else
+                e._2
+                  .sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2)
+                  .foreach(e => l1 = l1.concat(List(e)))
         })
-        Map.from(l1.zipWithIndex.map{ case (k,v) => (v,k) })
-      
+        Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) })
+
       private def updateView(): Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)

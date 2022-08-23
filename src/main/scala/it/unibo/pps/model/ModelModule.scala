@@ -2,9 +2,13 @@ package it.unibo.pps.model
 
 import it.unibo.pps.model.Car
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
-
+import monix.reactive.MulticastStrategy
+import monix.reactive.subjects.ConcurrentSubject
+import monix.execution.Scheduler.Implicits.global
 import scala.collection.mutable.Map
 import java.awt.Color
+import monix.execution.{Ack, Cancelable}
+import concurrent.{Future, Promise}
 
 object ModelModule:
   trait Model:
@@ -21,6 +25,11 @@ object ModelModule:
     def actualLap_=(lap: Int): Unit
     def updateStanding(): Unit
     def addSnapshot(snapshot: Snapshot): Unit
+    def registerCallbackHistory(
+        onNext: List[Snapshot] => Future[Ack],
+        onError: Throwable => Unit,
+        onComplete: () => Unit
+    ): Cancelable
 
   trait Provider:
     val model: Model
@@ -143,7 +152,6 @@ object ModelModule:
           //DrawingCarParams((725, 155), Color.GREEN)
         )
       )
-      
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 
@@ -153,6 +161,15 @@ object ModelModule:
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
 
+      //REACTIVE CHARTS
+      private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+      override def registerCallbackHistory(
+          onNext: List[Snapshot] => Future[Ack],
+          onError: Throwable => Unit,
+          onComplete: () => Unit
+      ): Cancelable =
+        historySubject.subscribe(onNext, onError, onComplete)
+
       override def currentCarIndex: Int = _currentCarIndex
       override def cars: List[Car] = _cars
       override def startingPositions: Map[Int, Car] = _startingPositions
@@ -160,7 +177,9 @@ object ModelModule:
       override def actualLap: Int = _actualLap
       override def standing: Standing = _standing
       override def getLastSnapshot(): Snapshot = history.last
-      override def addSnapshot(snapshot: Snapshot): Unit = history = history :+ snapshot
+      override def addSnapshot(snapshot: Snapshot): Unit =
+        history = history :+ snapshot
+        historySubject.onNext(history)
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def startingPositions_=(startingPos: Map[Int, Car]): Unit = _startingPositions = startingPos
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
