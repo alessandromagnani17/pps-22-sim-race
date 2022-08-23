@@ -44,10 +44,7 @@ object SimulationEngineModule:
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
       private var times0: HashMap[String, Int] = HashMap.empty
-
-      ///
       private var curvaFatta: Boolean = false
-      ///
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -103,16 +100,23 @@ object SimulationEngineModule:
               println("---------- CURVA ----------")
 
             car.actualSector = context.model.track.nextSector(car.actualSector)
+            checkLap(car)
             turnMovement(car, time)
         }
+
+      private def checkLap(car: Car): Unit =
+        if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
+        if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
+        println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
-             curvaFatta = true
+            curvaFatta = true
             car.actualSector = context.model.track.nextSector(car.actualSector)
             car.actualSpeed = 20
+            checkLap(car)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
         }
@@ -229,11 +233,13 @@ object SimulationEngineModule:
         x.foreach(e => {
           e._1 match
             case Straight(id, _) =>
-              if id == 1 then e._2.sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
+              if id == 1 then
+                e._2.sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
               else e._2.sortWith(_.drawingCarParams.position._1 < _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
             case Turn(id, _) =>
               if id == 2 then e._2.sortWith(_.drawingCarParams.position._2 > _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
-              else e._2.sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+              else
+                e._2.sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
         })
         Map.from(l1.zipWithIndex.map{ case (k,v) => (v,k) })
       

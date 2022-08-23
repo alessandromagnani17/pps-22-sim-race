@@ -9,6 +9,7 @@ case class Car(
     var tyre: Tyre,
     driver: Driver,
     var maxSpeed: Int,
+    var actualLap: Int,
     var actualSpeed: Double,
     var acceleration: Double,
     var actualSector: Sector,
