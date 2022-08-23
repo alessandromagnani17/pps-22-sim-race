@@ -1,38 +1,24 @@
-package it.unibo.pps.view
+package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.main_panel.{CarSelectionPanel, MainPanel, ParamsSelectionPanel, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
-import java.io.File
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  GridBagConstraints,
-  GridBagLayout,
-  LayoutManager
-}
+import java.awt.*
+import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.{
-  BorderFactory,
-  DefaultListCellRenderer,
-  ImageIcon,
-  JButton,
-  JComboBox,
-  JLabel,
-  JList,
-  JPanel,
-  SwingConstants
-}
+import javax.swing.*
+import it.unibo.pps.view.ViewConstants.*
 
 trait MainPanel extends JPanel:
-  def updateDisplayedCar(carIndex: Int, tyresType: String): Unit
+  def updateDisplayedCar(): Unit
+  def updateParametersPanel(): Unit
+
 
 object MainPanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): MainPanel =
@@ -41,17 +27,18 @@ object MainPanel:
   private class MainPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
-    private val panelWidth = (width * 0.48).toInt
-    private val panelHeight = (height * 0.65).toInt
-    private val carSelectionPanel = CarSelectionPanel(panelWidth, panelHeight, controller)
-    private val paramsSelectionPanel = ParamsSelectionPanel(panelWidth, panelHeight, controller)
-    private val startSimulationPanel = StartSimulationPanel(width, height - panelHeight, controller)
+    private val carSelectionPanel = CarSelectionPanel(CAR_SELECT_PANEL_WIDTH, CAR_SELECT_PANEL_HEIGHT, controller)
+    private val paramsSelectionPanel = ParamsSelectionPanel(CAR_SELECT_PANEL_WIDTH, CAR_SELECT_PANEL_HEIGHT, controller)
+    private val startSimulationPanel = StartSimulationPanel(width, height - CAR_SELECT_PANEL_HEIGHT, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(carIndex: Int, tyresType: String): Unit =
-      carSelectionPanel.updateDisplayedCar(carIndex, tyresType)
+    def updateDisplayedCar(): Unit =
+      carSelectionPanel.updateDisplayedCar()
+
+    def updateParametersPanel(): Unit =
+      paramsSelectionPanel.updateParametersPanel()
 
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =
       for
