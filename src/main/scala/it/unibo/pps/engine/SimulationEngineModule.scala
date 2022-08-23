@@ -112,6 +112,7 @@ object SimulationEngineModule:
           case Phase.Ended =>
              curvaFatta = true
             car.actualSector = context.model.track.nextSector(car.actualSector)
+            car.actualSpeed = 20
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
         }
@@ -130,15 +131,17 @@ object SimulationEngineModule:
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
 
-
           newVelocity <- io(
             if curvaFatta then
+              println("curvaFatta: "+curvaFatta)
               movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration)
             else
+              println("curvaFatta: "+curvaFatta)
               movementsManager.newVelocityStraightAcc(car, time, car.acceleration)
           )
+          //x <- io(car.drawingCarParams.position._1)
+          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
           //newVelocity <- io(movementsManager.newVelocityStraightAcc(car, time, car.acceleration))
-          //newVelocity <- io(movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration, i))
