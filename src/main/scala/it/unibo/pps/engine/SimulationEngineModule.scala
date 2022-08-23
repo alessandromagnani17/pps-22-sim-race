@@ -20,8 +20,8 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-
-import scala.collection.mutable.HashMap
+import it.unibo.pps.model.Sector
+import scala.collection.mutable.{HashMap, Map}
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
@@ -54,7 +54,7 @@ object SimulationEngineModule:
       override def simulationStep(): Task[Unit] =
         for
           _ <- moveCars()
-          //_ <- updateStanding()
+          _ <- updateStanding()
           //_ <- updateCharts()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
@@ -174,13 +174,38 @@ object SimulationEngineModule:
         else p
 
       private def updateCharts(): Task[Unit] =
-        for _ <- io(println("Updating charts...."))
+        for _ <- context.view.updateDisplayedStanding()
           yield ()
 
       private def updateStanding(): Task[Unit] =
-        for _ <- io(println("Updating standing...."))
-          yield ()
+        for
+          lastSnap <- io(context.model.getLastSnapshot())
+          newStartingPositions = calcNewStanding(lastSnap)
+          _ <- io(context.model.startingPositions = Map.from(newStartingPositions))
+          _ <- io(context.view.updateDisplayedStanding())
+        yield ()
 
+      private def calcNewStanding(snap: Snapshot): Map[Int, Car] =
+        // Funzionamento:
+        // Raggruppo le macchine per settore, poi ordino i settori dal più grande al più piccolo
+        // Dopo in base al settore guardo x o y
+        // NB Probabilmente ci sarà da mettere il giro per ogni macchina perchè altrimenti
+        // questo meccanismo non funziona ( quando una macchina completa il primo giro in prima posizione diventa ultima)
+        // Se mettessimo il giro per ogni macchina prima di raggruppare per settori raggruppiamo per giri in ordine decrescente
+        // e dopo credo che funzionerebbe
+        var x: List[(Sector, List[Car])] = snap.cars.groupBy(_.actualSector).sortWith(_._1.id >= _._1.id)
+        var l1: List[Car] = List.empty
+        x.foreach(e => {
+          e._1 match
+            case Straight(id, _) =>
+              if id == 1 then e._2.sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
+              else e._2.sortWith(_.drawingCarParams.position._1 < _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
+            case Turn(id, _) =>
+              if id == 2 then e._2.sortWith(_.drawingCarParams.position._2 > _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+              else e._2.sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+        })
+        Map.from(l1.zipWithIndex.map{ case (k,v) => (v,k) })
+      
       private def updateView(): Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)

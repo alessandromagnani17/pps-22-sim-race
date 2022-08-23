@@ -81,6 +81,8 @@ object StartingPositionsPanel:
         _ <- nextImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(prevLabelSupport)).get._1}.png"))
         _ <- prevImage.setIcon(imageLoader.load(s"/cars/miniatures/${carNames.find(_._2.equals(nextLabelSupport)).get._1}.png"))
       yield ()
+
+
       p.runSyncUnsafe()
 
     private def createPanel(dim: Dimension): Task[JPanel] =

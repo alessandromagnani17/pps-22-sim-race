@@ -151,7 +151,7 @@ object SimulationPanel:
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
 
-        // Decidere come settare colore giusto
+        // Decidere se settare colore qui o nella createLabel().
         _ <- color.setBackground(controller.startingPositions(elem._1).drawingCarParams.color)
         _ <- color.setOpaque(true)
 
