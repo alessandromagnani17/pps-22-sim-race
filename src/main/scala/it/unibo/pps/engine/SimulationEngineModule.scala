@@ -45,6 +45,10 @@ object SimulationEngineModule:
       private val movementsManager = PrologMovements()
       private var times0: HashMap[String, Int] = HashMap.empty
 
+      ///
+      private var curvaFatta: Boolean = false
+      ///
+
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
 
@@ -62,6 +66,7 @@ object SimulationEngineModule:
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
         val time = BASE_TIME * simulationSpeed
+
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
@@ -93,6 +98,10 @@ object SimulationEngineModule:
           case Phase.Acceleration => acc(car, time, car.actualSpeed)
           case Phase.Deceleration => dec(car, time, car.actualSpeed)
           case Phase.Ended =>
+
+            if car.name == "Ferrari" then
+              println("---------- CURVA ----------")
+
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
         }
@@ -101,6 +110,7 @@ object SimulationEngineModule:
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
+             curvaFatta = true
             car.actualSector = context.model.track.nextSector(car.actualSector)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
@@ -108,9 +118,27 @@ object SimulationEngineModule:
 
       private def acc(car: Car, time: Int, velocity: Double): Task[(Int, Int)] =
         for
+
+          _ <- io(
+            if car.name == "Ferrari" then
+              println("ActualSpeed: " + velocity)
+              println("Time: "+ time)
+              if curvaFatta then
+                println("Times0: "+ times0.get("Ferrari").get)
+          )
+
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraightAcc(car, time, car.acceleration))
+
+
+          newVelocity <- io(
+            if curvaFatta then
+              movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration)
+            else
+              movementsManager.newVelocityStraightAcc(car, time, car.acceleration)
+          )
+          //newVelocity <- io(movementsManager.newVelocityStraightAcc(car, time, car.acceleration))
+          //newVelocity <- io(movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration, i))
