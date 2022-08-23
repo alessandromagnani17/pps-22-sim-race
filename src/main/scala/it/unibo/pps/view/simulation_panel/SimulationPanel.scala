@@ -2,7 +2,7 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{BorderLayout, Color, Component, Dimension, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
 import javax.swing.{BorderFactory, BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
@@ -99,23 +99,14 @@ object SimulationPanel:
           createLabel(s"/cars/miniatures/${e._1}.png", null, true),
           createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
       })
-
-
-      /*for i <- 0 until NUM_CARS do
-        map += (i -> (createLabel((i + 1).toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel(carNames(i), Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
-          createLabel(s"/cars/miniatures/$i.png", null, true),
-          createLabel("tyre", Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))*/
       map
 
     private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
       for
         label <- if isImage then JLabel(imageLoader.load(text)) else JLabel(text)
-        _ <- if !isImage then label.setPreferredSize(dimension)
+        _ <- label.setPreferredSize(dimension)
         _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
-
 
     private val p = for
       cnv <- canvas
@@ -145,7 +136,7 @@ object SimulationPanel:
     private def addToPanel(elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])), mainPanel: JPanel): Task[Unit] =
       val start = 0
       val p = for
-        panel <- JPanel()
+        panel <- JPanel(FlowLayout(FlowLayout.LEFT))
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
 
@@ -157,8 +148,8 @@ object SimulationPanel:
 
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
-        _ <- paddingLabel.setPreferredSize(Dimension(30, STANDING_SUBPANEL_HEIGHT))
-        _ <- paddingLabel1.setPreferredSize(Dimension(30, STANDING_SUBPANEL_HEIGHT))
+        _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
 
         // Decidere come settare colore giusto
         _ <- color.setBackground(controller.startingPositions(elem._1).drawingCarParams.color)
