@@ -18,10 +18,10 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   private val mainPanel = MainPanel(width, height, controller)
   private val _simulationPanel = SimulationPanel(width, height, controller)
-  private val startingPositionsPanel = StartingPositionsPanel(STARTING_POSITIONS_PANEL_WIDTH, STARTING_POSITIONS_PANEL_HEIGHT, controller)
+  private val startingPositionsPanel = StartingPositionsPanel(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT, controller)
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
-    createFrame("starting-positions", STARTING_POSITIONS_FRAME_WIDTH, STARTING_POSITIONS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
+    createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
 
   private lazy val p =
     for

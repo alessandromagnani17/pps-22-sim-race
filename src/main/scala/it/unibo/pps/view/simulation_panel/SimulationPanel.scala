@@ -90,7 +90,7 @@ object SimulationPanel:
     private def createPositions(): Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
       val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] = Map.empty
 
-      controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
+      //controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
 
       controller.startingPositions.foreach(e => {
         map += (e._1 -> (createLabel((e._1 + 1).toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
