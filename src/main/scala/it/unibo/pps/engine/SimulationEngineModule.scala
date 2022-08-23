@@ -21,6 +21,8 @@ import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.model.Sector
+
+import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
@@ -43,7 +45,7 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
-      private var times0: HashMap[String, Int] = HashMap.empty
+      private var times0: HashMap[String, Int] = HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
       private var curvaFatta: Boolean = false
 
       override def decreaseSpeed(): Unit =
@@ -63,7 +65,6 @@ object SimulationEngineModule:
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
         val time = BASE_TIME * simulationSpeed
-
         Task.sleep(time millis)
 
       private def moveCars(): Task[Unit] =
@@ -91,6 +92,9 @@ object SimulationEngineModule:
       }
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
+
+        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => acc(car, time, car.actualSpeed)
           case Phase.Deceleration => dec(car, time, car.actualSpeed)
@@ -107,15 +111,19 @@ object SimulationEngineModule:
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
-        println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
+        //println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
+
+        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
             curvaFatta = true
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            car.actualSpeed = 20
+            car.actualSpeed = 15
+            times0(car.name) = 0
             checkLap(car)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
@@ -123,42 +131,23 @@ object SimulationEngineModule:
 
       private def acc(car: Car, time: Int, velocity: Double): Task[(Int, Int)] =
         for
-
-          _ <- io(
-            if car.name == "Ferrari" then
-              println("ActualSpeed: " + velocity)
-              println("Time: "+ time)
-              if curvaFatta then
-                println("Times0: "+ times0.get("Ferrari").get)
-          )
-
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-
-          newVelocity <- io(
-            if curvaFatta then
-              println("curvaFatta: "+curvaFatta)
-              movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration)
-            else
-              println("curvaFatta: "+curvaFatta)
-              movementsManager.newVelocityStraightAcc(car, time, car.acceleration)
-          )
-          //x <- io(car.drawingCarParams.position._1)
-          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-          //newVelocity <- io(movementsManager.newVelocityStraightAcc(car, time, car.acceleration))
+          newVelocity <- io(movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, time, car.acceleration, i))
+          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, car.acceleration, i))
+          _ <- io(times0(car.name) = times0(car.name)+1)
         yield (newP, car.drawingCarParams.position._2)
 
       private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
         for
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraightDec(car, time, 1))
+          newVelocity <- io(movementsManager.newVelocityStraightDec(car, times0.get(car.name).get, 1))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, time, 1, i))
+          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
             case DrawingStraightParams(_, _, _, _, endX) =>
               val d = (newP - endX) * i
@@ -167,6 +156,7 @@ object SimulationEngineModule:
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
+          _ <- io(times0(car.name) = times0(car.name)+1)
         yield p
 
       private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] =
