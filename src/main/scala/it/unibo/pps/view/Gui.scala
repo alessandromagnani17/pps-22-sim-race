@@ -10,6 +10,7 @@ import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.model.{Car, Driver, Standing, Track, Tyre}
+import it.unibo.pps.view.ViewConstants.*
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
@@ -17,10 +18,10 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   private val mainPanel = MainPanel(width, height, controller)
   private val _simulationPanel = SimulationPanel(width, height, controller)
-  private val startingPositionsPanel = StartingPositionsPanel((width * 0.4).toInt, (height * 0.4).toInt, controller)
+  private val startingPositionsPanel = StartingPositionsPanel(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT, controller)
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
-    createFrame("starting-positions", (width * 0.35).toInt, (height * 0.45).toInt, WindowConstants.HIDE_ON_CLOSE)
+    createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
 
   private lazy val p =
     for
@@ -46,6 +47,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
+
+  def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
 
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for

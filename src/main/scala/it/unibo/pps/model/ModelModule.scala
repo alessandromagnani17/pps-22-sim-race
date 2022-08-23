@@ -81,11 +81,11 @@ object ModelModule:
           //DrawingCarParams((725, 155), Color.GREEN)
         )
       )
-
-      private var _standing: Standing = Standing(cars)
+      
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 
+      private var _standing: Standing = Standing(cars)
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
       private val _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
@@ -100,4 +100,5 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
+
   trait Interface extends Provider with Component
