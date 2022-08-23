@@ -1,8 +1,11 @@
 package it.unibo.pps.model
 
 trait Track:
-  def getSectors(): List[Sector]
+  def sectors: List[Sector]
+  def startingGrid: List[StartingPoint]
   def addSector(sector: Sector): Unit
+  def addStartingPoint(startingPoint: StartingPoint): Unit
+  def nextSector(actualSector: Sector): Sector
 
 object Track:
   def apply(): Track =
@@ -10,8 +13,14 @@ object Track:
 
   private class TrackImpl() extends Track:
 
-    private var sectors: List[Sector] = List.empty
+    private var _sectors: List[Sector] = List.empty
+    private var _startingGrid: List[StartingPoint] = List.empty
 
-    override def getSectors(): List[Sector] = sectors
+    override def sectors: List[Sector] = _sectors
     override def addSector(sector: Sector): Unit =
-      sectors = sectors :+ sector
+      _sectors = _sectors :+ sector
+    override def startingGrid: List[StartingPoint] = _startingGrid
+    override def addStartingPoint(startingPoint: StartingPoint): Unit =
+      _startingGrid = _startingGrid :+ startingPoint
+    override def nextSector(actualSector: Sector): Sector =
+      _sectors.filter(e => e.id == (((actualSector.id) % 4) + 1)).head

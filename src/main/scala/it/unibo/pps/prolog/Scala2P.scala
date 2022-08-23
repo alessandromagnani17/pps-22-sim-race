@@ -16,10 +16,10 @@ object Scala2P:
 
   def extractTermToString(solveInfo: SolveInfo, s: String): String =
     solveInfo.getTerm(s).toString.replace("'", "")
-  
+
   def extractTermsToListOfStrings(solveInfo: SolveInfo, s: List[String]): List[String] =
     s.map(extractTermToString(solveInfo, _))
-  
+
   private def prologEngine(theory: Theory): Term => Iterable[SolveInfo] =
     val engine = Prolog()
     engine.setTheory(theory)
