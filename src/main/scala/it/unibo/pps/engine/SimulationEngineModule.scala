@@ -211,27 +211,30 @@ object SimulationEngineModule:
         yield ()
 
       private def calcNewStanding(snap: Snapshot): Map[Int, Car] =
-        // Funzionamento:
-        // Raggruppo le macchine per settore, poi ordino i settori dal più grande al più piccolo
-        // Dopo in base al settore guardo x o y
-        // NB Probabilmente ci sarà da mettere il giro per ogni macchina perchè altrimenti
-        // questo meccanismo non funziona ( quando una macchina completa il primo giro in prima posizione diventa ultima)
-        // Se mettessimo il giro per ogni macchina prima di raggruppare per settori raggruppiamo per giri in ordine decrescente
-        // e dopo credo che funzionerebbe
-        var x: List[(Sector, List[Car])] = snap.cars.groupBy(_.actualSector).sortWith(_._1.id >= _._1.id)
+        val x: List[(Sector, List[Car])] = snap.cars.groupBy(_.actualSector).sortWith(_._1.id >= _._1.id)
         var l1: List[Car] = List.empty
         x.foreach(e => {
           e._1 match
             case Straight(id, _) =>
               if id == 1 then
-                e._2.sortWith(_.drawingCarParams.position._1 > _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
-              else e._2.sortWith(_.drawingCarParams.position._1 < _.drawingCarParams.position._1).foreach(e => l1 = l1.concat(List(e)))
-            case Turn(id, _) =>
-              if id == 2 then e._2.sortWith(_.drawingCarParams.position._2 > _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+                l1 = l1.concat(sortCars(e._2, _ > _, true))
               else
-                e._2.sortWith(_.drawingCarParams.position._2 < _.drawingCarParams.position._2).foreach(e => l1 = l1.concat(List(e)))
+                l1 = l1.concat(sortCars(e._2, _ < _, true))
+            case Turn(id, _) =>
+              if id == 2 then
+                l1 = l1.concat(sortCars(e._2, _ > _, false))
+              else
+                l1 = l1.concat(sortCars(e._2, _ < _, false))
         })
         Map.from(l1.zipWithIndex.map{ case (k,v) => (v,k) })
+
+      private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
+        var l: List[Car] = List.empty
+        if isHorizontal then
+          cars.sortWith((c1, c2) => f(c1.drawingCarParams.position._1, c2.drawingCarParams.position._1)).foreach(e => l = l.concat(List(e)))
+        else
+          cars.sortWith((c1, c2) => f(c1.drawingCarParams.position._2, c2.drawingCarParams.position._2)).foreach(e => l = l.concat(List(e)))
+        l
       
       private def updateView(): Task[Unit] =
         for
