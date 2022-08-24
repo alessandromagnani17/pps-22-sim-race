@@ -32,7 +32,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, Sector, Standing, Track, TrackBuilder}
+import it.unibo.pps.model.{Car, Sector, Snapshot, Standing, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
@@ -44,6 +44,7 @@ import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 trait SimulationPanel extends JPanel:
 
@@ -52,6 +53,7 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
   def updateDisplayedStanding(): Unit
   def updateStanding(newStanding: Standing): Unit
+  def updateChars(snapshot: Snapshot): Unit
 
 object SimulationPanel:
 
@@ -74,35 +76,42 @@ object SimulationPanel:
         _ <- cnv.setVisible(true)
       yield cnv
 
-    private lazy val chartsPanel =
+    private lazy val charts: Task[List[LineChart]] =
       for
-        p <- new JPanel()
-        _ <- p.setLayout(new BoxLayout(p, 1))
         chartVel <- createChart("Velocity", "Virtual Time", "Velocity")
         chartFuel <- createChart("Fuel", "Virtual Time", "Fuel")
         chartTyres <- createChart("Degradation", "Virtual Time", "Degradation")
-        _ <- chartFuel.addSeries("Ferrari")
-        _ <- chartFuel.addSeries("Mercedes")
-        //_ <- chartFuel.addValue(1, 2, "Ferrari")
-        //_ <- chartFuel.addValue(3, 5, "Ferrari")
-        //_ <- chartFuel.addValue(6, 4, "Ferrari")
-        // _ <- chartFuel.addValue(2, 4, "Mercedes")
-        // _ <- chartFuel.addValue(5, 8, "Mercedes")
-        //_ <- chartFuel.addValue(6, 6, "Mercedes")
-        chartVelP <- chartVel.wrapToPanel()
-        chartFuelP <- chartFuel.wrapToPanel()
-        chartTyresP <- chartTyres.wrapToPanel()
-        _ <- chartVelP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
-        _ <- chartFuelP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
-        _ <- chartTyresP.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT))
-        _ <- p.add(chartVelP)
-        _ <- p.add(chartFuelP)
-        _ <- p.add(chartTyresP)
+        _ <- chartVel.addSeries("Ferrari")
+        _ <- chartVel.addSeries("Mercedes")
+        _ <- chartVel.addSeries("Red Bull")
+        _ <- chartVel.addSeries("McLaren")
+        _ <- chartVel.addValue(0, 0, "Ferrari")
+      yield List(chartVel, chartFuel, chartTyres)
+
+    private lazy val chartsPanel =
+      for
+        chs <- charts
+        p <- new JPanel()
+        _ <- p.setLayout(new BoxLayout(p, 1))
+        chPanels <- Task(chs.map(_.wrapToPanel()))
+        _ <- chPanels.foreach(_.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT)))
+        _ <- p.addAll(chPanels)
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED)
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
         _ <- controller.registerCallback()
       yield sp
+
+    override def updateChars(snapshot: Snapshot): Unit =
+      charts.foreach(c =>
+        c.foreach(chart =>
+          chart.getTitle match {
+            case s: String if s.equals("Velocity") =>
+              snapshot.cars.foreach(car => chart.addValue(car.actualSpeed, snapshot.time, car.name))
+            case _ =>
+          }
+        )
+      )
 
     private lazy val standingMap = createPositions()
 

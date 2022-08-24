@@ -30,6 +30,8 @@ trait LineChart:
     */
   def addSeries(name: String): Unit
 
+  def getTitle: String
+
 object LineChart:
 
   def apply(title: String, xLabel: String, yLabel: String): LineChart =
@@ -63,3 +65,5 @@ object LineChart:
         true,
         false
       )
+
+    override def getTitle: String = chart.getTitle.getText
