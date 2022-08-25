@@ -76,24 +76,23 @@ object SimulationPanel:
         _ <- cnv.setVisible(true)
       yield cnv
 
-    private lazy val charts: Task[List[LineChart]] =
-      for
-        chartVel <- createChart("Velocity", "Virtual Time", "Velocity")
-        chartFuel <- createChart("Fuel", "Virtual Time", "Fuel")
-        chartTyres <- createChart("Degradation", "Virtual Time", "Degradation")
-        _ <- chartVel.addSeries("Ferrari")
-        _ <- chartVel.addSeries("Mercedes")
-        _ <- chartVel.addSeries("Red Bull")
-        _ <- chartVel.addSeries("McLaren")
-        _ <- chartVel.addValue(0, 0, "Ferrari")
-      yield List(chartVel, chartFuel, chartTyres)
+    private def createCharts(): List[LineChart] =
+      val chartVel = LineChart("Velocity", "Virtual Time", "Velocity")
+      val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel")
+      val chartTyres = LineChart("Degradation", "Virtual Time", "Degradation")
+      chartVel.addSeries("Ferrari")
+      chartVel.addSeries("Mercedes")
+      chartVel.addSeries("Red Bull")
+      chartVel.addSeries("McLaren")
+      List(chartVel, chartFuel, chartTyres)
+
+    private val charts = createCharts()
 
     private lazy val chartsPanel =
       for
-        chs <- charts
         p <- new JPanel()
         _ <- p.setLayout(new BoxLayout(p, 1))
-        chPanels <- Task(chs.map(_.wrapToPanel()))
+        chPanels <- Task(charts.map(_.wrapToPanel()))
         _ <- chPanels.foreach(_.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT)))
         _ <- p.addAll(chPanels)
         sp <- new JScrollPane(p)
@@ -102,16 +101,15 @@ object SimulationPanel:
         _ <- controller.registerCallback()
       yield sp
 
+    private val matchChart = (chart: LineChart, snapshot: Snapshot) =>
+      chart.getTitle match {
+        case s: String if s.equals("Velocity") =>
+          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
+        case _ => //TODO - una volta che si trovano le funzioni per la degradation e il fuel si possno aggiungere i case
+      }
+
     override def updateChars(snapshot: Snapshot): Unit =
-      charts.foreach(c =>
-        c.foreach(chart =>
-          chart.getTitle match {
-            case s: String if s.equals("Velocity") =>
-              snapshot.cars.foreach(car => chart.addValue(car.actualSpeed, snapshot.time, car.name))
-            case _ =>
-          }
-        )
-      )
+      charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
     private lazy val standingMap = createPositions()
 

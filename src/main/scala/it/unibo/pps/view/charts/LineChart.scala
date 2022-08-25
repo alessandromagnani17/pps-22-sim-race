@@ -42,6 +42,7 @@ object LineChart:
     private var series: HashMap[String, XYSeries] = HashMap.empty
 
     override def addValue(x: Double, y: Double, seriesName: String): Unit =
+      println(s"$x --- $y ---- $seriesName")
       series ?--> (seriesName, _.add(x, y))
       chart.getXYPlot.setDataset(mkDataset())
 
