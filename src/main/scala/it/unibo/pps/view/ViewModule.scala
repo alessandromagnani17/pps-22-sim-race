@@ -12,7 +12,9 @@ object ViewModule:
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
     def displaySimulationPanel(track: Track, standing: Standing): Unit
+    def displayEndRacePanel(): Unit
     def updateCars(cars: List[Car]): Unit
+    def setFinalReportEnabled(): Unit
 
   trait Provider:
     val view: View
@@ -38,8 +40,14 @@ object ViewModule:
       override def displayStartingPositionsPanel(): Unit =
         gui.displayStartingPositionsPanel()
 
+      override def displayEndRacePanel(): Unit =
+        gui.displayEndRacePanel()
+
       override def updateParametersPanel(): Unit =
         gui.updateParametersPanel()
+
+      override def setFinalReportEnabled(): Unit =
+        gui.setFinalReportEnabled()
 
   trait Interface extends Provider with Component:
     self: Requirements =>

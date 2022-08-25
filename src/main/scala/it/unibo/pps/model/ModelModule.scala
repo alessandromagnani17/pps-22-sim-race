@@ -13,12 +13,14 @@ object ModelModule:
     def startingPositions: Map[Int, Car]
     def currentCarIndex: Int
     def actualLap: Int
+    def totalLaps: Int
     def standing: Standing
     def getLastSnapshot(): Snapshot
     def initSnapshot(): Unit
     def currentCarIndex_=(index: Int): Unit
     def startingPositions_=(startingPos: Map[Int, Car]): Unit
     def actualLap_=(lap: Int): Unit
+    def totalLaps_(lap: Int): Unit
     def updateStanding(): Unit
     def addSnapshot(snapshot: Snapshot): Unit
 
@@ -152,18 +154,21 @@ object ModelModule:
       private var _currentCarIndex = 0
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
+      private var _totalLaps = 1
 
       override def currentCarIndex: Int = _currentCarIndex
       override def cars: List[Car] = _cars
       override def startingPositions: Map[Int, Car] = _startingPositions
       override def track: Track = _track
       override def actualLap: Int = _actualLap
+      override def totalLaps: Int = _totalLaps
       override def standing: Standing = _standing
       override def getLastSnapshot(): Snapshot = history.last
       override def addSnapshot(snapshot: Snapshot): Unit = history = history :+ snapshot
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def startingPositions_=(startingPos: Map[Int, Car]): Unit = _startingPositions = startingPos
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
+      override def totalLaps_(lap: Int): Unit = _totalLaps = lap
       override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
 

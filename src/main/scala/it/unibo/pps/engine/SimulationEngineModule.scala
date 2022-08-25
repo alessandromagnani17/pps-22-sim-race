@@ -47,6 +47,7 @@ object SimulationEngineModule:
       private val movementsManager = PrologMovements()
       private var times0: HashMap[String, Int] = HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
       private var curvaFatta: Boolean = false
+      private var carsArrived = 0
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -60,6 +61,9 @@ object SimulationEngineModule:
           _ <- updateStanding()
           //_ <- updateCharts()
           _ <- updateView()
+          _ <- if carsArrived == NUM_CARS then 
+            controller.notifyStop()
+            context.view.setFinalReportEnabled()
           _ <- waitFor(speedManager._simulationSpeed)
         yield ()
 
@@ -80,7 +84,7 @@ object SimulationEngineModule:
           cars <- io(snapshot.cars)
           newCars = for
             car <- cars
-            newPosition = findNewPosition(car, time)
+            newPosition = if car.actualLap > context.model.totalLaps then car.drawingCarParams.position else findNewPosition(car, time)
             d = car.drawingCarParams.copy(position = newPosition)
           yield car.copy(drawingCarParams = d)
           newSnap <- io(Snapshot(newCars, time))
@@ -93,7 +97,7 @@ object SimulationEngineModule:
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
 
-        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+        //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
 
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => acc(car, time, car.actualSpeed)
@@ -101,21 +105,21 @@ object SimulationEngineModule:
           case Phase.Ended =>
 
             if car.name == "Ferrari" then
-              println("---------- CURVA ----------")
+              //println("---------- CURVA ----------")
 
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            checkLap(car)
+            //checkLap(car)
             turnMovement(car, time)
         }
 
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
-        //println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
+        if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
 
-        println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
+        //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
 
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)

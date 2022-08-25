@@ -2,6 +2,7 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.view.main_panel.MainPanel
+import it.unibo.pps.view.simulation_panel.EndRacePanel
 import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.simulation_panel.SimulationPanel
 import monix.eval.Task
@@ -22,6 +23,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
     createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
+  private val _endRacePanel = EndRacePanel(width, height, controller)
 
   private lazy val p =
     for
@@ -50,6 +52,9 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
 
+  def setFinalReportEnabled(): Unit = 
+    _simulationPanel.setFinalReportEnabled()
+
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for
       fr <- frame
@@ -66,6 +71,16 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     val p = for
       fr <- startingPositionsFrame
       _ <- fr.getContentPane().add(startingPositionsPanel)
+      _ <- fr.revalidate()
+    yield ()
+    p.runSyncUnsafe()
+  }
+
+  def displayEndRacePanel(): Unit = SwingUtilities.invokeLater { () =>
+    val p = for
+      fr <- frame
+      _ <- fr.getContentPane().removeAll()
+      _ <- fr.getContentPane().add(_endRacePanel)
       _ <- fr.revalidate()
     yield ()
     p.runSyncUnsafe()

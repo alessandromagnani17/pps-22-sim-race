@@ -26,6 +26,7 @@ trait SimulationPanel extends JPanel:
   /** Method for rendering the new snapshot of the simulation */
   def render(cars: List[Car]): Unit
   def renderTrack(track: Track): Unit
+  def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
   def updateStanding(newStanding: Standing): Unit
 
@@ -108,6 +109,12 @@ object SimulationPanel:
         _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
 
+    private val reportButton = for
+      btn <- JButton("Final report")
+      _ <- btn.setEnabled(false)
+      _ <- btn.addActionListener(e => controller.displayEndRacePanel())
+    yield btn
+
     private val p = for
       cnv <- canvas
       scrollPanel <- chartsPanel
@@ -115,6 +122,7 @@ object SimulationPanel:
       stopButton <- createButton("Stop", e => controller.notifyStop())
       incVelocityButton <- createButton("+ Velocity", e => {controller.notifyIncreaseSpeed()})
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
+      reportButton <- reportButton
       s <- standing
       buttonsPanel = new JPanel()
       _ <- buttonsPanel.setPreferredSize(Dimension(width,BUTTONS_PANEL_HEIGHT))
@@ -124,6 +132,7 @@ object SimulationPanel:
       _ <- buttonsPanel.add(stopButton)
       _ <- buttonsPanel.add(incVelocityButton)
       _ <- buttonsPanel.add(decVelocityButton)
+      _ <- buttonsPanel.add(reportButton)
       _ <- mainPanel.add(cnv)
       _ <- mainPanel.add(s)
       _ <- standingMap.foreach(e => addToPanel(e, s))
@@ -176,6 +185,13 @@ object SimulationPanel:
       yield ()
       p.runSyncUnsafe()
     }
+
+    override def setFinalReportEnabled(): Unit =
+      val p = for
+        reportButton <- reportButton
+        _ <- reportButton.setEnabled(true)
+      yield ()
+      p.runSyncUnsafe()
 
     override def renderTrack(track: Track): Unit = SwingUtilities.invokeLater { () =>
       val p = for
