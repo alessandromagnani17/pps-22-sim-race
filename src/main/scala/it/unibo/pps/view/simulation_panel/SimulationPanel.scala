@@ -44,9 +44,11 @@ object SimulationPanel:
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
     private val imageLoader = ImageLoader()
 
+
+
     private lazy val canvas =
       for
-        cnv <- new Enviroment(CANVAS_WIDTH, CANVAS_HEIGHT)
+        cnv <- new Environment(CANVAS_WIDTH, CANVAS_HEIGHT)
         _ <- cnv.setPreferredSize(Dimension(CANVAS_WIDTH, CANVAS_HEIGHT))
         _ <- cnv.setVisible(true)
       yield cnv

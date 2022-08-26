@@ -8,7 +8,7 @@ import scala.{Tuple2 => Point2d}
 import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.model.{Car, Straight, Turn}
 
-class Enviroment(val w: Int, val h: Int) extends JPanel:
+class Environment(val w: Int, val h: Int) extends JPanel:
 
   private var _track: Track = Track()
   private var _cars: List[Car] = List.empty
@@ -21,6 +21,7 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
 
+    super.paintComponent(g)
     g.setColor(Color.MAGENTA)
     g.drawString("LAP: 1", 449, 60)
 
