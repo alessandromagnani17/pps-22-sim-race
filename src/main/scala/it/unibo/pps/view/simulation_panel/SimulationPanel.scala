@@ -127,7 +127,7 @@ object SimulationPanel:
       startButton <- createButton("Start", e => controller.notifyStart())
       stopButton <- createButton("Stop", e => controller.notifyStop())
       incVelocityButton <- createButton("+ Velocity", e => {controller.notifyIncreaseSpeed()})
-      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreseSpeed())
+      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
       reportButton <- reportButton
       s <- standing
       buttonsPanel = new JPanel()

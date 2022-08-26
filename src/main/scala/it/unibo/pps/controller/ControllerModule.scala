@@ -18,7 +18,7 @@ object ControllerModule:
     def notifyStart(): Unit
     def notifyStop(): Unit
     //def notifyFinish(): Unit
-    def notifyDecreseSpeed(): Unit
+    def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
     def startingPositions: Map[Int, Car]
     def currentCar: Car
@@ -72,7 +72,7 @@ object ControllerModule:
         
         //displayEndRacePanel()
 
-      override def notifyDecreseSpeed(): Unit =
+      override def notifyDecreaseSpeed(): Unit =
         context.simulationEngine.decreaseSpeed()
 
       override def notifyIncreaseSpeed(): Unit =
