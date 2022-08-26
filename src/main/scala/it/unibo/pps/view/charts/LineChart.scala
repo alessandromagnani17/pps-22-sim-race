@@ -8,6 +8,8 @@ import scala.collection.immutable.HashMap
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.utility.PimpScala.RichHashMap.*
 
+import java.awt.Color
+
 /** Scala facade for a 2D JFreeChart Line Chart */
 trait LineChart:
 
@@ -28,7 +30,7 @@ trait LineChart:
     * @param name
     *   The name of the new serie
     */
-  def addSeries(name: String): Unit
+  def addSeries(name: String, color: Color): Unit
 
   def getTitle: String
 
@@ -48,7 +50,18 @@ object LineChart:
 
     override def wrapToPanel(): ChartPanel = ChartPanel(chart)
 
-    override def addSeries(name: String): Unit = series = series + (name -> XYSeries(name))
+    override def addSeries(name: String, color: Color): Unit =
+      series = series + (name -> XYSeries(name))
+      setSeriesColor(name, color)
+
+    private def setSeriesColor(name: String, color: Color): Unit =
+      series.keysIterator.zipWithIndex
+        .foreach((seriesName, index) =>
+          seriesName match {
+            case sn: String if sn.equals(name) => chart.getXYPlot.getRenderer.setSeriesPaint(index, color)
+            case _ =>
+          }
+        )
 
     private def mkDataset(): XYSeriesCollection =
       val dataset = XYSeriesCollection()
@@ -66,5 +79,4 @@ object LineChart:
         true,
         false
       )
-
     override def getTitle: String = chart.getTitle.getText

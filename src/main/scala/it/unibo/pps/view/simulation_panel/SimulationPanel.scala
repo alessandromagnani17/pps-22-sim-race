@@ -53,7 +53,7 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
   def updateDisplayedStanding(): Unit
   def updateStanding(newStanding: Standing): Unit
-  def updateChars(snapshot: Snapshot): Unit
+  def updateCharts(snapshot: Snapshot): Unit
 
 object SimulationPanel:
 
@@ -71,7 +71,7 @@ object SimulationPanel:
 
     private lazy val canvas =
       for
-        cnv <- new Enviroment(CANVAS_WIDTH, CANVAS_HEIGHT)
+        cnv <- new Environment(CANVAS_WIDTH, CANVAS_HEIGHT)
         _ <- cnv.setPreferredSize(Dimension(CANVAS_WIDTH, CANVAS_HEIGHT))
         _ <- cnv.setVisible(true)
       yield cnv
@@ -80,11 +80,15 @@ object SimulationPanel:
       val chartVel = LineChart("Velocity", "Virtual Time", "Velocity")
       val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel")
       val chartTyres = LineChart("Degradation", "Virtual Time", "Degradation")
-      chartVel.addSeries("Ferrari")
-      chartVel.addSeries("Mercedes")
-      chartVel.addSeries("Red Bull")
-      chartVel.addSeries("McLaren")
-      List(chartVel, chartFuel, chartTyres)
+      val c = List(chartVel, chartFuel, chartTyres)
+      c.foreach(addSeriesToChart(_))
+      c
+
+    private def addSeriesToChart(chart: LineChart): Unit =
+      chart.addSeries("Ferrari", Color.RED)
+      chart.addSeries("Mercedes", Color.CYAN)
+      chart.addSeries("Red Bull", Color.BLUE)
+      chart.addSeries("McLaren", Color.GREEN)
 
     private val charts = createCharts()
 
@@ -108,7 +112,7 @@ object SimulationPanel:
         case _ => //TODO - una volta che si trovano le funzioni per la degradation e il fuel si possno aggiungere i case
       }
 
-    override def updateChars(snapshot: Snapshot): Unit =
+    override def updateCharts(snapshot: Snapshot): Unit =
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
     private lazy val standingMap = createPositions()

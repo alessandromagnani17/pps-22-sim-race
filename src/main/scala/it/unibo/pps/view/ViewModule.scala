@@ -12,7 +12,7 @@ object ViewModule:
     def updateParametersPanel(): Unit
     def displaySimulationPanel(track: Track, standing: Standing): Unit
     def updateCars(cars: List[Car]): Unit
-    def updateChars(l: List[Snapshot]): Unit
+    def updateCharts(l: List[Snapshot]): Unit
 
   trait Provider:
     val view: View
@@ -41,8 +41,8 @@ object ViewModule:
       override def updateParametersPanel(): Unit =
         gui.updateParametersPanel()
 
-      override def updateChars(l: List[Snapshot]): Unit =
-        gui.simulationPanel.updateChars(l.last)
+      override def updateCharts(l: List[Snapshot]): Unit =
+        gui.simulationPanel.updateCharts(l.last)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

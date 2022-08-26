@@ -120,7 +120,7 @@ object ControllerModule:
 
       override def registerCallback(): Unit =
         val onNext = (l: List[Snapshot]) => {
-          context.view.updateChars(l)
+          context.view.updateCharts(l)
           Ack.Continue
         }
         val onError = (t: Throwable) => ()

@@ -8,7 +8,7 @@ import scala.{Tuple2 => Point2d}
 import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.model.{Car, Straight, Turn}
 
-class Enviroment(val w: Int, val h: Int) extends JPanel:
+class Environment(val w: Int, val h: Int) extends JPanel:
 
   private var _track: Track = Track()
   private var _cars: List[Car] = List.empty
@@ -20,26 +20,10 @@ class Enviroment(val w: Int, val h: Int) extends JPanel:
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
-
     g.setColor(Color.MAGENTA)
     g.drawString("LAP: 1", 449, 60)
 
     g.setColor(Color.BLACK)
-    // ---------------- Metodo 1 per disegnare le macchine --------------------------------------------
-    //Variabili relative alle macchine
-    /*
-    var intW = (w * 0.5).toInt
-    var intH = (h * 0.2).toInt + 2
-    var carDiameter = 12
-    var distanceBeetweenCars = 20
-    g.setColor(Color.BLUE)
-    g.fillOval(intW, intH, carDiameter, carDiameter)
-    g.setColor(Color.GREEN)
-    g.fillOval(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
-    g.setColor(Color.RED)
-    g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
-    g.setColor(Color.BLACK)
-     */
 
     _cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
     g.setColor(Color.BLACK)
