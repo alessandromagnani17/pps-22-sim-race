@@ -112,7 +112,11 @@ object SimulationPanel:
     private val reportButton = for
       btn <- JButton("Final report")
       _ <- btn.setEnabled(false)
-      _ <- btn.addActionListener(e => controller.displayEndRacePanel())
+      _ <- btn.addActionListener(e => {
+        println("Classifica:")
+        controller.startingPositions.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
+        controller.displayEndRacePanel()
+      })
     yield btn
 
     private val p = for

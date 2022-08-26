@@ -10,6 +10,7 @@ import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import scala.collection.mutable.Map
 import it.unibo.pps.model.Car
 import it.unibo.pps.view.main_panel.ImageLoader
+import it.unibo.pps.view.ViewConstants.*
 
 trait EndRacePanel extends JPanel
 
@@ -32,8 +33,7 @@ object EndRacePanel:
     private def createStandingsPanel(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(600, 400))
-        _ <- panel.setBackground(Color.CYAN)
+        _ <- panel.setPreferredSize(Dimension(900, 400))
       yield panel
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =
@@ -45,8 +45,10 @@ object EndRacePanel:
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
-        _ <- Map.from(controller.standings._standing.zipWithIndex.map{ case (k,v) => (v,k) }).foreach(e => addToPanel(e, standingsPanel))
-        //_ <- controller.standings._standing.foreach(e => addToPanel(e, standingsPanel))
+        //_ <- Map.from(controller.standings._standing.zipWithIndex.map{ case (k,v) => (v,k) }).foreach(e => addToPanel(e, standingsPanel))
+        _ <- controller.startingPositions.foreach(e => addToPanel(e, standingsPanel))
+        _ <- println("Classifica1:")
+        _ <- controller.startingPositions.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)
@@ -57,18 +59,19 @@ object EndRacePanel:
       val p = for
         p <- JPanel()
         _ <- p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        position <- JLabel(elem._1.toString)
+        position <- JLabel((elem._1 + 1).toString)
         name <- JLabel(elem._2.name)
         color <- JLabel()
-        img <- JLabel(imageLoader.load(s"/cars/miniatures/${elem._1}.png"))
+        _ <- color.setBackground(elem._2.drawingCarParams.color)
+        _ <- color.setOpaque(true)
+        img <- JLabel(imageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
         tyre <- JLabel(elem._2.tyre.toString)
         time <- JLabel(controller.totalLaps.toString)
-        _ <- position.setPreferredSize(Dimension(70, 70))
-        _ <- name.setPreferredSize(Dimension(70, 70))
-        _ <- color.setPreferredSize(Dimension(70, 70))
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
-        _ <- tyre.setPreferredSize(Dimension(70, 70))
-        _ <- time.setPreferredSize(Dimension(70, 70))
+        _ <- position.setPreferredSize(Dimension(20, 70))
+        _ <- name.setPreferredSize(Dimension(100, 70))
+        _ <- color.setPreferredSize(Dimension(20, 70))
+        _ <- tyre.setPreferredSize(Dimension(120, 70))
+        _ <- time.setPreferredSize(Dimension(90, 70))
 
         _ <- p.add(position)
         _ <- p.add(name)

@@ -23,7 +23,6 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
     createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
-  private val _endRacePanel = EndRacePanel(width, height, controller)
 
   private lazy val p =
     for
@@ -52,7 +51,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
 
-  def setFinalReportEnabled(): Unit = 
+  def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
@@ -77,6 +76,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   }
 
   def displayEndRacePanel(): Unit = SwingUtilities.invokeLater { () =>
+    val _endRacePanel = EndRacePanel(width, height, controller)
     val p = for
       fr <- frame
       _ <- fr.getContentPane().removeAll()

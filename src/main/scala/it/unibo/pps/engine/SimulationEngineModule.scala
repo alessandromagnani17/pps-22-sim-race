@@ -47,6 +47,7 @@ object SimulationEngineModule:
       private val movementsManager = PrologMovements()
       private var times0: HashMap[String, Int] = HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
       private var curvaFatta: Boolean = false
+      private val finalPositions = Map(0 -> (500, 135), 1 -> (450, 135), 2 -> (400, 135), 3 -> (350, 135))
       private var carsArrived = 0
 
       override def decreaseSpeed(): Unit =
@@ -61,10 +62,10 @@ object SimulationEngineModule:
           _ <- updateStanding()
           //_ <- updateCharts()
           _ <- updateView()
-          _ <- if carsArrived == NUM_CARS then 
+          _ <- waitFor(speedManager._simulationSpeed)
+          _ <- if carsArrived == NUM_CARS then
             controller.notifyStop()
             context.view.setFinalReportEnabled()
-          _ <- waitFor(speedManager._simulationSpeed)
         yield ()
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
@@ -84,11 +85,15 @@ object SimulationEngineModule:
           cars <- io(snapshot.cars)
           newCars = for
             car <- cars
-            newPosition = if car.actualLap > context.model.totalLaps then car.drawingCarParams.position else findNewPosition(car, time)
+            newPosition = if car.actualLap > context.model.totalLaps then getFinalPositions(car) else findNewPosition(car, time)
             d = car.drawingCarParams.copy(position = newPosition)
           yield car.copy(drawingCarParams = d)
           newSnap <- io(Snapshot(newCars, time))
         yield newSnap
+
+      private def getFinalPositions(car: Car): (Int, Int) =
+        finalPositions(controller.startingPositions.find(_._2.equals(car)).get._1)
+
 
       private def findNewPosition(car: Car, time: Int): Tuple2[Int, Int] = car.actualSector match {
         case Straight(_, _) => straightMovement(car, time)
