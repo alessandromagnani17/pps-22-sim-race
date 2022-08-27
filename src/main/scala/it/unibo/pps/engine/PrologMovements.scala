@@ -10,8 +10,8 @@ given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
 
 trait PrologMovements:
   def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int
-  def newVelocityStraightAcc(car: Car, time: Int, acceleration: Double): Int
-  def newVelocityStraightDec(car: Car, time: Int, acceleration: Double): Int
+  def newVelocityStraightAcc(car: Car, time: Int): Int
+  def newVelocityStraightDec(car: Car, time: Int): Int
 
   def newPositionTurn(): Unit
 
@@ -30,16 +30,16 @@ object PrologMovements:
         .toDouble
         .toInt
 
-    override def newVelocityStraightAcc(car: Car, time: Int, acceleration: Double): Int =
-      engine(s"computeNewVelocity(${car.actualSpeed}, $acceleration, $time,  Ns)")
+    override def newVelocityStraightAcc(car: Car, time: Int): Int =
+      engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time,  Ns)")
         .map(Scala2P.extractTermToString(_, "Ns"))
         .toSeq
         .head
         .toDouble
         .toInt
 
-    override def newVelocityStraightDec(car: Car, time: Int, acceleration: Double): Int =
-      engine(s"computeNewVelocityDeceleration(${car.actualSpeed}, $acceleration, $time,  Ns)")
+    override def newVelocityStraightDec(car: Car, time: Int): Int =
+      engine(s"computeNewVelocityDeceleration(${car.actualSpeed}, 1, $time,  Ns)")
         .map(Scala2P.extractTermToString(_, "Ns"))
         .toSeq
         .head

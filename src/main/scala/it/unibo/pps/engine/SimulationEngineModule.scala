@@ -46,13 +46,10 @@ object SimulationEngineModule:
       private val movementsManager = PrologMovements()
       private var times0: HashMap[String, Int] =
         HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
-      private var previuosTeta: HashMap[String, Double] =
-        HashMap.empty + ("Ferrari" -> 0.0) + ("McLaren" -> 0.0) + ("Red Bull" -> 0.0) + ("Mercedes" -> 0.0)
 
-      var primoTrattoInCurva: Boolean = true
-      var angoloIniziale: Double = 0
-      var angoloFinale: Double = 0
-      var angoloPercorso: Double = 0
+      //old, new
+      private var tetaDiff: HashMap[String, (Double, Double)] =
+        HashMap.empty + ("Ferrari" -> (0.0, 0.0)) + ("McLaren" -> (0.0, 0.0)) + ("Red Bull" -> (0.0, 0.0)) + ("Mercedes" -> (0.0, 0.0))
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -75,34 +72,57 @@ object SimulationEngineModule:
       private def moveCars(): Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
-          newSnap <- updatePositions(lastSnap)
+          newSnap <- computeNewSnapshot(lastSnap)
           _ <- io(context.model.addSnapshot(newSnap))
         yield ()
 
-      private def updatePositions(snapshot: Snapshot): Task[Snapshot] =
+      private def computeNewSnapshot(snapshot: Snapshot): Task[Snapshot] =
         for
           time <- io(snapshot.time + 1)
           cars <- io(snapshot.cars)
-          newCars = for
-            car <- cars
-            newPosition = findNewPosition(car, time)
-            d = car.drawingCarParams.copy(position = newPosition)
-          yield car.copy(drawingCarParams = d)
+          newCars <- io(cars.map(updateCar(_, time)))
           newSnap <- io(Snapshot(newCars, time))
         yield newSnap
 
-      private def findNewPosition(car: Car, time: Int): Tuple2[Int, Int] = car.actualSector match {
+      private def updateCar(car: Car, time: Int): Car =
+        val newVelocity = updateVelocity(car, time)
+        val newPosition = updatePosition(car, time)
+        val newFuel = updateFuel(car, newPosition)
+        val newDrawingParams = car.drawingCarParams.copy(position = newPosition)
+        car.copy(actualSpeed = newVelocity, fuel = newFuel, drawingCarParams = newDrawingParams)
+
+      private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double = car.actualSector match {
+        case Straight(_, _) =>
+          val oldPosition = car.drawingCarParams.position
+          car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
+        case Turn(_, _) =>
+          val teta = tetaDiff(car.name)._2 - tetaDiff(car.name)._1
+          val l = (teta / 360) * 2 * car.radius * Math.PI
+          car.fuel - l * 0.0015
+      }
+
+      private def updateVelocity(car: Car, time: Int): Double = car.actualSector match {
+        case Straight(_, _) =>
+          car.actualSector.phase(car.drawingCarParams.position) match {
+            case Phase.Acceleration =>
+              val v = movementsManager.newVelocityStraightAcc(car, times0(car.name))
+              if v > car.maxSpeed then car.maxSpeed else v
+            case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, times0(car.name))
+            case _ => car.actualSpeed
+          }
+        case Turn(_, _) => car.actualSpeed
+      }
+
+      private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] = car.actualSector match {
         case Straight(_, _) => straightMovement(car, time)
         case Turn(_, _) => turnMovement(car, time)
       }
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
-          case Phase.Acceleration => acc(car, time, car.actualSpeed)
-          case Phase.Deceleration => dec(car, time, car.actualSpeed)
+          case Phase.Acceleration => acceleration(car, time)
+          case Phase.Deceleration => deceleration(car, time)
           case Phase.Ended =>
-            if car.name == "Ferrari" then println("---------- CURVA ----------")
-
             car.actualSector = context.model.track.nextSector(car.actualSector)
             checkLap(car)
             turnMovement(car, time)
@@ -124,58 +144,40 @@ object SimulationEngineModule:
           case Phase.Deceleration => (0, 0)
         }
 
-      private def acc(car: Car, time: Int, velocity: Double): Task[(Int, Int)] =
+      private def acceleration(car: Car, time: Int): Task[(Int, Int)] =
         for
+          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt) //TODO - spostare
           x <- io(car.drawingCarParams.position._1)
-          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration))
-          _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, car.acceleration, i))
+          velocity <- io(car.actualSpeed)
+          time <- io(times0.get(car.name).get)
+          acceleration <- io(car.acceleration)
+          newP <- io(movementsManager.newPositionStraight(x, velocity, time, acceleration, i))
           _ <- io(times0(car.name) = times0(car.name) + 1)
-          _ <- io(car.fuel = car.fuel - (Math.abs(newP - x) * 0.0015))
-          _ <- io(
-            println(s"Car: ${car.name} ---- Consumo: ${(Math.abs(newP - x) * 0.0015)} ---- Rimanente: ${car.fuel}")
-          )
         yield (newP, car.drawingCarParams.position._2)
 
-      private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
+      private def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
         for
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
-          newVelocity <- io(movementsManager.newVelocityStraightDec(car, times0.get(car.name).get, 1))
-          _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, 1, i))
+          newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, times0.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
-            case DrawingStraightParams(_, _, _, _, endX) =>
+            case DrawingStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
               val d = (newP - endX) * i
               if d >= 0 then
                 times0(car.name) = 0
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
-          _ <- io(times0(car.name) = times0(car.name) + 1)
-          _ <- io(car.fuel = car.fuel - (Math.abs(newP - x) * 0.0015))
-          _ <- io(
-            println(s"Car: ${car.name} ---- Consumo: ${(Math.abs(newP - x) * 0.0015)} ---- Rimanente: ${car.fuel}")
-          )
         yield p
 
       private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] = d match {
         case DrawingTurnParams(center, _, _, _, _, direction, _) =>
           val x = car.drawingCarParams.position._1
-          val t0 = times0.get(car.name).get
+          val t0 = times0(car.name)
           val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-          val previous = previuosTeta.get(car.name).get
-          val alpha = teta_t - previous
-          val spazioPercorso = alpha / 360 * 2 * car.radius * Math.PI
-          val consumo = spazioPercorso * 0.0015
-          car.fuel = car.fuel - consumo
-          previuosTeta(car.name) = teta_t
-          println(s"car: ${car.name} ---- spazio percorso: $spazioPercorso ---- teta_ $teta_t")
-          println("consumo: " + consumo)
-          println("carburante rimanente: " + car.fuel)
+          tetaDiff(car.name) = (tetaDiff(car.name)._2, teta_t)
           times0(car.name) = times0(car.name) + 1
           val r = car.radius
           var newX = 0.0
