@@ -109,7 +109,9 @@ object SimulationPanel:
       chart.title match {
         case s: String if s.equals("Velocity") =>
           snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
-        case _ => //TODO - una volta che si trovano le funzioni per la degradation e il fuel si possno aggiungere i case
+        case s: String if s.equals("Fuel") =>
+          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.fuel, car.name))
+        case _ => //TODO - una volta che si trova la funzione per la degradation si può aggiungere il case
       }
 
     override def updateCharts(snapshot: Snapshot): Unit =
