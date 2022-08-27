@@ -7,7 +7,6 @@ import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
-
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -45,16 +44,15 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
-      private var times0: HashMap[String, Int] = HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
-
+      private var times0: HashMap[String, Int] =
+        HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
+      private var previuosTeta: HashMap[String, Double] =
+        HashMap.empty + ("Ferrari" -> 0.0) + ("McLaren" -> 0.0) + ("Red Bull" -> 0.0) + ("Mercedes" -> 0.0)
 
       var primoTrattoInCurva: Boolean = true
       var angoloIniziale: Double = 0
       var angoloFinale: Double = 0
       var angoloPercorso: Double = 0
-
-
-      private var fuel: Double = 220 //litri
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -66,7 +64,6 @@ object SimulationEngineModule:
         for
           _ <- moveCars()
           _ <- updateStanding()
-          //_ <- updateCharts()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
         yield ()
@@ -100,39 +97,11 @@ object SimulationEngineModule:
       }
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
-
-        //----- CONTROLLO CARBURANTE -------
-        /*
-        if car.name == "Ferrari" then
-
-          if car.actualSpeed < 20 then
-            fuel = fuel - 0.4
-          else if car.actualSpeed > 20 && car.actualSpeed < 30 then
-            fuel = fuel - 0.5
-          else if car.actualSpeed > 30 then
-            fuel = fuel - 0.6
-
-          println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
-          println("Actual fuel: " + fuel)
-        */
-        //-----------------------------------
-
-        //-------- CONSUMI IN CURVA ---------
-
-
-
-        //-----------------------------------
-
-
-
-
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => acc(car, time, car.actualSpeed)
           case Phase.Deceleration => dec(car, time, car.actualSpeed)
           case Phase.Ended =>
-
-            if car.name == "Ferrari" then
-              println("---------- CURVA ----------")
+            if car.name == "Ferrari" then println("---------- CURVA ----------")
 
             car.actualSector = context.model.track.nextSector(car.actualSector)
             checkLap(car)
@@ -142,24 +111,8 @@ object SimulationEngineModule:
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
-        //println(s"Nuovo lap --> ${car.actualLap} | Car --> ${car.name} ")
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
-
-        //----- CONTROLLO CARBURANTE -------
-        if car.name == "Ferrari" then
-
-          if car.actualSpeed < 20 then
-            fuel = fuel - 0.4
-          else if car.actualSpeed > 20 && car.actualSpeed < 30 then
-            fuel = fuel - 0.5
-          else if car.actualSpeed > 30 then
-            fuel = fuel - 0.6
-
-          //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
-          //println("Actual fuel: " + fuel)
-        //-----------------------------------
-
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
@@ -179,7 +132,11 @@ object SimulationEngineModule:
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, car.acceleration, i))
-          _ <- io(times0(car.name) = times0(car.name)+1)
+          _ <- io(times0(car.name) = times0(car.name) + 1)
+          _ <- io(car.fuel = car.fuel - (Math.abs(newP - x) * 0.0015))
+          _ <- io(
+            println(s"Car: ${car.name} ---- Consumo: ${(Math.abs(newP - x) * 0.0015)} ---- Rimanente: ${car.fuel}")
+          )
         yield (newP, car.drawingCarParams.position._2)
 
       private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
@@ -198,90 +155,44 @@ object SimulationEngineModule:
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
-          _ <- io(times0(car.name) = times0(car.name)+1)
+          _ <- io(times0(car.name) = times0(car.name) + 1)
+          _ <- io(car.fuel = car.fuel - (Math.abs(newP - x) * 0.0015))
+          _ <- io(
+            println(s"Car: ${car.name} ---- Consumo: ${(Math.abs(newP - x) * 0.0015)} ---- Rimanente: ${car.fuel}")
+          )
         yield p
 
-      private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] =
-        d match {
-          case DrawingTurnParams(center, _, _, _, _, direction, _) =>
-
-        // ------ DA TOGLIERE, È SOLO UNA PROVA PER LE STAMPE -------
-        // Ho fatto un if che ripete le cose fche facciamo normalmente sotto (le ho messe nell'else) per
-        // riuscire a capire come gestire teta.
-        // Secondo me la cosa migliore potrebbe essere fare un angolo per ogni macchina, in modo che ognuna
-        // poi lavora sul proprio angolo di percorrenza
-
-          if car.name == "Ferrari" then
-            val x = car.drawingCarParams.position._1
-            val t0 = times0.get(car.name).get
-            val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-
-            if primoTrattoInCurva then
-              angoloIniziale = teta_t
-              primoTrattoInCurva = false
-              println(">>>> 1")
-            else
-              println(">>>> 2")
-              angoloFinale = teta_t
-              angoloPercorso = angoloFinale - angoloIniziale
-
-              println("Angolo iniziale: " + angoloIniziale)
-              println("Angolo finale: " + angoloFinale)
-              println("Angolo percorso: " + angoloPercorso)
-
-              angoloIniziale = angoloFinale //Per il prossimo giro
-
-              var spazioPercorso = angoloPercorso / 360 * 2 * car.radius * Math.PI
-              var consumo = spazioPercorso * 0.0015
-              var carburanteRimanente = fuel - consumo
-
-              println("spazio percorso: " + spazioPercorso)
-              println("consumo: " + consumo)
-              println("carburante rimanente: " + carburanteRimanente)
-
-
-            times0(car.name) = times0(car.name) + 1
-            val r = car.radius
-            var newX = 0.0
-            var newY = 0.0
-            var np = (0, 0)
-            if direction == 1 then
-              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
-              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
-              np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, center, 170, direction)
-            else
-              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
-              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
-              np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, center, 170, direction)
-            np
-          // ---- Da qui in su è da togliere, per poi mettere solamente le cose dell'else sotto nel metodo
-
+      private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] = d match {
+        case DrawingTurnParams(center, _, _, _, _, direction, _) =>
+          val x = car.drawingCarParams.position._1
+          val t0 = times0.get(car.name).get
+          val teta_t = 0.5 * car.acceleration * (t0 ** 2)
+          val previous = previuosTeta.get(car.name).get
+          val alpha = teta_t - previous
+          val spazioPercorso = alpha / 360 * 2 * car.radius * Math.PI
+          val consumo = spazioPercorso * 0.0015
+          car.fuel = car.fuel - consumo
+          previuosTeta(car.name) = teta_t
+          println(s"car: ${car.name} ---- spazio percorso: $spazioPercorso ---- teta_ $teta_t")
+          println("consumo: " + consumo)
+          println("carburante rimanente: " + car.fuel)
+          times0(car.name) = times0(car.name) + 1
+          val r = car.radius
+          var newX = 0.0
+          var newY = 0.0
+          var np = (0, 0)
+          if direction == 1 then
+            newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
+            newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
+            np = (newX.toInt, newY.toInt)
+            np = checkBounds(np, center, 170, direction)
           else
-            val x = car.drawingCarParams.position._1
-            val t0 = times0.get(car.name).get
-            val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-
-
-            times0(car.name) = times0(car.name) + 1
-            val r = car.radius
-            var newX = 0.0
-            var newY = 0.0
-            var np = (0, 0)
-            if direction == 1 then
-              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
-              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
-              np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, center, 170, direction)
-            else
-              newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
-              newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
-              np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, center, 170, direction)
-            np
-
-        }
+            newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
+            newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
+            np = (newX.toInt, newY.toInt)
+            np = checkBounds(np, center, 170, direction)
+          np
+      }
 
       private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
         var dx = 0
@@ -297,10 +208,6 @@ object SimulationEngineModule:
         if dx >= r || dy >= r then (p._1 - (dx - r), p._2 - (dy - r))
         else p
 
-      private def updateCharts(): Task[Unit] =
-        for _ <- context.view.updateDisplayedStanding()
-          yield ()
-
       private def updateStanding(): Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
@@ -315,26 +222,26 @@ object SimulationEngineModule:
         x.foreach(e => {
           e._1 match
             case Straight(id, _) =>
-              if id == 1 then
-                l1 = l1.concat(sortCars(e._2, _ > _, true))
-              else
-                l1 = l1.concat(sortCars(e._2, _ < _, true))
+              if id == 1 then l1 = l1.concat(sortCars(e._2, _ > _, true))
+              else l1 = l1.concat(sortCars(e._2, _ < _, true))
             case Turn(id, _) =>
-              if id == 2 then
-                l1 = l1.concat(sortCars(e._2, _ > _, false))
-              else
-                l1 = l1.concat(sortCars(e._2, _ < _, false))
+              if id == 2 then l1 = l1.concat(sortCars(e._2, _ > _, false))
+              else l1 = l1.concat(sortCars(e._2, _ < _, false))
         })
-        Map.from(l1.zipWithIndex.map{ case (k,v) => (v,k) })
+        Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) })
 
       private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
         var l: List[Car] = List.empty
         if isHorizontal then
-          cars.sortWith((c1, c2) => f(c1.drawingCarParams.position._1, c2.drawingCarParams.position._1)).foreach(e => l = l.concat(List(e)))
+          cars
+            .sortWith((c1, c2) => f(c1.drawingCarParams.position._1, c2.drawingCarParams.position._1))
+            .foreach(e => l = l.concat(List(e)))
         else
-          cars.sortWith((c1, c2) => f(c1.drawingCarParams.position._2, c2.drawingCarParams.position._2)).foreach(e => l = l.concat(List(e)))
+          cars
+            .sortWith((c1, c2) => f(c1.drawingCarParams.position._2, c2.drawingCarParams.position._2))
+            .foreach(e => l = l.concat(List(e)))
         l
-      
+
       private def updateView(): Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)

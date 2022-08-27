@@ -97,6 +97,7 @@ object ModelModule:
           2,
           _track.sectors.head,
           128,
+          130,
           DrawingCarParams((313, 155), Color.RED)
           //DrawingCarParams((725, 115), Color.RED)
         ),
@@ -111,6 +112,7 @@ object ModelModule:
           2,
           _track.sectors.head,
           141,
+          130,
           DrawingCarParams((293, 142), Color.CYAN)
           //DrawingCarParams((725, 129), Color.CYAN)
         ),
@@ -125,6 +127,7 @@ object ModelModule:
           2,
           _track.sectors.head,
           154,
+          130,
           DrawingCarParams((273, 129), Color.BLUE)
           //DrawingCarParams((725, 142), Color.BLUE)
         ),
@@ -139,11 +142,11 @@ object ModelModule:
           2,
           _track.sectors.head,
           168,
+          130,
           DrawingCarParams((253, 115), Color.GREEN)
           //DrawingCarParams((725, 155), Color.GREEN)
         )
       )
-      
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 

@@ -14,6 +14,7 @@ case class Car(
     var acceleration: Double,
     var actualSector: Sector,
     var radius: Int,
+    var fuel: Double,
     var drawingCarParams: DrawingCarParams
 )
 
