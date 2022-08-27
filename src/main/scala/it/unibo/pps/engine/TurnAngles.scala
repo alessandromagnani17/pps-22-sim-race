@@ -16,7 +16,12 @@ object TurnAngles:
   private class TurnAnglesImpl() extends TurnAngles:
 
     private val angles =
-      HashMap(("Ferrari", (0.0, 0.0)), ("Mercedes", (0.0, 0.0)), ("Red Bull", (0.0, 0.0)), ("McLaren", (0.0, 0.0)))
+      HashMap(
+        ("Ferrari" -> (0.0, 0.0)),
+        ("Mercedes" -> (0.0, 0.0)),
+        ("Red Bull" -> (0.0, 0.0)),
+        ("McLaren" -> (0.0, 0.0))
+      )
 
     override def reset(car: String): Unit = angles(car) = (0.0, 0.0)
 

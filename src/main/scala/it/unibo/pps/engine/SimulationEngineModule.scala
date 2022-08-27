@@ -44,8 +44,8 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
-      private var times0: HashMap[String, Int] =
-        HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
+      private var sectorTimes: HashMap[String, Int] =
+        HashMap(("Ferrari" -> 0), ("McLaren" -> 0), ("Red Bull" -> 0), ("Mercedes" -> 0))
 
       private val angles = TurnAngles()
 
@@ -103,9 +103,9 @@ object SimulationEngineModule:
         case Straight(_, _) =>
           car.actualSector.phase(car.drawingCarParams.position) match {
             case Phase.Acceleration =>
-              val v = movementsManager.newVelocityStraightAcc(car, times0(car.name))
+              val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
-            case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, times0(car.name))
+            case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
             case _ => car.actualSpeed
           }
         case Turn(_, _) => car.actualSpeed
@@ -136,7 +136,7 @@ object SimulationEngineModule:
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
             car.actualSpeed = 6
-            times0(car.name) = 0
+            sectorTimes(car.name) = 0
             angles.reset(car.name)
             checkLap(car)
             straightMovement(car, time)
@@ -149,10 +149,10 @@ object SimulationEngineModule:
           x <- io(car.drawingCarParams.position._1)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           velocity <- io(car.actualSpeed)
-          time <- io(times0.get(car.name).get)
+          time <- io(sectorTimes.get(car.name).get)
           acceleration <- io(car.acceleration)
           newP <- io(movementsManager.newPositionStraight(x, velocity, time, acceleration, i))
-          _ <- io(times0(car.name) = times0(car.name) + 1)
+          _ <- io(sectorTimes(car.name) = sectorTimes(car.name) + 1)
         yield (newP, car.drawingCarParams.position._2)
 
       private def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
@@ -160,12 +160,12 @@ object SimulationEngineModule:
           x <- io(car.drawingCarParams.position._1)
           _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, times0.get(car.name).get, 1, i))
+          newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, sectorTimes.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
             case DrawingStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
               val d = (newP - endX) * i
               if d >= 0 then
-                times0(car.name) = 0
+                sectorTimes(car.name) = 0
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
@@ -174,10 +174,10 @@ object SimulationEngineModule:
       private def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] = d match {
         case DrawingTurnParams(center, _, _, _, _, direction, _) =>
           val x = car.drawingCarParams.position._1
-          val t0 = times0(car.name)
+          val t0 = sectorTimes(car.name)
           val teta_t = 0.5 * car.acceleration * (t0 ** 2)
           angles.setAngle(teta_t, car.name)
-          times0(car.name) = times0(car.name) + 1
+          sectorTimes(car.name) = sectorTimes(car.name) + 1
           val r = car.radius
           var newX = 0.0
           var newY = 0.0
