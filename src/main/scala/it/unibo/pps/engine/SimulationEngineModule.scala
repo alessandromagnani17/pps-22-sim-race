@@ -47,9 +47,7 @@ object SimulationEngineModule:
       private var times0: HashMap[String, Int] =
         HashMap.empty + ("Ferrari" -> 0) + ("McLaren" -> 0) + ("Red Bull" -> 0) + ("Mercedes" -> 0)
 
-      //old, new
-      private var tetaDiff: HashMap[String, (Double, Double)] =
-        HashMap.empty + ("Ferrari" -> (0.0, 0.0)) + ("McLaren" -> (0.0, 0.0)) + ("Red Bull" -> (0.0, 0.0)) + ("Mercedes" -> (0.0, 0.0))
+      private val angles = TurnAngles()
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -96,7 +94,7 @@ object SimulationEngineModule:
           val oldPosition = car.drawingCarParams.position
           car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
         case Turn(_, _) =>
-          val teta = tetaDiff(car.name)._2 - tetaDiff(car.name)._1
+          val teta = angles.difference(car.name)
           val l = (teta / 360) * 2 * car.radius * Math.PI
           car.fuel - l * 0.0015
       }
@@ -139,6 +137,7 @@ object SimulationEngineModule:
             car.actualSector = context.model.track.nextSector(car.actualSector)
             car.actualSpeed = 6
             times0(car.name) = 0
+            angles.reset(car.name)
             checkLap(car)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
@@ -177,7 +176,7 @@ object SimulationEngineModule:
           val x = car.drawingCarParams.position._1
           val t0 = times0(car.name)
           val teta_t = 0.5 * car.acceleration * (t0 ** 2)
-          tetaDiff(car.name) = (tetaDiff(car.name)._2, teta_t)
+          angles.setAngle(teta_t, car.name)
           times0(car.name) = times0(car.name) + 1
           val r = car.radius
           var newX = 0.0
@@ -197,14 +196,8 @@ object SimulationEngineModule:
       }
 
       private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
-        var dx = 0
-        var dy = 0
-        if direction == 1 then
-          dx = (p._1 + 12, p._2) euclideanDistance center
-          dy = (p._1, p._2 + 12) euclideanDistance center
-        else
-          dx = (p._1 - 12, p._2) euclideanDistance center
-          dy = (p._1, p._2 + 12) euclideanDistance center
+        var dx = (p._1 + (12 * direction), p._2) euclideanDistance center
+        var dy = (p._1, p._2 + 12) euclideanDistance center
         if dx - r < 0 then dx = r
         if dy - r < 0 then dy = r
         if dx >= r || dy >= r then (p._1 - (dx - r), p._2 - (dy - r))
