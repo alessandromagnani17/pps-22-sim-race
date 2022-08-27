@@ -160,9 +160,8 @@ object ModelModule:
       private var _currentCarIndex = 0
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
-
-      //REACTIVE CHARTS
       private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+
       override def registerCallbackHistory(
           onNext: List[Snapshot] => Future[Ack],
           onError: Throwable => Unit,

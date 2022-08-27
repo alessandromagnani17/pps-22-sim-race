@@ -48,7 +48,7 @@ import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 trait SimulationPanel extends JPanel:
 
-  /** Method for rendering the new snapshot of the simulation */
+  /** Renders the new snapshot of the simulation */
   def render(cars: List[Car]): Unit
   def renderTrack(track: Track): Unit
   def updateDisplayedStanding(): Unit
@@ -102,11 +102,11 @@ object SimulationPanel:
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED)
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
-        _ <- controller.registerCallback()
+        _ <- controller.registerReactiveChartCallback()
       yield sp
 
     private val matchChart = (chart: LineChart, snapshot: Snapshot) =>
-      chart.getTitle match {
+      chart.title match {
         case s: String if s.equals("Velocity") =>
           snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
         case _ => //TODO - una volta che si trovano le funzioni per la degradation e il fuel si possno aggiungere i case

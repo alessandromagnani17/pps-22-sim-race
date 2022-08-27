@@ -34,9 +34,7 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
-
-    //Monix Reactive
-    def registerCallback(): Unit
+    def registerReactiveChartCallback(): Unit
 
   trait Provider:
     val controller: Controller
@@ -118,7 +116,7 @@ object ControllerModule:
           context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
 
-      override def registerCallback(): Unit =
+      override def registerReactiveChartCallback(): Unit =
         val onNext = (l: List[Snapshot]) => {
           context.view.updateCharts(l)
           Ack.Continue
