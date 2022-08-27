@@ -8,7 +8,8 @@ import monix.execution.Scheduler.Implicits.global
 import monix.execution.Cancelable
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
-
+import monix.eval.Task
+import monix.execution.{Ack, Cancelable}
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
@@ -33,6 +34,7 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+    def registerReactiveChartCallback(): Unit
 
   trait Provider:
     val controller: Controller
@@ -113,6 +115,15 @@ object ControllerModule:
         context.model.startingPositions(prevIndex).drawingCarParams.position =
           context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
+
+      override def registerReactiveChartCallback(): Unit =
+        val onNext = (l: List[Snapshot]) => {
+          context.view.updateCharts(l)
+          Ack.Continue
+        }
+        val onError = (t: Throwable) => ()
+        val onComplete = () => ()
+        context.model.registerCallbackHistory(onNext, onError, onComplete)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

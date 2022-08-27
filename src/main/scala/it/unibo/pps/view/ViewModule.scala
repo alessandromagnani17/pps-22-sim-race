@@ -1,8 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Tyre
-import it.unibo.pps.model.{Car, Standing, Track}
+import it.unibo.pps.model.{Car, Snapshot, Standing, Track, Tyre}
 import it.unibo.pps.view.ViewConstants.*
 
 object ViewModule:
@@ -13,6 +12,7 @@ object ViewModule:
     def updateParametersPanel(): Unit
     def displaySimulationPanel(track: Track, standing: Standing): Unit
     def updateCars(cars: List[Car]): Unit
+    def updateCharts(l: List[Snapshot]): Unit
 
   trait Provider:
     val view: View
@@ -40,6 +40,9 @@ object ViewModule:
 
       override def updateParametersPanel(): Unit =
         gui.updateParametersPanel()
+
+      override def updateCharts(l: List[Snapshot]): Unit =
+        gui.simulationPanel.updateCharts(l.last)
 
   trait Interface extends Provider with Component:
     self: Requirements =>
