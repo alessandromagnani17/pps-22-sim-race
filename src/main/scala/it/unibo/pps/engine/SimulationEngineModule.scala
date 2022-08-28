@@ -26,6 +26,7 @@ import scala.collection.mutable.{HashMap, Map}
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
+given Conversion[Task[Car], Car] = _.runSyncUnsafe()
 
 object SimulationEngineModule:
   trait SimulationEngine:
@@ -83,12 +84,13 @@ object SimulationEngineModule:
         yield newSnap
 
       private def updateCar(car: Car, time: Int): Car =
-        val newVelocity = updateVelocity(car, time)
-        val newPosition = updatePosition(car, time)
-        val newFuel = updateFuel(car, newPosition)
-        val newDegradation = updateDegradation(car, newPosition, newVelocity)
-        val newDrawingParams = car.drawingCarParams.copy(position = newPosition)
-        car.copy(
+        for
+          newVelocity <- io(updateVelocity(car, time))
+          newPosition <- io(updatePosition(car, time))
+          newFuel <- io(updateFuel(car, newPosition))
+          newDegradation <- io(updateDegradation(car, newPosition, newVelocity))
+          newDrawingParams <- io(car.drawingCarParams.copy(position = newPosition))
+        yield car.copy(
           actualSpeed = newVelocity,
           fuel = newFuel,
           degradation = newDegradation,
@@ -216,11 +218,13 @@ object SimulationEngineModule:
             np = (newX.toInt, newY.toInt)
             println(s"${car.name}")
             np = checkBounds(np, center, 170, direction)
+            if np._1 < 725 then np = (724, np._2) // TODO - migliorare
           else
             newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
             newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
             np = (newX.toInt, newY.toInt)
             np = checkBounds(np, center, 170, direction)
+            if np._1 > 181 then np = (182, np._2) // TODO - migliorare
           np
       }
 
