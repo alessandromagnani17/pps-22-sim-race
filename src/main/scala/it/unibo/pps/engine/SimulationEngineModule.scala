@@ -135,7 +135,11 @@ object SimulationEngineModule:
             case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
             case _ => car.actualSpeed
           }
-        case Turn(_, _) => car.actualSpeed
+        case Turn(_, _) =>
+          car.actualSector.phase(car.drawingCarParams.position) match {
+            case Phase.Acceleration => car.actualSpeed
+            case _ => 6 //TODO - magic number
+          }
       }
 
       private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] = car.actualSector match {
@@ -162,7 +166,6 @@ object SimulationEngineModule:
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            car.actualSpeed = 6
             sectorTimes(car.name) = 0
             angles.reset(car.name)
             checkLap(car)
