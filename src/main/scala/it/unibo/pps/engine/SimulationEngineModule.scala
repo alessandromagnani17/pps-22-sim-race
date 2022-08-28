@@ -153,7 +153,7 @@ object SimulationEngineModule:
 
       private def acceleration(car: Car, time: Int): Task[(Int, Int)] =
         for
-          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt) //TODO - spostare
+          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt) //TODO - spostare
           x <- io(car.drawingCarParams.position._1)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           velocity <- io(car.actualSpeed)
@@ -166,7 +166,7 @@ object SimulationEngineModule:
       private def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
         for
           x <- io(car.drawingCarParams.position._1)
-          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
+          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, sectorTimes.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
@@ -195,6 +195,7 @@ object SimulationEngineModule:
             newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
             newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
             np = (newX.toInt, newY.toInt)
+            println(s"${car.name}")
             np = checkBounds(np, center, 170, direction)
           else
             newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
@@ -205,11 +206,15 @@ object SimulationEngineModule:
       }
 
       private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
-        var dx = (p._1 + (12 * direction), p._2) euclideanDistance center
+        var dx = (p._1 + 12, p._2) euclideanDistance center
         var dy = (p._1, p._2 + 12) euclideanDistance center
-        if dx - r < 0 then dx = r
-        if dy - r < 0 then dy = r
-        if dx >= r || dy >= r then (p._1 - (dx - r), p._2 - (dy - r))
+        val rI = 113
+        if dx - r < 0 && direction == 1 then dx = r
+        if dy - r < 0 && direction == 1 then dy = r
+        if (dx >= r || dy >= r) && direction == 1 then (p._1 - (dx - r), p._2 - (dy - r))
+        else if (dx <= rI || dy <= rI) && direction == -1 then
+          println(s"dx-r: ${dx - rI} ---- dy-r: ${dy - rI} ")
+          (p._1 + (dx - rI), p._2 + (dy - rI))
         else p
 
       private def updateStanding(): Task[Unit] =

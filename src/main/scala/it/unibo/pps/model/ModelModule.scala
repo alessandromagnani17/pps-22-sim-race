@@ -188,7 +188,9 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def startingPositions_=(startingPos: Map[Int, Car]): Unit = _startingPositions = startingPos
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
-      override def initSnapshot(): Unit = addSnapshot(Snapshot(cars, 0))
+      override def initSnapshot(): Unit =
+        val c = _cars.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
+        addSnapshot(Snapshot(c, 0))
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
 
   trait Interface extends Provider with Component
