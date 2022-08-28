@@ -13,6 +13,7 @@ case class Car(
     var actualSpeed: Double,
     var acceleration: Double,
     var actualSector: Sector,
-    var fuel: Double,
+    val fuel: Double,
+    val degradation: Double,
     var drawingCarParams: DrawingCarParams
 )

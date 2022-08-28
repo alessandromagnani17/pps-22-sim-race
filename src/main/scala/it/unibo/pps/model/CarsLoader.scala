@@ -30,20 +30,19 @@ object CarsLoader:
   private val engine = Scala2P.createEngine("/prolog/cars.pl")
 
   def load(track: Track): List[Car] =
-    val variables = List("Path", "Name", "Tyre", "Attack", "Defense", "MaxSpeed", "ActualLap", "ActualSpeed",
-      "Acceleration", "ActualSector", "Fuel", "Color")
+    val variables =
+      List("Path", "Name", "Tyre", "Attack", "Defense", "MaxSpeed", "Acceleration", "ActualSector", "Fuel", "Color")
     for
       sol <- engine(
-        "car(path(Path), name(Name), tyre(Tyre), driver(Attack, Defense), maxSpeed(MaxSpeed), actualLap(ActualLap), " +
-          "actualSpeed(ActualSpeed), acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel), color(Color))."
+        "car(path(Path), name(Name), tyre(Tyre), driver(Attack, Defense), maxSpeed(MaxSpeed)," +
+          "acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel), color(Color))."
       )
       x = Scala2P.extractTermsToListOfStrings(sol, variables)
       car = mkCar(x, track)
     yield car
 
   private def mkCar(params: List[String], track: Track): Car = params match {
-    case List(path, name, tyre, attack, defense, maxSpeed, actualLap, actualSpeed, acceleration, actualSector, fuel,
-          carColor) =>
+    case List(path, name, tyre, attack, defense, maxSpeed, acceleration, actualSector, fuel, carColor) =>
       val position = carsInitial(name)
       val startingPoint = track.startingGrid(position).drawingParams.position
       Car(
@@ -52,11 +51,12 @@ object CarsLoader:
         tyre,
         Driver(attack, defense),
         maxSpeed,
-        actualLap,
-        actualSpeed.toDouble,
+        0,
+        0,
         acceleration.toDouble,
         track.sectors.head,
         fuel.toDouble,
+        0,
         DrawingCarParams(startingPoint, carColor)
       )
   }

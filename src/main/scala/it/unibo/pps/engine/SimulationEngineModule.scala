@@ -86,8 +86,14 @@ object SimulationEngineModule:
         val newVelocity = updateVelocity(car, time)
         val newPosition = updatePosition(car, time)
         val newFuel = updateFuel(car, newPosition)
+        val newDegradation = updateDegradation(car, newPosition, newVelocity)
         val newDrawingParams = car.drawingCarParams.copy(position = newPosition)
-        car.copy(actualSpeed = newVelocity, fuel = newFuel, drawingCarParams = newDrawingParams)
+        car.copy(
+          actualSpeed = newVelocity,
+          fuel = newFuel,
+          degradation = newDegradation,
+          drawingCarParams = newDrawingParams
+        )
 
       private val computeRadius = (d: DrawingParams, position: Tuple2[Int, Int]) =>
         d match {
@@ -106,6 +112,19 @@ object SimulationEngineModule:
           val l = (teta / 360) * 2 * r * Math.PI
           car.fuel - l * 0.0015
       }
+
+      private def updateDegradation(car: Car, newPosition: Tuple2[Int, Int], v: Double): Double =
+        val f = (d: Double, s: Double, v: Double, l: Int) => if d >= 50 then d else d + (s + v + l) / 3500
+        car.actualSector match {
+          case Straight(_, _) =>
+            val oldPosition = car.drawingCarParams.position
+            f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
+          case Turn(_, _) =>
+            val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
+            val teta = angles.difference(car.name)
+            val l = (teta / 360) * 2 * r * Math.PI
+            f(car.degradation, l, v, car.actualLap)
+        }
 
       private def updateVelocity(car: Car, time: Int): Double = car.actualSector match {
         case Straight(_, _) =>
@@ -153,7 +172,6 @@ object SimulationEngineModule:
 
       private def acceleration(car: Car, time: Int): Task[(Int, Int)] =
         for
-          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt) //TODO - spostare
           x <- io(car.drawingCarParams.position._1)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           velocity <- io(car.actualSpeed)
@@ -166,7 +184,6 @@ object SimulationEngineModule:
       private def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
         for
           x <- io(car.drawingCarParams.position._1)
-          //_ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
           newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, sectorTimes.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
@@ -186,7 +203,6 @@ object SimulationEngineModule:
           val teta_t = 0.5 * car.acceleration * (t0 ** 2)
           angles.setAngle(teta_t, car.name)
           sectorTimes(car.name) = sectorTimes(car.name) + 1
-          //val r = car.radius
           val r = car.drawingCarParams.position euclideanDistance center
           var newX = 0.0
           var newY = 0.0
