@@ -89,13 +89,21 @@ object SimulationEngineModule:
         val newDrawingParams = car.drawingCarParams.copy(position = newPosition)
         car.copy(actualSpeed = newVelocity, fuel = newFuel, drawingCarParams = newDrawingParams)
 
+      private val computeRadius = (d: DrawingParams, position: Tuple2[Int, Int]) =>
+        d match {
+          case DrawingTurnParams(center, _, _, _, _, _, _) =>
+            center euclideanDistance position
+          case _ => 0
+        }
+
       private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double = car.actualSector match {
         case Straight(_, _) =>
           val oldPosition = car.drawingCarParams.position
           car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
         case Turn(_, _) =>
+          val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
           val teta = angles.difference(car.name)
-          val l = (teta / 360) * 2 * car.radius * Math.PI
+          val l = (teta / 360) * 2 * r * Math.PI
           car.fuel - l * 0.0015
       }
 
@@ -178,7 +186,8 @@ object SimulationEngineModule:
           val teta_t = 0.5 * car.acceleration * (t0 ** 2)
           angles.setAngle(teta_t, car.name)
           sectorTimes(car.name) = sectorTimes(car.name) + 1
-          val r = car.radius
+          //val r = car.radius
+          val r = car.drawingCarParams.position euclideanDistance center
           var newX = 0.0
           var newY = 0.0
           var np = (0, 0)
