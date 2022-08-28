@@ -3,8 +3,8 @@ package it.unibo.pps.model
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
-
 import java.awt.Color
+import it.unibo.pps.utility.Constants.*
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
 given Conversion[String, Term] = Term.createTerm(_)
@@ -18,24 +18,34 @@ given Conversion[String, Tyre] = _ match {
   case s: String if s.equals("Hard") => Tyre.HARD
 }
 
+given Conversion[String, Color] = _ match {
+  case s: String if s.equals("Red") => Color.RED
+  case s: String if s.equals("Cyan") => Color.CYAN
+  case s: String if s.equals("Blue") => Color.BLUE
+  case s: String if s.equals("Green") => Color.GREEN
+}
+
 object CarsLoader:
 
-  private val engine = Scala2P.createEngine("")
+  private val engine = Scala2P.createEngine("/prolog/cars.pl")
 
   def load(track: Track): List[Car] =
     val variables = List("Path", "Name", "Tyre", "Attack", "Defense", "MaxSpeed", "ActualLap", "ActualSpeed",
-      "Acceleration", "ActualSector", "Fuel")
+      "Acceleration", "ActualSector", "Fuel", "Color")
     for
       sol <- engine(
         "car(path(Path), name(Name), tyre(Tyre), driver(Attack, Defense), maxSpeed(MaxSpeed), actualLap(ActualLap), " +
-          "actualSpeed(ActualSpeed), acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel))"
+          "actualSpeed(ActualSpeed), acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel), color(Color))."
       )
       x = Scala2P.extractTermsToListOfStrings(sol, variables)
       car = mkCar(x, track)
     yield car
 
   private def mkCar(params: List[String], track: Track): Car = params match {
-    case List(path, name, tyre, attack, defense, maxSpeed, actualLap, actualSpeed, acceleration, actualSector, fuel) =>
+    case List(path, name, tyre, attack, defense, maxSpeed, actualLap, actualSpeed, acceleration, actualSector, fuel,
+          carColor) =>
+      val position = carsInitial(name)
+      val startingPoint = track.startingGrid(position).drawingParams.position
       Car(
         path,
         name,
@@ -47,6 +57,6 @@ object CarsLoader:
         acceleration.toDouble,
         track.sectors.head,
         fuel.toDouble,
-        DrawingCarParams((0, 0), Color.GREEN)
+        DrawingCarParams(startingPoint, carColor)
       )
   }

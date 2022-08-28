@@ -94,7 +94,7 @@ object ModelModule:
         )
       )*/
 
-      private var _cars: List[Car] = List(
+      /*private var _cars: List[Car] = List(
         Car(
           "/cars/0-hard.png",
           "Ferrari",
@@ -152,10 +152,12 @@ object ModelModule:
           _track.sectors.head,
           //168,
           130,
-          DrawingCarParams((253, 115), Color.GREEN)
+          DrawingCarParams(X, Color.GREEN)
           //DrawingCarParams((725, 155), Color.GREEN)
         )
-      )
+      )*/
+
+      private var _cars: List[Car] = CarsLoader.load(track)
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 
