@@ -31,7 +31,7 @@ object PrologMovements:
         .toInt
 
     override def newVelocityStraightAcc(car: Car, time: Int): Int =
-      engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time,  Ns)")
+      engine(s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)")
         .map(Scala2P.extractTermToString(_, "Ns"))
         .toSeq
         .head
