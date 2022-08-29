@@ -4,7 +4,7 @@ computeNewPositionForStraight(Coord, Vel, Time, Acc, I, Np) :- pow(Time, 2, Time
 
 computeNewVelocity(Speed, Acc, Time, Ns) :- Ns is Speed + (Acc * Time).
 
-computeNewVelocityDeceleration(Speed, Acc, Time, Ns) :- Ns is (Speed + (Acc * Time))*0.6.
+computeNewVelocityDeceleration(Speed, Acc, Time, Ns) :- Ns is (Speed + (Acc * Time)) * 0.9.
 
 pow(X, Esp, Y):-  pow(X, X, Esp, Y).
 pow(X, Temp, Esp, Y):- Esp=:=0, !, Y=1.

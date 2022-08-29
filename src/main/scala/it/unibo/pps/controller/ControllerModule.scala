@@ -133,5 +133,9 @@ object ControllerModule:
           context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
 
+        val radius = context.model.startingPositions(prevIndex).radius
+        context.model.startingPositions(prevIndex).radius = context.model.startingPositions(nextIndex).radius
+        context.model.startingPositions(nextIndex).radius = radius
+
   trait Interface extends Provider with Component:
     self: Requirements =>

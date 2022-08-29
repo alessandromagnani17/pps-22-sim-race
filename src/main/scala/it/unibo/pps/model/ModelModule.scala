@@ -98,8 +98,8 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
-          128,
-          DrawingCarParams((313, 155), Color.RED)
+          168, // era 168
+          DrawingCarParams((313, 115), Color.RED)
           //DrawingCarParams((725, 115), Color.RED)
         ),
         Car(
@@ -112,8 +112,8 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
-          141,
-          DrawingCarParams((293, 142), Color.CYAN)
+          154, //era 154
+          DrawingCarParams((313, 129), Color.CYAN) // 293
           //DrawingCarParams((725, 129), Color.CYAN)
         ),
         Car(
@@ -126,8 +126,8 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
-          154,
-          DrawingCarParams((273, 129), Color.BLUE)
+          141,
+          DrawingCarParams((313, 142), Color.BLUE) // 273
           //DrawingCarParams((725, 142), Color.BLUE)
         ),
         Car(
@@ -140,8 +140,8 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
-          168,
-          DrawingCarParams((253, 115), Color.GREEN)
+          128, // 128
+          DrawingCarParams((313, 155), Color.GREEN) // 253
           //DrawingCarParams((725, 155), Color.GREEN)
         )
       )

@@ -105,12 +105,11 @@ object SimulationEngineModule:
         //println("ActualSpeed: " + car.actualSpeed + " --- time0: "+ times0.get(car.name).get)
 
         car.actualSector.phase(car.drawingCarParams.position) match {
-          case Phase.Acceleration => acc(car, time, car.actualSpeed)
-          case Phase.Deceleration => dec(car, time, car.actualSpeed)
+          case Phase.Acceleration => acc(car, time)
+          case Phase.Deceleration => dec(car, time)
           case Phase.Ended =>
-
-            if car.name == "Ferrari" then
-              //println("---------- CURVA ----------")
+            if car.name == "Ferrari" then println("FINE RETTILINEO")
+            times0(car.name) = 3
 
             car.actualSector = context.model.track.nextSector(car.actualSector)
             //checkLap(car)
@@ -129,39 +128,44 @@ object SimulationEngineModule:
         car.actualSector.phase(car.drawingCarParams.position) match {
           case Phase.Acceleration => turn(car, time, car.actualSpeed, car.actualSector.drawingParams)
           case Phase.Ended =>
+            if car.name == "Ferrari" then println("FINE CURVA")
+
             curvaFatta = true
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            car.actualSpeed = 15
-            times0(car.name) = 0
+            car.actualSpeed = 45
+            times0(car.name) = 25
             checkLap(car)
+            //if car.name == "Ferrari" then println("Velocità: " + car.actualSpeed)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
         }
 
-      private def acc(car: Car, time: Int, velocity: Double): Task[(Int, Int)] =
+      private def acc(car: Car, time: Int): Task[(Int, Int)] =
         for
           x <- io(car.drawingCarParams.position._1)
-          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
+          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
           newVelocity <- io(movementsManager.newVelocityStraightAcc(car, times0.get(car.name).get, car.acceleration))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, car.acceleration, i))
-          _ <- io(times0(car.name) = times0(car.name)+1)
+          newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, times0.get(car.name).get, car.acceleration, i))
+          _ <- io(times0(car.name) = times0(car.name) + 1)
+//          _ <- if car.name == "Ferrari" then println("Velocità: " + car.actualSpeed + " | Velocity: " + newVelocity + " | x: " + newP)
+
         yield (newP, car.drawingCarParams.position._2)
 
-      private def dec(car: Car, time: Int, velocity: Double): Task[Tuple2[Int, Int]] =
+      private def dec(car: Car, time: Int): Task[Tuple2[Int, Int]] =
         for
           x <- io(car.drawingCarParams.position._1)
-          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed / 3.6).toInt)
+          _ <- io(if time == 1 then car.maxSpeed = (car.maxSpeed * 0.069).toInt)
           newVelocity <- io(movementsManager.newVelocityStraightDec(car, times0.get(car.name).get, 1))
           _ <- io(if newVelocity < car.maxSpeed then car.actualSpeed = newVelocity)
           i <- io(if car.actualSector.id == 1 then 1 else -1)
-          newP <- io(movementsManager.newPositionStraight(x, velocity, times0.get(car.name).get, 1, i))
+          newP <- io(movementsManager.newPositionStraight(x, car.actualSpeed, times0.get(car.name).get, 1, i))
           p <- io(car.actualSector.drawingParams match {
             case DrawingStraightParams(_, _, _, _, endX) =>
               val d = (newP - endX) * i
               if d >= 0 then
-                times0(car.name) = 0
+                times0(car.name) = 3
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
@@ -175,20 +179,32 @@ object SimulationEngineModule:
             val t0 = times0.get(car.name).get
             val teta_t = 0.5 * car.acceleration * (t0 ** 2)
             times0(car.name) = times0(car.name) + 1
-            val r = car.radius
+            var r = 283 - car.drawingCarParams.position._2
+
+
+
+            //val r = car.radius
             var newX = 0.0
             var newY = 0.0
             var np = (0, 0)
             if direction == 1 then
+              if r < (car.radius - 6) then r = car.radius - 6
               newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
               newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
+              if newX <= 725 then
+                //newY = 400
+                //println(s"Car ${car.name} | index: ${controller.standings._standing.map(e => e.name).reverse.indexOf(car.name)}")
+                newY = 400 + 15 * controller.standings._standing.map(e => e.name).reverse.indexOf(car.name)
               np = (newX.toInt, newY.toInt)
               np = checkBounds(np, center, 170, direction)
             else
+              //if (r * -1) < car.radius then r = car.radius else r = r * -1
+              r = r * -1
+              println(s"Car: ${car.name} | Radius: $r")
               newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + 180)))
               newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + 180)))
               np = (newX.toInt, newY.toInt)
-              np = checkBounds(np, center, 170, direction)
+              //np = checkBounds(np, center, 170, direction)
             np
 
         }
