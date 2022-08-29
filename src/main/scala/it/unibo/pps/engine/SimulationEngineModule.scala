@@ -135,7 +135,7 @@ object SimulationEngineModule:
               val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
             case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
-            case _ => car.actualSpeed
+            case _ => car.actualSpeed // TODO ending
           }
         case Turn(_, _) =>
           car.actualSector.phase(car.drawingCarParams.position) match {
