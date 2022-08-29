@@ -45,10 +45,9 @@ object EndRacePanel:
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
-        //_ <- Map.from(controller.standings._standing.zipWithIndex.map{ case (k,v) => (v,k) }).foreach(e => addToPanel(e, standingsPanel))
-        _ <- controller.startingPositions.foreach(e => addToPanel(e, standingsPanel))
+        _ <- controller.standings._standing.foreach(e => addToPanel(e, standingsPanel))
         _ <- println("Classifica1:")
-        _ <- controller.startingPositions.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
+        _ <- controller.standings._standing.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)
@@ -72,14 +71,12 @@ object EndRacePanel:
         _ <- color.setPreferredSize(Dimension(20, 70))
         _ <- tyre.setPreferredSize(Dimension(120, 70))
         _ <- time.setPreferredSize(Dimension(90, 70))
-
         _ <- p.add(position)
         _ <- p.add(name)
         _ <- p.add(color)
         _ <- p.add(img)
         _ <- p.add(tyre)
         _ <- p.add(time)
-
         _ <- panel.add(p)
       yield ()
       p.runSyncUnsafe()

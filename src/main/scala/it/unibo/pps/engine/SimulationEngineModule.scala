@@ -3,7 +3,7 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn, Tyre}
+import it.unibo.pps.model.{Car, ModelModule, Phase, Sector, Snapshot, Standing, Straight, Turn, Tyre}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -19,7 +19,6 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.model.Sector
 
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
@@ -45,10 +44,10 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = PrologMovements()
-      private var sectorTimes: HashMap[String, Int] =
-        HashMap(("Ferrari" -> 0), ("McLaren" -> 0), ("Red Bull" -> 0), ("Mercedes" -> 0))
+      private val sectorTimes: HashMap[String, Int] =
+        HashMap("Ferrari" -> 0, "McLaren" -> 0, "Red Bull" -> 0, "Mercedes" -> 0)
       private val angles = TurnAngles()
-      private val finalPositions = Map(0 -> (500, 135), 1 -> (450, 135), 2 -> (400, 135), 3 -> (350, 135))
+      private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
 
       override def decreaseSpeed(): Unit =
@@ -175,9 +174,14 @@ object SimulationEngineModule:
         }
 
       private def checkLap(car: Car): Unit =
-        if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
+        println("Aumento carsArrived")
+        if car.actualSector.id == 1 then
+          car.actualLap = car.actualLap + 1
+          println(s"${car.name} --- ${car.actualLap}")
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
-        if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1
+        if car.actualLap > context.model.totalLaps then
+
+          carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
@@ -235,7 +239,6 @@ object SimulationEngineModule:
             newX = center._1 + (r * Math.sin(Math.toRadians(teta_t)))
             newY = center._2 - (r * Math.cos(Math.toRadians(teta_t)))
             np = (newX.toInt, newY.toInt)
-            println(s"${car.name}")
             np = checkBounds(np, center, 170, direction)
             if np._1 < 725 then np = (724, np._2) // TODO - migliorare
           else
@@ -254,32 +257,37 @@ object SimulationEngineModule:
         if dx - r < 0 && direction == 1 then dx = r
         if dy - r < 0 && direction == 1 then dy = r
         if (dx >= r || dy >= r) && direction == 1 then (p._1 - (dx - r), p._2 - (dy - r))
-        else if (dx <= rI || dy <= rI) && direction == -1 then
-          println(s"dx-r: ${dx - rI} ---- dy-r: ${dy - rI} ")
-          (p._1 + (dx - rI), p._2 + (dy - rI))
+        else if (dx <= rI || dy <= rI) && direction == -1 then (p._1 + (dx - rI), p._2 + (dy - rI))
         else p
 
       private def updateStanding(): Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
-          newStartingPositions = calcNewStanding(lastSnap)
-          _ <- io(context.model.startingPositions = Map.from(newStartingPositions))
+          newStanding = calcNewStanding(lastSnap)
+          _ <- io(context.model.setS(newStanding))
           _ <- io(context.view.updateDisplayedStanding())
         yield ()
 
-      private def calcNewStanding(snap: Snapshot): Map[Int, Car] =
-        val x: List[(Sector, List[Car])] = snap.cars.groupBy(_.actualSector).sortWith(_._1.id >= _._1.id)
+      private def calcNewStanding(snap: Snapshot): Standing =
+
+        val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
         var l1: List[Car] = List.empty
-        x.foreach(e => {
-          e._1 match
-            case Straight(id, _) =>
-              if id == 1 then l1 = l1.concat(sortCars(e._2, _ > _, true))
-              else l1 = l1.concat(sortCars(e._2, _ < _, true))
-            case Turn(id, _) =>
-              if id == 2 then l1 = l1.concat(sortCars(e._2, _ > _, false))
-              else l1 = l1.concat(sortCars(e._2, _ < _, false))
+
+        carsByLap.foreach(carsBySector => {
+          carsBySector._2
+            .groupBy(_.actualSector)
+            .sortWith(_._1.id >= _._1.id)
+            .foreach(e => {
+              e._1 match
+                case Straight(id, _) =>
+                  if id == 1 then l1 = l1.concat(sortCars(e._2, _ > _, true))
+                  else l1 = l1.concat(sortCars(e._2, _ < _, true))
+                case Turn(id, _) =>
+                  if id == 2 then l1 = l1.concat(sortCars(e._2, _ > _, false))
+                  else l1 = l1.concat(sortCars(e._2, _ < _, false))
+            })
         })
-        Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) })
+        Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
       private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
         var l: List[Car] = List.empty
@@ -296,11 +304,11 @@ object SimulationEngineModule:
       private def updateView(): Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)
-          _ <- io(context.view.updateCars(cars))
+          _ <- io(context.view.updateCars(cars, context.model.actualLap, context.model.totalLaps))
         yield ()
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(controller.startingPositions.find(_._2.equals(car)).get._1)
+        finalPositions(context.model.standing._standing.find(_._2.equals(car)).get._1)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

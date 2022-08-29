@@ -57,7 +57,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
     val p = for
       fr <- frame
-      _ <- _simulationPanel.updateStanding(standing)
+      //_ <- _simulationPanel.updateStanding(standing)
       _ <- _simulationPanel.renderTrack(track)
       _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(_simulationPanel)

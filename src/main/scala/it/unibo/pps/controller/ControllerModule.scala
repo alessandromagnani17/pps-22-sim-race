@@ -66,6 +66,7 @@ object ControllerModule:
       )
 
       override def notifyStop(): Unit =
+        println("hdfghuefgheuygfe")
         stopFuture --> (_.cancel())
         stopFuture = None
 
@@ -107,11 +108,11 @@ object ControllerModule:
         defense
 
       override def displaySimulationPanel(): Unit =
-        context.model.updateStanding()
+        context.model.createStanding()
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.standing._standing)
+        context.view.updateCars(context.model.standing._standing.values.toList, context.model.actualLap, context.model.totalLaps)
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
