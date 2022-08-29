@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage
 import java.awt.{Component, GridBagConstraints}
 import javax.swing.{JButton, JComboBox, JFrame, JLabel, JPanel, JScrollPane}
 import it.unibo.pps.view.charts.LineChart
-import it.unibo.pps.view.simulation_panel.Enviroment
+import it.unibo.pps.view.simulation_panel.Environment
 import org.jfree.chart.ChartPanel
 
 object GivenConversion:
@@ -27,16 +27,15 @@ object GivenConversion:
     given Conversion[Component, Task[Component]] = Task(_)
     given Conversion[BufferedImage, Task[BufferedImage]] = Task(_)
     given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
-    given Conversion[Enviroment, Task[Enviroment]] = Task(_)
+    given Conversion[Environment, Task[Environment]] = Task(_)
     given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
-
+    given Iterable2Task[E]: Conversion[Iterable[E], Task[Iterable[E]]] = Task(_)
 
   object ModelConversion extends CommonConversion:
     given Conversion[Car, Task[Car]] = Task(_)
     given Conversion[Snapshot, Task[Snapshot]] = Task(_)
-
 
   object TrackBuilderGivenConversion:
     given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList

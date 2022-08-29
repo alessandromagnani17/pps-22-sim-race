@@ -8,40 +8,36 @@ import scala.{Tuple2 => Point2d}
 import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.model.{Car, Straight, Turn}
 
-class Enviroment(val w: Int, val h: Int) extends JPanel:
+class Environment(val w: Int, val h: Int) extends JPanel:
 
   private var _track: Track = Track()
   private var _cars: List[Car] = List.empty
+  private var _actualLap: Int = 1
+  private var _totalLaps: Int = 20
 
   def track: Track = _track
   def track_=(t: Track): Unit = _track = t
   def cars: List[Car] = _cars
   def cars_=(c: List[Car]): Unit = _cars = c
+  def actualLap: Int = _actualLap
+  def actualLap_=(actualLap: Int) = _actualLap = actualLap
+  def totalLaps: Int = _totalLaps
+  def totalLaps_=(totalLaps: Int) = _totalLaps = totalLaps
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
-
-    g.setColor(Color.MAGENTA)
-    g.drawString("LAP: 1", 449, 60)
-
+    super.paintComponent(g)
     g.setColor(Color.BLACK)
-    // ---------------- Metodo 1 per disegnare le macchine --------------------------------------------
-    //Variabili relative alle macchine
-    /*
-    var intW = (w * 0.5).toInt
-    var intH = (h * 0.2).toInt + 2
-    var carDiameter = 12
-    var distanceBeetweenCars = 20
-    g.setColor(Color.BLUE)
-    g.fillOval(intW, intH, carDiameter, carDiameter)
-    g.setColor(Color.GREEN)
-    g.fillOval(intW + distanceBeetweenCars, intH + distanceBeetweenCars, carDiameter, carDiameter)
-    g.setColor(Color.RED)
-    g.fillOval(intW + (distanceBeetweenCars * 2), intH + (distanceBeetweenCars * 2), carDiameter, carDiameter)
-    g.setColor(Color.BLACK)
-     */
+    g.drawString(s"LAP: ${ if _actualLap > _totalLaps then _totalLaps else _actualLap} / $_totalLaps", 449, 60)
+    g.drawString("4° ", 303, 283)
+    g.drawString("3° ", 403, 283)
+    g.drawString("2° ", 503, 283)
+    g.drawString("1° ", 603, 283)
+
+    g.drawLine(230, 113, 230, 170)
 
     _cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
+
     g.setColor(Color.BLACK)
 
     def sketcher(e: Sector) = e match {

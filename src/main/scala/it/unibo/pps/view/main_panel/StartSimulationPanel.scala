@@ -21,13 +21,12 @@ object StartSimulationPanel:
     private val imageLoader = ImageLoader()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
-    private var numLaps = 20
     private val lapsLabel =
       createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
     private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 50, _ + 1)
     private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 20, _ - 1)
     private val lapsSelectedLabel =
-      createLabel(numLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
+      createLabel(controller.totalLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
     private val startingPositionsButton = createButton("Set up the Starting Positions", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displayStartingPositionsPanel())
     private val startButton = createButton("Start Simulation", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displaySimulationPanel())
     private val startSimulationPanel = createPanelAndAddAllComponents()
@@ -55,9 +54,9 @@ object StartSimulationPanel:
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {
-          if comparator(numLaps) then
-            numLaps = function(numLaps)
-            lapsSelectedLabel.foreach(e => e.setText(numLaps.toString))
+          if comparator(controller.totalLaps) then
+            controller.totalLaps = function(controller.totalLaps)
+            lapsSelectedLabel.foreach(e => e.setText(controller.totalLaps.toString))
         })
       yield button
 

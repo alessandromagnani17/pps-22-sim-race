@@ -20,7 +20,7 @@ turn(id(4), center(181, 283), startPointE(181, 113), startPointI(181, 170), endP
 
 %startingPoint(id, x_position, y_position)
 %Query: startingPoint(id(ID), position(X, Y)).
-startingPoint(id(1), position(453, 115)).
-startingPoint(id(2), position(473, 129)).
-startingPoint(id(3), position(493, 142)).
-startingPoint(id(4), position(513, 155)).
+startingPoint(id(1), position(313, 115)).
+startingPoint(id(2), position(293, 129)).
+startingPoint(id(3), position(273, 142)).
+startingPoint(id(4), position(253, 155)).
