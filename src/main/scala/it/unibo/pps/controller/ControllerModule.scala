@@ -8,7 +8,8 @@ import monix.execution.Scheduler.Implicits.global
 import monix.execution.Cancelable
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
-
+import monix.eval.Task
+import monix.execution.{Ack, Cancelable}
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
@@ -17,12 +18,16 @@ object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def notifyStop(): Unit
-    def notifyDecreseSpeed(): Unit
+    //def notifyFinish(): Unit
+    def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
     def startingPositions: Map[Int, Car]
     def currentCar: Car
     def currentCarIndex: Int
+    def standings: Standing
+    def totalLaps: Int
     def currentCarIndex_=(index: Int): Unit
+    def totalLaps_=(lap: Int): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
@@ -30,9 +35,11 @@ object ControllerModule:
     def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
+    def displayEndRacePanel(): Unit
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+    def registerReactiveChartCallback(): Unit
 
   trait Provider:
     val controller: Controller
@@ -59,10 +66,16 @@ object ControllerModule:
       )
 
       override def notifyStop(): Unit =
+        println("hdfghuefgheuygfe")
         stopFuture --> (_.cancel())
         stopFuture = None
 
-      override def notifyDecreseSpeed(): Unit =
+      //override def notifyFinish(): Unit =
+      //notifyStop()
+
+      //displayEndRacePanel()
+
+      override def notifyDecreaseSpeed(): Unit =
         context.simulationEngine.decreaseSpeed()
 
       override def notifyIncreaseSpeed(): Unit =
@@ -74,7 +87,13 @@ object ControllerModule:
 
       override def currentCarIndex: Int = context.model.currentCarIndex
 
+      override def totalLaps: Int = context.model.totalLaps
+
+      override def standings: Standing = context.model.standing
+
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
+
+      override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
 
       override def setPath(path: String): Unit = context.model.cars(context.model.currentCarIndex).path = path
 
@@ -89,14 +108,17 @@ object ControllerModule:
         defense
 
       override def displaySimulationPanel(): Unit =
-        context.model.updateStanding()
+        context.model.createStanding()
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.standing._standing)
+        context.view.updateCars(context.model.standing._standing.values.toList, context.model.actualLap, context.model.totalLaps)
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
+
+      override def displayEndRacePanel(): Unit =
+        context.view.displayEndRacePanel()
 
       override def updateParametersPanel(): Unit =
         context.view.updateParametersPanel()
@@ -113,6 +135,15 @@ object ControllerModule:
         context.model.startingPositions(prevIndex).drawingCarParams.position =
           context.model.startingPositions(nextIndex).drawingCarParams.position
         context.model.startingPositions(nextIndex).drawingCarParams.position = position
+
+      override def registerReactiveChartCallback(): Unit =
+        val onNext = (l: List[Snapshot]) => {
+          context.view.updateCharts(l)
+          Ack.Continue
+        }
+        val onError = (t: Throwable) => ()
+        val onComplete = () => ()
+        context.model.registerCallbackHistory(onNext, onError, onComplete)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

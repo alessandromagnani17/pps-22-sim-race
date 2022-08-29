@@ -1,6 +1,9 @@
 package it.unibo.pps.utility
 
 import scala.collection.immutable.HashMap
+import javax.swing.JPanel
+import java.awt.Component
+
 object PimpScala:
 
   object RichInt:
@@ -30,3 +33,8 @@ object PimpScala:
         * If the element doesn't exists it does nothing
         */
       def ?-->(key: A, consumer: B => Unit): Unit = h.get(key) --> consumer
+
+  object RichJPanel:
+    extension (p: JPanel)
+      def addAll[E <: Component](elements: List[E]): Unit =
+        elements.foreach(p.add(_))
