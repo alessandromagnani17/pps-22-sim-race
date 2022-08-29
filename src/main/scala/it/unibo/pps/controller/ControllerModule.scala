@@ -66,6 +66,7 @@ object ControllerModule:
       )
 
       override def notifyStop(): Unit =
+        println("hdfghuefgheuygfe")
         stopFuture --> (_.cancel())
         stopFuture = None
 

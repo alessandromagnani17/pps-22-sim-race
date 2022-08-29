@@ -51,7 +51,7 @@ object CarsLoader:
         tyre,
         Driver(attack, defense),
         maxSpeed,
-        0,
+        1,
         0,
         acceleration.toDouble,
         track.sectors.head,
