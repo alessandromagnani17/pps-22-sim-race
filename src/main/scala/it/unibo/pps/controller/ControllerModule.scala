@@ -18,12 +18,16 @@ object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def notifyStop(): Unit
-    def notifyDecreseSpeed(): Unit
+    //def notifyFinish(): Unit
+    def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
     def startingPositions: Map[Int, Car]
     def currentCar: Car
     def currentCarIndex: Int
+    def standings: Standing
+    def totalLaps: Int
     def currentCarIndex_=(index: Int): Unit
+    def totalLaps_=(lap: Int): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
@@ -31,6 +35,7 @@ object ControllerModule:
     def setDefense(defense: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
+    def displayEndRacePanel(): Unit
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
@@ -64,7 +69,12 @@ object ControllerModule:
         stopFuture --> (_.cancel())
         stopFuture = None
 
-      override def notifyDecreseSpeed(): Unit =
+      //override def notifyFinish(): Unit =
+      //notifyStop()
+
+      //displayEndRacePanel()
+
+      override def notifyDecreaseSpeed(): Unit =
         context.simulationEngine.decreaseSpeed()
 
       override def notifyIncreaseSpeed(): Unit =
@@ -76,7 +86,13 @@ object ControllerModule:
 
       override def currentCarIndex: Int = context.model.currentCarIndex
 
+      override def totalLaps: Int = context.model.totalLaps
+
+      override def standings: Standing = context.model.standing
+
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
+
+      override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
 
       override def setPath(path: String): Unit = context.model.cars(context.model.currentCarIndex).path = path
 
@@ -99,6 +115,9 @@ object ControllerModule:
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
+
+      override def displayEndRacePanel(): Unit =
+        context.view.displayEndRacePanel()
 
       override def updateParametersPanel(): Unit =
         context.view.updateParametersPanel()

@@ -47,8 +47,9 @@ object SimulationEngineModule:
       private val movementsManager = PrologMovements()
       private var sectorTimes: HashMap[String, Int] =
         HashMap(("Ferrari" -> 0), ("McLaren" -> 0), ("Red Bull" -> 0), ("Mercedes" -> 0))
-
       private val angles = TurnAngles()
+      private val finalPositions = Map(0 -> (500, 135), 1 -> (450, 135), 2 -> (400, 135), 3 -> (350, 135))
+      private var carsArrived = 0
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -62,6 +63,9 @@ object SimulationEngineModule:
           _ <- updateStanding()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
+          _ <- if carsArrived == NUM_CARS then
+            controller.notifyStop()
+            context.view.setFinalReportEnabled()
         yield ()
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
@@ -86,7 +90,9 @@ object SimulationEngineModule:
       private def updateCar(car: Car, time: Int): Car =
         for
           newVelocity <- io(updateVelocity(car, time))
-          newPosition <- io(updatePosition(car, time))
+          newPosition <- io(
+            if car.actualLap > context.model.totalLaps then getFinalPositions(car) else updatePosition(car, time)
+          )
           newFuel <- io(updateFuel(car, newPosition))
           newDegradation <- io(updateDegradation(car, newPosition, newVelocity))
           newDrawingParams <- io(car.drawingCarParams.copy(position = newPosition))
@@ -154,14 +160,15 @@ object SimulationEngineModule:
           case Phase.Acceleration => acceleration(car, time)
           case Phase.Deceleration => deceleration(car, time)
           case Phase.Ended =>
+            sectorTimes(car.name) = 3
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            checkLap(car)
             turnMovement(car, time)
         }
 
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
+        if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
@@ -170,6 +177,9 @@ object SimulationEngineModule:
             car.actualSector = context.model.track.nextSector(car.actualSector)
             sectorTimes(car.name) = 0
             angles.reset(car.name)
+            sectorTimes(car.name) = 25 //TODO
+            //car.actualSpeed = 45 //TODO
+            //if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1 //TODO
             checkLap(car)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
@@ -195,7 +205,7 @@ object SimulationEngineModule:
             case DrawingStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
               val d = (newP - endX) * i
               if d >= 0 then
-                sectorTimes(car.name) = 0
+                sectorTimes(car.name) = 3
                 (endX, car.drawingCarParams.position._2)
               else (newP, car.drawingCarParams.position._2)
           })
@@ -279,6 +289,9 @@ object SimulationEngineModule:
           cars <- io(context.model.getLastSnapshot().cars)
           _ <- io(context.view.updateCars(cars))
         yield ()
+
+      private def getFinalPositions(car: Car): (Int, Int) =
+        finalPositions(controller.startingPositions.find(_._2.equals(car)).get._1)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

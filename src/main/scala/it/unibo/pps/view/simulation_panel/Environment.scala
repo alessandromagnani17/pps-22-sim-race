@@ -20,6 +20,7 @@ class Environment(val w: Int, val h: Int) extends JPanel:
 
   override def getPreferredSize: Dimension = new Dimension(w, h)
   override def paintComponent(g: Graphics): Unit =
+    super.paintComponent(g)
     g.setColor(Color.MAGENTA)
     g.drawString("LAP: 1", 449, 60)
 

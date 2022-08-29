@@ -17,12 +17,14 @@ object ModelModule:
     def startingPositions: Map[Int, Car]
     def currentCarIndex: Int
     def actualLap: Int
+    def totalLaps: Int
     def standing: Standing
     def getLastSnapshot(): Snapshot
     def initSnapshot(): Unit
     def currentCarIndex_=(index: Int): Unit
     def startingPositions_=(startingPos: Map[Int, Car]): Unit
     def actualLap_=(lap: Int): Unit
+    def totalLaps_(lap: Int): Unit
     def updateStanding(): Unit
     def addSnapshot(snapshot: Snapshot): Unit
     def registerCallbackHistory(
@@ -105,9 +107,14 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
+<<<<<<< HEAD
           //128,
           130,
           DrawingCarParams((313, 155), Color.RED)
+=======
+          168, // era 168
+          DrawingCarParams((313, 115), Color.RED)
+>>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
           //DrawingCarParams((725, 115), Color.RED)
         ),
         Car(
@@ -120,9 +127,14 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
+<<<<<<< HEAD
           //141,
           130,
           DrawingCarParams((293, 142), Color.CYAN)
+=======
+          154, //era 154
+          DrawingCarParams((313, 129), Color.CYAN) // 293
+>>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
           //DrawingCarParams((725, 129), Color.CYAN)
         ),
         Car(
@@ -135,9 +147,14 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
+<<<<<<< HEAD
           //154,
           130,
           DrawingCarParams((273, 129), Color.BLUE)
+=======
+          141,
+          DrawingCarParams((313, 142), Color.BLUE) // 273
+>>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
           //DrawingCarParams((725, 142), Color.BLUE)
         ),
         Car(
@@ -150,9 +167,14 @@ object ModelModule:
           0,
           2,
           _track.sectors.head,
+<<<<<<< HEAD
           //168,
           130,
           DrawingCarParams(X, Color.GREEN)
+=======
+          128, // 128
+          DrawingCarParams((313, 155), Color.GREEN) // 253
+>>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
           //DrawingCarParams((725, 155), Color.GREEN)
         )
       )*/
@@ -167,6 +189,7 @@ object ModelModule:
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
       private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+      private var _totalLaps = 2
 
       override def registerCallbackHistory(
           onNext: List[Snapshot] => Future[Ack],
@@ -180,6 +203,7 @@ object ModelModule:
       override def startingPositions: Map[Int, Car] = _startingPositions
       override def track: Track = _track
       override def actualLap: Int = _actualLap
+      override def totalLaps: Int = _totalLaps
       override def standing: Standing = _standing
       override def getLastSnapshot(): Snapshot = history.last
       override def addSnapshot(snapshot: Snapshot): Unit =
@@ -188,9 +212,13 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def startingPositions_=(startingPos: Map[Int, Car]): Unit = _startingPositions = startingPos
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
+
       override def initSnapshot(): Unit =
         val c = _cars.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
         addSnapshot(Snapshot(c, 0))
+
+      override def totalLaps_(lap: Int): Unit = _totalLaps = lap
+
       override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
 
   trait Interface extends Provider with Component

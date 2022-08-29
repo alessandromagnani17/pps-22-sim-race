@@ -6,6 +6,7 @@ computeNewVelocity(Speed, Acc, Time, Ns) :- Ns is Speed + (Acc * Time).
 
 computeNewVelocityDeceleration(Speed, Acc, Time, Ns) :- Ns is (Speed + (Acc * Time))*0.3.
 
+
 pow(X, Esp, Y):-  pow(X, X, Esp, Y).
 pow(X, Temp, Esp, Y):- Esp=:=0, !, Y=1.
 pow(X, Temp, Esp, Y):- Esp=:=1, !, Y is Temp.
