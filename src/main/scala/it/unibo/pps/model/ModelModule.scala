@@ -25,7 +25,8 @@ object ModelModule:
     def startingPositions_=(startingPos: Map[Int, Car]): Unit
     def actualLap_=(lap: Int): Unit
     def totalLaps_(lap: Int): Unit
-    def updateStanding(): Unit
+    def setS(standings: Standing): Unit
+    def createStanding(): Unit
     def addSnapshot(snapshot: Snapshot): Unit
     def registerCallbackHistory(
         onNext: List[Snapshot] => Future[Ack],
@@ -183,7 +184,7 @@ object ModelModule:
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 
-      private var _standing: Standing = Standing(cars)
+      private var _standing: Standing = Standing(Map.from(cars.zipWithIndex.map { case (k, v) => (v, k) }))
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
@@ -212,6 +213,7 @@ object ModelModule:
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
       override def startingPositions_=(startingPos: Map[Int, Car]): Unit = _startingPositions = startingPos
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
+      override def setS(standings: Standing): Unit = _standing = standings
 
       override def initSnapshot(): Unit =
         val c = _cars.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
@@ -219,6 +221,6 @@ object ModelModule:
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
 
-      override def updateStanding(): Unit = _standing = Standing(startingPositions.toList.map(e => e._2))
+      override def createStanding(): Unit = _standing = Standing(startingPositions)
 
   trait Interface extends Provider with Component

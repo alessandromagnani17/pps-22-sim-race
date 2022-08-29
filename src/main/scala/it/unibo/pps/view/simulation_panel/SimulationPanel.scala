@@ -53,7 +53,7 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
-  def updateStanding(newStanding: Standing): Unit
+  //def updateStanding(newStanding: Standing): Unit
   def updateCharts(snapshot: Snapshot): Unit
 
 object SimulationPanel:
@@ -257,19 +257,19 @@ object SimulationPanel:
 
     override def updateDisplayedStanding(): Unit =
       standingMap.foreach { e =>
-        e._2._2.foreach(f => f.setText(controller.startingPositions(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.startingPositions(e._1).drawingCarParams.color))
+        e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
+        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).drawingCarParams.color))
         e._2._4.foreach(f =>
           f.setIcon(
             imageLoader.load(
-              s"/cars/miniatures/${carNames.find(_._2.equals(controller.startingPositions(e._1).name)).get._1}.png"
+              s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
             )
           )
         )
-        e._2._5.foreach(f => f.setText(controller.startingPositions(e._1).tyre.toString))
+        e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
       }
 
-    override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
+    /*override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
       val p =
         for s <- standing
         //_ <- s.setText(getPrintableStanding(newStanding))
@@ -282,7 +282,7 @@ object SimulationPanel:
         .map(_.name)
         .zipWithIndex
         .map((car, index) => (car, index + 1))
-        .foldLeft("")((prev: String, t: Tuple2[String, Int]) => prev + s"${t._2}) ${t._1}    ")
+        .foldLeft("")((prev: String, t: Tuple2[String, Int]) => prev + s"${t._2}) ${t._1}    ")*/
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for

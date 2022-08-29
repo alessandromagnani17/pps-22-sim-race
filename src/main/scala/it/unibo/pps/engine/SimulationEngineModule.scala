@@ -3,10 +3,11 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn}
+import it.unibo.pps.model.{Car, ModelModule, Phase, Sector, Snapshot, Standing, Straight, Turn}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
+
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -19,7 +20,6 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.model.Sector
 
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
@@ -256,12 +256,12 @@ object SimulationEngineModule:
       private def updateStanding(): Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
-          newStartingPositions = calcNewStanding(lastSnap)
-          _ <- io(context.model.startingPositions = Map.from(newStartingPositions))
+          newStanding = calcNewStanding(lastSnap)
+          _ <- io(context.model.setS(newStanding))
           _ <- io(context.view.updateDisplayedStanding())
         yield ()
 
-      private def calcNewStanding(snap: Snapshot): Map[Int, Car] =
+      private def calcNewStanding(snap: Snapshot): Standing =
 
         val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
         var l1: List[Car] = List.empty
@@ -277,7 +277,7 @@ object SimulationEngineModule:
                 else l1 = l1.concat(sortCars(e._2, _ < _, false))
           })
         })
-        Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) })
+        Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
       private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
         var l: List[Car] = List.empty
@@ -298,7 +298,7 @@ object SimulationEngineModule:
         yield ()
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(context.model.startingPositions.find(_._2.equals(car)).get._1)
+        finalPositions(context.model.standing._standing.find(_._2.equals(car)).get._1)
 
   trait Interface extends Provider with Component:
     self: Requirements =>
