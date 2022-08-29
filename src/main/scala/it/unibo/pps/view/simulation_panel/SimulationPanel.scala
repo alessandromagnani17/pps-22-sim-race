@@ -109,7 +109,7 @@ object SimulationPanel:
     private val matchChart = (chart: LineChart, snapshot: Snapshot) =>
       chart.title match {
         case s: String if s.equals("Velocity") =>
-          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
+          snapshot.cars.foreach(car => chart.addValue(snapshot.time, (car.actualSpeed / 0.069).toInt, car.name))
         case s: String if s.equals("Fuel") =>
           snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.fuel, car.name))
         case s: String if s.equals("Degradation") =>
