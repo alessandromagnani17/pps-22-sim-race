@@ -3,7 +3,7 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn}
+import it.unibo.pps.model.{Car, ModelModule, Phase, Snapshot, Straight, Turn, Tyre}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -122,7 +122,16 @@ object SimulationEngineModule:
       }
 
       private def updateDegradation(car: Car, newPosition: Tuple2[Int, Int], v: Double): Double =
-        val f = (d: Double, s: Double, v: Double, l: Int) => if d >= 50 then d else d + (s + v + l) / 3500
+        val f = (d: Double, s: Double, v: Double, l: Int) => //TODO - refactor
+          if d >= 50 then d
+          else
+            var m = 0
+            car.tyre match {
+              case Tyre.HARD => m = 10
+              case Tyre.MEDIUM => m = 5
+              case Tyre.SOFT => m = 1
+            }
+            d + (s + v + l) / (3000 + 50 * m)
         car.actualSector match {
           case Straight(_, _) =>
             val oldPosition = car.drawingCarParams.position
