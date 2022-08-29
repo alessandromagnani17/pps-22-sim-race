@@ -14,10 +14,8 @@ given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
 given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
 
 trait Movements:
-  def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int
   def newVelocityStraightAcc(car: Car, time: Int): Int
   def newVelocityStraightDec(car: Car, time: Int): Int
-  def newPositionTurn(): Unit
   def acceleration(car: Car, time: Int): Task[(Int, Int)]
   def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
   def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int]
@@ -79,7 +77,7 @@ object Movements:
       else if (dx <= rI || dy <= rI) && direction == -1 then (p._1 + (dx - rI), p._2 + (dy - rI))
       else p
 
-    override def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int =
+    private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int =
       query(s"computeNewPositionForStraight($x, $velocity, $time, $acceleration, $i, Np)", "Np")
 
     override def newVelocityStraightAcc(car: Car, time: Int): Int =
@@ -98,5 +96,3 @@ object Movements:
         .head
         .toDouble
         .toInt
-
-    override def newPositionTurn(): Unit = ???
