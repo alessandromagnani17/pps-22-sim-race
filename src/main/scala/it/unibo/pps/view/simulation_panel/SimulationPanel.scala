@@ -49,7 +49,7 @@ import it.unibo.pps.utility.PimpScala.RichJPanel.*
 trait SimulationPanel extends JPanel:
 
   /** Renders the new snapshot of the simulation */
-  def render(cars: List[Car]): Unit
+  def render(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
@@ -228,10 +228,12 @@ object SimulationPanel:
       yield ()
       p.runAsyncAndForget
 
-    override def render(cars: List[Car]): Unit = SwingUtilities.invokeLater { () =>
+    override def render(cars: List[Car], actualLap: Int, totalLaps: Int): Unit = SwingUtilities.invokeLater { () =>
       val p = for
         cnv <- canvas
         _ <- cnv.cars = cars
+        _ <- cnv.actualLap = actualLap
+        _ <- cnv.totalLaps = totalLaps
         _ <- cnv.invalidate()
         _ <- cnv.repaint()
       yield ()
@@ -268,21 +270,6 @@ object SimulationPanel:
         )
         e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
       }
-
-    /*override def updateStanding(newStanding: Standing): Unit = SwingUtilities.invokeLater { () =>
-      val p =
-        for s <- standing
-        //_ <- s.setText(getPrintableStanding(newStanding))
-        yield ()
-      p.runSyncUnsafe()
-    }
-
-    private def getPrintableStanding(newStanding: Standing): String =
-      newStanding._standing
-        .map(_.name)
-        .zipWithIndex
-        .map((car, index) => (car, index + 1))
-        .foldLeft("")((prev: String, t: Tuple2[String, Int]) => prev + s"${t._2}) ${t._1}    ")*/
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for

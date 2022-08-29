@@ -294,7 +294,7 @@ object SimulationEngineModule:
       private def updateView(): Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)
-          _ <- io(context.view.updateCars(cars))
+          _ <- io(context.view.updateCars(cars, context.model.actualLap, context.model.totalLaps))
         yield ()
 
       private def getFinalPositions(car: Car): (Int, Int) =

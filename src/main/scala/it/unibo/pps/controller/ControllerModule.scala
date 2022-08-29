@@ -112,7 +112,7 @@ object ControllerModule:
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.standing._standing.values.toList)
+        context.view.updateCars(context.model.standing._standing.values.toList, context.model.actualLap, context.model.totalLaps)
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
