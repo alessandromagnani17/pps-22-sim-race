@@ -14,3 +14,6 @@
 - [Requisiti](doc/requisiti.md)
 - [Design architetturale](doc/design_architetturale.md)
 - [Design di dettaglio](doc/design_dettaglio.md)
+- [Implementazione](doc/implementazione.md)
+- [Sviluppi futuri](doc/sviluppi_futuri.md)
+- [Guida utente](doc/guida.md)
