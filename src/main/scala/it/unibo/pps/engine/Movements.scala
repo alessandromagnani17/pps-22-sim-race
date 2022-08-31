@@ -36,6 +36,7 @@ object Movements:
       for
         x <- io(car.drawingCarParams.position._1)
         i <- io(if car.actualSector.id == 1 then 1 else -1)
+        _ <- io(println(s"$time"))
         newP <- io(newPositionStraight(x, car.actualSpeed, time, 1, i))
       yield (newP, car.drawingCarParams.position._2)
 
@@ -74,7 +75,7 @@ object Movements:
       else p
 
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int =
-      query(s"computeNewPositionForStraight($x, $velocity, $time, $acceleration, $i, Np)", "Np")
+      query(s"computeNewPositionForStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $i, Np)", "Np")
 
     override def newVelocityStraightAcc(car: Car, time: Int): Int =
       query(
@@ -85,7 +86,7 @@ object Movements:
     override def newVelocityStraightDec(car: Car, time: Int): Int =
       query(s"computeNewVelocityDeceleration(${car.actualSpeed}, 1, $time, ${car.degradation}, ${car.fuel}, Ns)", "Ns")
 
-    private def query(q: String, output: String) =
+    private def query(q: String, output: String): Int =
       engine(q)
         .map(Scala2P.extractTermToString(_, output))
         .toSeq

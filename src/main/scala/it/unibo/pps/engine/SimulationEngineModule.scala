@@ -83,12 +83,13 @@ object SimulationEngineModule:
         for
           time <- io(snapshot.time + 1)
           cars <- io(snapshot.cars)
-          newCars <- io(cars.map(updateCar(_, time)))
+          newCars <- io(cars.map(updateCar(_)))
           newSnap <- io(Snapshot(newCars, time))
         yield newSnap
 
-      private def updateCar(car: Car, time: Int): Car =
+      private def updateCar(car: Car): Car =
         for
+          time <- io(sectorTimes(car.name))
           newVelocity <- io(updateVelocity(car, time))
           newPosition <- io(
             if car.actualLap > context.model.totalLaps then getFinalPositions(car) else updatePosition(car)
@@ -137,20 +138,18 @@ object SimulationEngineModule:
             case Phase.Acceleration =>
               val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
-            case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
-            case _ => car.actualSpeed // TODO ending
-        val onTurn = () =>
-          car.actualSector.phase(car.drawingCarParams.position) match {
-            case Phase.Acceleration => car.actualSpeed
-            case _ => 6 //TODO - magic number
-          }
+            case Phase.Deceleration =>
+              val v = movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
+              if v > (80 * 0.069) then v else (80 * 0.069).toInt
+            case _ => car.actualSpeed
+        val onTurn = () => car.actualSpeed
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updatePosition(car: Car): Tuple2[Int, Int] =
         updateParameter(car.actualSector, () => straightMovement(car), () => turnMovement(car))
 
       private def straightMovement(car: Car): Tuple2[Int, Int] =
-        car.actualSector.phase(car.drawingCarParams.position) match {
+        car.actualSector.phase(car.drawingCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.acceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
@@ -159,19 +158,17 @@ object SimulationEngineModule:
             val p = movementsManager.deceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             val i = if car.actualSector.id == 1 then 1 else -1
-            car.actualSector.drawingParams match {
+            car.actualSector.drawingParams match
               case DrawingStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
                 val d = (p._1 - endX) * i
                 if d >= 0 then
                   sectorTimes(car.name) = 3
                   (endX, p._2)
                 else p
-            }
           case Phase.Ended =>
             sectorTimes(car.name) = 3
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car)
-        }
 
       private def checkLap(car: Car): Unit =
         if car.actualSector.id == 1 then car.actualLap = car.actualLap + 1
@@ -179,21 +176,17 @@ object SimulationEngineModule:
         if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car): Tuple2[Int, Int] =
-        car.actualSector.phase(car.drawingCarParams.position) match {
+        car.actualSector.phase(car.drawingCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.turn(car, sectorTimes(car.name), car.actualSpeed, car.actualSector.drawingParams)
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             p
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            sectorTimes(car.name) = 0
-            sectorTimes(car.name) = 25 //TODO
-            //car.actualSpeed = 45 //TODO
-            //if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1 //TODO
+            sectorTimes(car.name) = 20
             checkLap(car)
             straightMovement(car)
           case Phase.Deceleration => EMPTY_POSITION
-        }
 
       private def updateStanding(): Task[Unit] =
         for

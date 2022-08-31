@@ -41,145 +41,6 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackBuilder().createBaseTrack()
-
-      /*private var _cars: List[Car] = List(
-        Car(
-          "/cars/3-hard.png",
-          "McLaren",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          128,
-          DrawingCarParams((313, 155), Color.GREEN)
-          //DrawingCarParams((725, 155), Color.GREEN)
-        ),
-        Car(
-          "/cars/2-hard.png",
-          "Red Bull",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          141,
-          DrawingCarParams((293, 142), Color.BLUE)
-          //DrawingCarParams((725, 142), Color.BLUE)
-        ),
-        Car(
-          "/cars/1-hard.png",
-          "Mercedes",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          154,
-          DrawingCarParams((273, 129), Color.CYAN)
-          //DrawingCarParams((725, 129), Color.CYAN)
-        ),
-        Car(
-          "/cars/0-hard.png",
-          "Ferrari",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          168,
-          DrawingCarParams((253, 115), Color.RED)
-          //DrawingCarParams((725, 115), Color.RED)
-        )
-      )*/
-
-      /*private var _cars: List[Car] = List(
-        Car(
-          "/cars/0-hard.png",
-          "Ferrari",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //128,
-          130,
-          DrawingCarParams((313, 155), Color.RED)
-=======
-          168, // era 168
-          DrawingCarParams((313, 115), Color.RED)
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 115), Color.RED)
-        ),
-        Car(
-          "/cars/1-hard.png",
-          "Mercedes",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //141,
-          130,
-          DrawingCarParams((293, 142), Color.CYAN)
-=======
-          154, //era 154
-          DrawingCarParams((313, 129), Color.CYAN) // 293
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 129), Color.CYAN)
-        ),
-        Car(
-          "/cars/2-hard.png",
-          "Red Bull",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //154,
-          130,
-          DrawingCarParams((273, 129), Color.BLUE)
-=======
-          141,
-          DrawingCarParams((313, 142), Color.BLUE) // 273
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 142), Color.BLUE)
-        ),
-        Car(
-          "/cars/3-hard.png",
-          "McLaren",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //168,
-          130,
-          DrawingCarParams(X, Color.GREEN)
-=======
-          128, // 128
-          DrawingCarParams((313, 155), Color.GREEN) // 253
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 155), Color.GREEN)
-        )
-      )*/
-
       private var _cars: List[Car] = CarsLoader.load(track)
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
@@ -216,7 +77,9 @@ object ModelModule:
       override def setS(standings: Standing): Unit = _standing = standings
 
       override def initSnapshot(): Unit =
-        val c = _cars.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
+        val c = _cars
+        //.map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
+        //.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
         addSnapshot(Snapshot(c, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
