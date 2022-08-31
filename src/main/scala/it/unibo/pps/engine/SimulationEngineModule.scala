@@ -102,21 +102,14 @@ object SimulationEngineModule:
           drawingCarParams = newDrawingParams
         )
 
-      private val computeRadius = (d: DrawingParams, position: Tuple2[Int, Int]) =>
-        d match {
-          case DrawingTurnParams(center, _, _, _, _, _, _) =>
-            center euclideanDistance position
-          case _ => 0
-        }
-
       private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double = car.actualSector match {
         case Straight(_, _) =>
           val oldPosition = car.drawingCarParams.position
           car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
         case Turn(_, _) =>
           val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-          val teta = angles.difference(car.name)
-          val l = (teta / 360) * 2 * r * Math.PI
+          val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
+          val l = circularArc(teta, r)
           car.fuel - l * 0.0015
       }
 
@@ -137,16 +130,8 @@ object SimulationEngineModule:
             f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
           case Turn(_, _) =>
             val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-            val teta2 = angles.difference(car.name)
-            println(s"Car: ${car.name}")
-            println(s"Teta2: $teta2")
-            //Old pos --> A
-            //new pos --> B
-            val oldPos = car.drawingCarParams.position
-            val AB = oldPos euclideanDistance newPosition
-            val teta = Math.acos(((2 * r * r) - AB) / (2 * r * r))
-            println(s"Teta: $teta")
-            val l = (teta / 360) * 2 * r * Math.PI
+            val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
+            val l = circularArc(teta, r)
             f(car.degradation, l, v, car.actualLap)
         }
 
