@@ -78,8 +78,7 @@ object ModelModule:
 
       override def initSnapshot(): Unit =
         val c = _cars
-        //.map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
-        //.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
+          .map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
         addSnapshot(Snapshot(c, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
