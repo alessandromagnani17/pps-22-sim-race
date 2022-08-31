@@ -40,8 +40,7 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = Movements()
-      private val sectorTimes: HashMap[String, Int] =
-        HashMap("Ferrari" -> 0, "McLaren" -> 0, "Red Bull" -> 0, "Mercedes" -> 0)
+      private val sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
 
@@ -193,7 +192,7 @@ object SimulationEngineModule:
             //if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1 //TODO
             checkLap(car)
             straightMovement(car)
-          case Phase.Deceleration => (0, 0)
+          case Phase.Deceleration => EMPTY_POSITION
         }
 
       private def updateStanding(): Task[Unit] =
