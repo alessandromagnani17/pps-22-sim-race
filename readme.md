@@ -7,4 +7,10 @@
 [Andrea Matteucci](mailto:andrea.matteucci5@studio.unibo.it),
 [Simone Montanari](mailto:simone.montanari14@studio.unibo.it)
 
-See documentation [here](doc/report.md)
+## Sezioni
+
+- [Introduzione](doc/introduzione.md)
+- [Processo di sviluppo adottato](doc/sviluppo.md)
+- [Requisiti](doc/requisiti.md)
+- [Design architetturale](doc/design_architetturale.md)
+- [Design di dettaglio](doc/design_dettaglio.md)
