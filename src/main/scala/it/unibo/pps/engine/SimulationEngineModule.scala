@@ -137,7 +137,15 @@ object SimulationEngineModule:
             f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
           case Turn(_, _) =>
             val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-            val teta = angles.difference(car.name)
+            val teta2 = angles.difference(car.name)
+            println(s"Car: ${car.name}")
+            println(s"Teta2: $teta2")
+            //Old pos --> A
+            //new pos --> B
+            val oldPos = car.drawingCarParams.position
+            val AB = oldPos euclideanDistance newPosition
+            val teta = Math.acos(((2 * r * r) - AB) / (2 * r * r))
+            println(s"Teta: $teta")
             val l = (teta / 360) * 2 * r * Math.PI
             f(car.degradation, l, v, car.actualLap)
         }
