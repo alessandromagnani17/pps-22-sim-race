@@ -272,7 +272,6 @@ object SimulationEngineModule:
         yield ()
 
       private def calcNewStanding(snap: Snapshot): Standing =
-
         val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
         var l1: List[Car] = List.empty
 
