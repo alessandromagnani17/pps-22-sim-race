@@ -1,6 +1,7 @@
 package it.unibo.pps
 
 import alice.tuprolog.{Term, Theory}
+import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.view.simulation_panel.{DrawingParams, DrawingTurnParams}
@@ -24,3 +25,8 @@ package object engine:
   given Conversion[String, Term] = Term.createTerm(_)
   given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
   given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
+  given Conversion[Tyre, Int] = _ match {
+    case Tyre.HARD => 10
+    case Tyre.MEDIUM => 5
+    case Tyre.SOFT => 1
+  }

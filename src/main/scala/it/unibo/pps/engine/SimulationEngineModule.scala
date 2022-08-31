@@ -56,10 +56,17 @@ object SimulationEngineModule:
           _ <- moveCars()
           _ <- updateStanding()
           _ <- updateView()
+          _ <- checkEnd()
           _ <- waitFor(speedManager._simulationSpeed)
-          _ <- if carsArrived == NUM_CARS then
-            controller.notifyStop()
-            context.view.setFinalReportEnabled()
+        yield ()
+
+      private def checkEnd(): Task[Unit] =
+        for
+          _ <- io(
+            if carsArrived == NUM_CARS then
+              controller.notifyStop()
+              context.view.setFinalReportEnabled()
+          )
         yield ()
 
       private def waitFor(simulationSpeed: Double): Task[Unit] =
@@ -97,59 +104,51 @@ object SimulationEngineModule:
           drawingCarParams = newDrawingParams
         )
 
-      private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double = car.actualSector match {
-        case Straight(_, _) =>
+      private def updateParameter[E](sector: Sector, onStraight: () => E, onTurn: () => E): E = sector match
+        case s: Straight => onStraight()
+        case t: Turn => onTurn()
+
+      private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double =
+        val onStraight = () =>
           val oldPosition = car.drawingCarParams.position
           car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
-        case Turn(_, _) =>
+        val onTurn = () =>
           val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
           val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
           car.fuel - l * 0.0015
-      }
+        updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateDegradation(car: Car, newPosition: Tuple2[Int, Int], v: Double): Double =
-        val f = (d: Double, s: Double, v: Double, l: Int) => //TODO - refactor
-          if d >= 50 then d
-          else
-            var m = 0
-            car.tyre match {
-              case Tyre.HARD => m = 10
-              case Tyre.MEDIUM => m = 5
-              case Tyre.SOFT => m = 1
-            }
-            d + (s + v + l) / (3000 + 50 * m)
-        car.actualSector match {
-          case Straight(_, _) =>
-            val oldPosition = car.drawingCarParams.position
-            f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
-          case Turn(_, _) =>
-            val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-            val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
-            val l = circularArc(teta, r)
-            f(car.degradation, l, v, car.actualLap)
-        }
+        val f = (d: Double, s: Double, v: Double, l: Int) =>
+          if d >= 50 then d else d + (s + v + l) / (3000 + 50 * car.tyre)
+        val onStraight = () =>
+          val oldPosition = car.drawingCarParams.position
+          f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
+        val onTurn = () =>
+          val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
+          val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
+          val l = circularArc(teta, r)
+          f(car.degradation, l, v, car.actualLap)
+        updateParameter(car.actualSector, onStraight, onTurn)
 
-      private def updateVelocity(car: Car, time: Int): Double = car.actualSector match {
-        case Straight(_, _) =>
-          car.actualSector.phase(car.drawingCarParams.position) match {
+      private def updateVelocity(car: Car, time: Int): Int =
+        val onStraight = () =>
+          car.actualSector.phase(car.drawingCarParams.position) match
             case Phase.Acceleration =>
               val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
             case Phase.Deceleration => movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
             case _ => car.actualSpeed // TODO ending
-          }
-        case Turn(_, _) =>
+        val onTurn = () =>
           car.actualSector.phase(car.drawingCarParams.position) match {
             case Phase.Acceleration => car.actualSpeed
             case _ => 6 //TODO - magic number
           }
-      }
+        updateParameter(car.actualSector, onStraight, onTurn)
 
-      private def updatePosition(car: Car): Tuple2[Int, Int] = car.actualSector match {
-        case Straight(_, _) => straightMovement(car)
-        case Turn(_, _) => turnMovement(car)
-      }
+      private def updatePosition(car: Car): Tuple2[Int, Int] =
+        updateParameter(car.actualSector, () => straightMovement(car), () => turnMovement(car))
 
       private def straightMovement(car: Car): Tuple2[Int, Int] =
         car.actualSector.phase(car.drawingCarParams.position) match {
