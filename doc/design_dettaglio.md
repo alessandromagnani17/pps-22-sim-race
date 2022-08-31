@@ -1,0 +1,2 @@
+## Design di dettaglio
+// TODO
