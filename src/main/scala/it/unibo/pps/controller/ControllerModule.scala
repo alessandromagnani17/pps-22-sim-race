@@ -5,11 +5,10 @@ import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Standing, Tyre}
 import it.unibo.pps.view.ViewModule
 import it.unibo.pps.view.main_panel.ImageLoader
 import monix.execution.Scheduler.Implicits.global
-import monix.execution.Cancelable
+import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.eval.Task
-import monix.execution.{Ack, Cancelable}
 
 import java.awt.Color
 import scala.collection.mutable
@@ -28,8 +27,12 @@ object ControllerModule:
     def currentCarIndex: Int
     def standings: Standing
     def totalLaps: Int
+    def fastestLap: Int
+    def fastestCar: String
     def currentCarIndex_=(index: Int): Unit
     def totalLaps_=(lap: Int): Unit
+    def fastestLap_=(lap: Int): Unit
+    def fastestCar_=(carName: String): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
@@ -90,13 +93,21 @@ object ControllerModule:
 
       override def currentCarIndex: Int = context.model.currentCarIndex
 
+      override def standings: Standing = context.model.standing
+
       override def totalLaps: Int = context.model.totalLaps
 
-      override def standings: Standing = context.model.standing
+      override def fastestLap: Int = context.model.fastestLap
+
+      override def fastestCar: String = context.model.fastestCar
 
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
+
+      override def fastestLap_=(lap: Int): Unit = context.model.fastestLap = lap
+
+      override def fastestCar_=(carName: String): Unit = context.model.fastestCar = carName
 
       override def setPath(path: String): Unit = context.model.cars(context.model.currentCarIndex).path = path
 

@@ -179,6 +179,10 @@ object SimulationEngineModule:
           car.actualLap = car.actualLap + 1
           car.lapTime = time - car.raceTime
           if car.lapTime < car.fastestLap || car.fastestLap == 0 then car.fastestLap = car.lapTime
+          if car.lapTime < controller.fastestLap || controller.fastestLap == 0 then
+            controller.fastestLap = car.lapTime
+            controller.fastestCar = car.name
+            context.view.updateFastestLapIcon(car.name)
           car.raceTime = time
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
         if car.actualLap > context.model.totalLaps then
