@@ -20,6 +20,7 @@ import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
 
+import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
 
@@ -173,14 +174,17 @@ object SimulationEngineModule:
             turnMovement(car, time)
         }
 
-      private def checkLap(car: Car): Unit =
-        println("Aumento carsArrived")
+      private def checkLap(car: Car, time: Int): Unit =
         if car.actualSector.id == 1 then
           car.actualLap = car.actualLap + 1
-          println(s"${car.name} --- ${car.actualLap}")
+
+          car.lapTime = time - car.raceTime
+          car.raceTime = time
+          context.view.updateDisplayedTimes(car.name)
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
         if car.actualLap > context.model.totalLaps then
-
+          car.raceTime = time
+          context.view.updateDisplayedTimes(car.name)
           carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
@@ -193,7 +197,7 @@ object SimulationEngineModule:
             sectorTimes(car.name) = 25 //TODO
             //car.actualSpeed = 45 //TODO
             //if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1 //TODO
-            checkLap(car)
+            checkLap(car, time)
             straightMovement(car, time)
           case Phase.Deceleration => (0, 0)
         }
@@ -284,7 +288,9 @@ object SimulationEngineModule:
                   else l1 = l1.concat(sortCars(e._2, _ < _, true))
                 case Turn(id, _) =>
                   if id == 2 then l1 = l1.concat(sortCars(e._2, _ > _, false))
-                  else l1 = l1.concat(sortCars(e._2, _ < _, false))
+                  else
+                    if e._2.head.drawingCarParams.position._2 < 283 then l1 = l1.concat(sortCars(e._2, _ > _, true))
+                    else l1 = l1.concat(sortCars(e._2, _ < _, false))
             })
         })
         Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))

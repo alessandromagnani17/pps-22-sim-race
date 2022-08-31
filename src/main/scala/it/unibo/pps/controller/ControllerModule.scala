@@ -10,9 +10,11 @@ import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.eval.Task
 import monix.execution.{Ack, Cancelable}
+
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
+import scala.math.BigDecimal
 
 object ControllerModule:
   trait Controller:
@@ -40,6 +42,8 @@ object ControllerModule:
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
     def registerReactiveChartCallback(): Unit
+    def convertTimeToMinutes(time: Int): String
+    def calcCarPosting(car: Car): String
 
   trait Provider:
     val controller: Controller
@@ -66,7 +70,6 @@ object ControllerModule:
       )
 
       override def notifyStop(): Unit =
-        println("hdfghuefgheuygfe")
         stopFuture --> (_.cancel())
         stopFuture = None
 
@@ -144,6 +147,18 @@ object ControllerModule:
         val onError = (t: Throwable) => ()
         val onComplete = () => ()
         context.model.registerCallbackHistory(onNext, onError, onComplete)
+
+      override def convertTimeToMinutes(time: Int): String =
+        val minutes: Int = time / 60
+        val seconds: Double = time % 60
+        BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
+
+      override def calcCarPosting(car: Car): String =
+        if standings._standing(0).equals(car) then convertTimeToMinutes(car.raceTime)
+        else
+          val posting = car.raceTime - standings._standing(0).raceTime
+          if posting > 0 then s"+${convertTimeToMinutes(posting)}"
+          else "+0:00"
 
   trait Interface extends Provider with Component:
     self: Requirements =>

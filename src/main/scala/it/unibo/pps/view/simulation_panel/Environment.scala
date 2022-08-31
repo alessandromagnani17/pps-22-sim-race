@@ -34,7 +34,7 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     g.drawString("2° ", 503, 283)
     g.drawString("1° ", 603, 283)
 
-    g.drawLine(230, 113, 230, 170)
+    g.drawLine(200, 113, 200, 170)
 
     _cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
 

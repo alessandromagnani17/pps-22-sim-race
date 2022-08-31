@@ -46,8 +46,6 @@ object EndRacePanel:
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
         _ <- controller.standings._standing.foreach(e => addToPanel(e, standingsPanel))
-        _ <- println("Classifica1:")
-        _ <- controller.standings._standing.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)
@@ -65,7 +63,7 @@ object EndRacePanel:
         _ <- color.setOpaque(true)
         img <- JLabel(imageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
         tyre <- JLabel(elem._2.tyre.toString)
-        time <- JLabel(controller.totalLaps.toString)
+        time <- JLabel(controller.calcCarPosting(elem._2))
         _ <- position.setPreferredSize(Dimension(20, 70))
         _ <- name.setPreferredSize(Dimension(100, 70))
         _ <- color.setPreferredSize(Dimension(20, 70))

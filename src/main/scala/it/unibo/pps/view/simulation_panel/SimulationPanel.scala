@@ -2,32 +2,8 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  Graphics,
-  GridBagConstraints,
-  GridBagLayout,
-  GridLayout
-}
-import javax.swing.{
-  BorderFactory,
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingConstants,
-  SwingUtilities,
-  WindowConstants
-}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
+import javax.swing.{BorderFactory, BoxLayout, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
@@ -46,6 +22,8 @@ import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
+import scala.math.BigDecimal
+
 trait SimulationPanel extends JPanel:
 
   /** Renders the new snapshot of the simulation */
@@ -53,6 +31,7 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
+  def updateDisplayedTimes(carName: String): Unit
   //def updateStanding(newStanding: Standing): Unit
   def updateCharts(snapshot: Snapshot): Unit
 
@@ -129,8 +108,8 @@ object SimulationPanel:
       yield panel
 
     // Posizione - Nome - Colore - Immagine - Gomma
-    private def createPositions(): Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
-      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] = Map.empty
+    private def createPositions(): Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
+      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] = Map.empty
 
       //controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
 
@@ -143,7 +122,9 @@ object SimulationPanel:
         createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
         createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
         createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
+        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
       })
       map
 
@@ -158,8 +139,6 @@ object SimulationPanel:
       btn <- JButton("Final report")
       _ <- btn.setEnabled(false)
       _ <- btn.addActionListener { e =>
-        println("Classifica:")
-        controller.startingPositions.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
         controller.displayEndRacePanel()
       }
     yield btn
@@ -192,7 +171,7 @@ object SimulationPanel:
     p.runAsyncAndForget
 
     private def addToPanel(
-        elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])),
+        elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])),
         mainPanel: JPanel
     ): Task[Unit] =
       val start = 0
@@ -206,6 +185,8 @@ object SimulationPanel:
         color <- elem._2._3 // Colore
         img <- elem._2._4 // Immagine
         tyre <- elem._2._5 // Gomma
+        lapTime <- elem._2._6 // Lap time
+        raceTime <- elem._2._7 // Race time
 
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
@@ -224,6 +205,8 @@ object SimulationPanel:
         _ <- panel.add(img)
         _ <- panel.add(paddingLabel)
         _ <- panel.add(tyre)
+        _ <- panel.add(lapTime)
+        _ <- panel.add(raceTime)
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
@@ -258,7 +241,7 @@ object SimulationPanel:
     }
 
     override def updateDisplayedStanding(): Unit =
-      standingMap.foreach { e =>
+      standingMap.foreach ( e =>
         e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
         e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).drawingCarParams.color))
         e._2._4.foreach(f =>
@@ -269,8 +252,33 @@ object SimulationPanel:
           )
         )
         e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
-      }
+        e._2._6.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
+        e._2._7.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1)))))
 
+        /*if e._1 == 0 then e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).raceTime)))
+        else e._2._7.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1).raceTime))))*/
+
+
+    override def updateDisplayedTimes(carName: String): Unit =
+      var bb = 0
+
+      /*standingMap.foreach( g =>
+        if g._2._2.getText.equals(carName) then
+          println(s"Sono nella label -> ${g._2._2.getText}")
+          g._2._6.foreach(f => f.setText("ciao"))
+          g._2._7.foreach(f => f.setText(controller.standings._standing(g._1).raceTime.toString)))
+        //if checkCarName(carName, e._2._2) then
+          //e._2._6.foreach(f => f.setText(controller.standings._standing(e._1).lapTime.toString))
+
+
+    private def checkCarName(carName: String, label: Task[JLabel]): Boolean =
+      var b = false
+      label.foreach(e =>
+        if e.getText.equals(carName) then
+          println(s"$carName, ${e.getText}")
+          b = true)
+      b
+*/
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for
         jb <- new JButton()

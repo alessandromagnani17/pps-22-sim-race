@@ -13,6 +13,8 @@ case class Car(
     var actualSpeed: Double,
     var acceleration: Double,
     var actualSector: Sector,
+    var raceTime: Int,
+    var lapTime: Int,
     val fuel: Double,
     val degradation: Double,
     var drawingCarParams: DrawingCarParams

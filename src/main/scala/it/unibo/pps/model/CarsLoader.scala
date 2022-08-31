@@ -55,6 +55,8 @@ object CarsLoader:
         0,
         acceleration.toDouble,
         track.sectors.head,
+        0,
+        0,
         fuel.toDouble,
         0,
         DrawingCarParams(startingPoint, carColor)
