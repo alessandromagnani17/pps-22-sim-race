@@ -51,8 +51,6 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
   
-  def updateDisplayedTimes(carName: String): Unit = _simulationPanel.updateDisplayedTimes(carName)
-
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 

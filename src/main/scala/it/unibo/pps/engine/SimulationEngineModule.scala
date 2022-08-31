@@ -178,12 +178,11 @@ object SimulationEngineModule:
         if car.actualSector.id == 1 then
           car.actualLap = car.actualLap + 1
           car.lapTime = time - car.raceTime
+          if car.lapTime < car.fastestLap || car.fastestLap == 0 then car.fastestLap = car.lapTime
           car.raceTime = time
-          context.view.updateDisplayedTimes(car.name)
         if car.actualLap > context.model.actualLap then context.model.actualLap = car.actualLap
         if car.actualLap > context.model.totalLaps then
           car.raceTime = time
-          context.view.updateDisplayedTimes(car.name)
           carsArrived = carsArrived + 1
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
@@ -286,13 +285,13 @@ object SimulationEngineModule:
                   else l1 = l1.concat(sortCars(e._2, _ < _, true))
                 case Turn(id, _) =>
                   if id == 2 then
-                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 396), _ < _, true))
-                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 170 && c.drawingCarParams.position._2 < 396), _ > _, false))
-                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 170), _ > _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 390), _ < _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 175 && c.drawingCarParams.position._2 < 390), _ > _, false))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 175), _ > _, true))
                   else
-                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 170), _ > _, true))
-                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 170 && c.drawingCarParams.position._2 < 396), _ < _, false))
-                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 396), _ < _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 175), _ > _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 175 && c.drawingCarParams.position._2 < 390), _ < _, false))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 390), _ < _, true))
             })
         })
         Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))

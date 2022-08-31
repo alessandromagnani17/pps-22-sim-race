@@ -8,7 +8,6 @@ object ViewModule:
   trait View:
     def updateDisplayedCar(): Unit
     def updateDisplayedStanding(): Unit
-    def updateDisplayedTimes(carName: String): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
     def displaySimulationPanel(track: Track, standing: Standing): Unit
@@ -31,9 +30,7 @@ object ViewModule:
         gui.updateDisplayedCar()
 
       override def updateDisplayedStanding(): Unit = gui.updateDisplayedStanding()
-
-      override def updateDisplayedTimes(carName: String): Unit = gui.updateDisplayedTimes(carName)
-
+      
       override def displaySimulationPanel(track: Track, standing: Standing): Unit =
         gui.displaySimulationPanel(track, standing)
 
