@@ -177,7 +177,6 @@ object SimulationEngineModule:
       private def checkLap(car: Car, time: Int): Unit =
         if car.actualSector.id == 1 then
           car.actualLap = car.actualLap + 1
-
           car.lapTime = time - car.raceTime
           car.raceTime = time
           context.view.updateDisplayedTimes(car.name)
@@ -287,10 +286,14 @@ object SimulationEngineModule:
                   if id == 1 then l1 = l1.concat(sortCars(e._2, _ > _, true))
                   else l1 = l1.concat(sortCars(e._2, _ < _, true))
                 case Turn(id, _) =>
-                  if id == 2 then l1 = l1.concat(sortCars(e._2, _ > _, false))
+                  if id == 2 then
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 396), _ < _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 170 && c.drawingCarParams.position._2 < 396), _ > _, false))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 170), _ > _, true))
                   else
-                    if e._2.head.drawingCarParams.position._2 < 283 then l1 = l1.concat(sortCars(e._2, _ > _, true))
-                    else l1 = l1.concat(sortCars(e._2, _ < _, false))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 170), _ > _, true))
+                    l1 = l1.concat(sortCars(e._2.filter(c => c.drawingCarParams.position._2 >= 170 && c.drawingCarParams.position._2 < 396), _ < _, false))
+                    l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 396), _ < _, true))
             })
         })
         Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
