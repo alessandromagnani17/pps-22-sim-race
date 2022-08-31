@@ -9,10 +9,6 @@ import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 
-given Conversion[String, Term] = Term.createTerm(_)
-given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
-given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
-
 trait Movements:
   def newVelocityStraightAcc(car: Car, time: Int): Int
   def newVelocityStraightDec(car: Car, time: Int): Int

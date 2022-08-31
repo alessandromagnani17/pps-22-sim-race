@@ -23,10 +23,6 @@ import it.unibo.pps.view.ViewConstants.*
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
 
-given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
-given Conversion[Task[(Int, Int)], (Int, Int)] = _.runSyncUnsafe()
-given Conversion[Task[Car], Car] = _.runSyncUnsafe()
-
 object SimulationEngineModule:
   trait SimulationEngine:
     def simulationStep(): Task[Unit]
@@ -46,7 +42,6 @@ object SimulationEngineModule:
       private val movementsManager = Movements()
       private val sectorTimes: HashMap[String, Int] =
         HashMap("Ferrari" -> 0, "McLaren" -> 0, "Red Bull" -> 0, "Mercedes" -> 0)
-      private val angles = TurnAngles()
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
 
@@ -194,7 +189,6 @@ object SimulationEngineModule:
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
             sectorTimes(car.name) = 0
-            angles.reset(car.name)
             sectorTimes(car.name) = 25 //TODO
             //car.actualSpeed = 45 //TODO
             //if car.actualLap > context.model.totalLaps then carsArrived = carsArrived + 1 //TODO
