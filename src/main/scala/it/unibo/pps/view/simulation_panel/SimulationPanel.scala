@@ -68,7 +68,6 @@ object SimulationPanel:
     self =>
 
     private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-    private val imageLoader = ImageLoader()
 
     private lazy val canvas =
       for
@@ -149,7 +148,7 @@ object SimulationPanel:
 
     private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
       for
-        label <- if isImage then JLabel(imageLoader.load(text)) else JLabel(text)
+        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
         _ <- label.setPreferredSize(dimension)
         _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label
@@ -263,7 +262,7 @@ object SimulationPanel:
         e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).drawingCarParams.color))
         e._2._4.foreach(f =>
           f.setIcon(
-            imageLoader.load(
+            ImageLoader.load(
               s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
             )
           )

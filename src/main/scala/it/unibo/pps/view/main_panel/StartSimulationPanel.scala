@@ -2,7 +2,6 @@ package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.view.main_panel.{ImageLoader, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
@@ -18,7 +17,6 @@ object StartSimulationPanel:
   private class StartSimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends StartSimulationPanel:
     self =>
-    private val imageLoader = ImageLoader()
     private val colorNotSelected = Color(238, 238, 238)
     private val colorSelected = Color(79, 195, 247)
     private val lapsLabel =
@@ -26,9 +24,21 @@ object StartSimulationPanel:
     private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 50, _ + 1)
     private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 20, _ - 1)
     private val lapsSelectedLabel =
-      createLabel(controller.totalLaps.toString, Dimension((width * 0.04).toInt, (height * 0.06).toInt), SwingConstants.CENTER)
-    private val startingPositionsButton = createButton("Set up the Starting Positions", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displayStartingPositionsPanel())
-    private val startButton = createButton("Start Simulation", Dimension((width * 0.2).toInt, (height * 0.2).toInt), () => controller.displaySimulationPanel())
+      createLabel(
+        controller.totalLaps.toString,
+        Dimension((width * 0.04).toInt, (height * 0.06).toInt),
+        SwingConstants.CENTER
+      )
+    private val startingPositionsButton = createButton(
+      "Set up the Starting Positions",
+      Dimension((width * 0.2).toInt, (height * 0.2).toInt),
+      () => controller.displayStartingPositionsPanel()
+    )
+    private val startButton = createButton(
+      "Start Simulation",
+      Dimension((width * 0.2).toInt, (height * 0.2).toInt),
+      () => controller.displaySimulationPanel()
+    )
     private val startSimulationPanel = createPanelAndAddAllComponents()
 
     startSimulationPanel foreach (e => self.add(e))
@@ -50,7 +60,7 @@ object StartSimulationPanel:
 
     private def createArrowButton(path: String, comparator: Int => Boolean, function: Int => Int): Task[JButton] =
       for
-        button <- JButton(imageLoader.load(path))
+        button <- JButton(ImageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener(e => {

@@ -3,7 +3,6 @@ package it.unibo.pps.controller
 import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Standing, Tyre}
 import it.unibo.pps.view.ViewModule
-import it.unibo.pps.view.main_panel.ImageLoader
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.Cancelable
 import it.unibo.pps.utility.PimpScala.RichOption.*
@@ -18,7 +17,6 @@ object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def notifyStop(): Unit
-    //def notifyFinish(): Unit
     def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
     def startingPositions: Map[Int, Car]
@@ -50,7 +48,6 @@ object ControllerModule:
     context: Requirements =>
     class ControllerImpl extends Controller:
 
-      private val imageLoader = ImageLoader()
       private val numCars = 4
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var stopFuture: Option[Cancelable] = None
@@ -112,7 +109,11 @@ object ControllerModule:
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.standing._standing.values.toList, context.model.actualLap, context.model.totalLaps)
+        context.view.updateCars(
+          context.model.standing._standing.values.toList,
+          context.model.actualLap,
+          context.model.totalLaps
+        )
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()

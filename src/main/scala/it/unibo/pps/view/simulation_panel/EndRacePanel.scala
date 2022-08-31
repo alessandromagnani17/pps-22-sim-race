@@ -18,13 +18,11 @@ object EndRacePanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): EndRacePanel =
     EndRacePanelImpl(width, height, controller)
 
-  private class EndRacePanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-    extends EndRacePanel:
+  private class EndRacePanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
 
     import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-    private val imageLoader = ImageLoader()
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()
 
@@ -63,7 +61,7 @@ object EndRacePanel:
         color <- JLabel()
         _ <- color.setBackground(elem._2.drawingCarParams.color)
         _ <- color.setOpaque(true)
-        img <- JLabel(imageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
+        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
         tyre <- JLabel(elem._2.tyre.toString)
         time <- JLabel(controller.totalLaps.toString)
         _ <- position.setPreferredSize(Dimension(20, 70))
@@ -80,4 +78,3 @@ object EndRacePanel:
         _ <- panel.add(p)
       yield ()
       p.runSyncUnsafe()
-
