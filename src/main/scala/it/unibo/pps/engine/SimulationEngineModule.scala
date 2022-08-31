@@ -120,16 +120,14 @@ object SimulationEngineModule:
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateDegradation(car: Car, newPosition: Tuple2[Int, Int], v: Double): Double =
-        val f = (d: Double, s: Double, v: Double, l: Int) =>
-          if d >= 50 then d else d + (s + v + l) / (3000 + 50 * car.tyre)
         val onStraight = () =>
           val oldPosition = car.drawingCarParams.position
-          f(car.degradation, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
+          car.degradation + Tyre.degradation(car.tyre, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
         val onTurn = () =>
           val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
           val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
-          f(car.degradation, l, v, car.actualLap)
+          car.degradation + Tyre.degradation(car.tyre, l, v, car.actualLap)
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateVelocity(car: Car, time: Int): Int =
