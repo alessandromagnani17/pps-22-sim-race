@@ -45,6 +45,8 @@ Di seguito è riportata una sezione per la descrizione dettagliata di ogni modul
 ### Model
 ![Model](./imgs/cake-model.svg)
 
+![Model_dettaglio](./imgs/model.svg)
+
 ### View
 ![View](./imgs/cake-view.svg)
 
