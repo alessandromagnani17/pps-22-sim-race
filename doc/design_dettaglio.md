@@ -36,8 +36,8 @@ object ViewModule:
 
 Sfruttando questo pattern avanzato si è dunque deciso di implementare quattro moduli: Model, View, Controller ed Engine. Le dipendenze fra i vari moduli sono le seguenti: 
 - View -> Controller
-- Controller -> Model | Engine | View
-- Engine -> View | Model | Controller
+- Controller -> Model, Engine, View
+- Engine -> View, Model, Controller
 
 Di seguito è riportata una sezione per la descrizione dettagliata di ogni modulo.
 
