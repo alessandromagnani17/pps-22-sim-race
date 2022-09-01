@@ -1,16 +1,16 @@
-package it.unibo.pps.view.simulation_panel
+package it.unibo.pps.view.end_race_panel
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.Car
+import it.unibo.pps.view.ViewConstants.EndRacePanelConstants
+import it.unibo.pps.view.main_panel.ImageLoader
+import it.unibo.pps.view.simulation_panel.EndRacePanel
 import monix.eval.Task
-
-import javax.swing.{BorderFactory, JButton, JLabel, JPanel, SwingConstants}
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
+import javax.swing.*
 import scala.collection.mutable.Map
-import it.unibo.pps.model.Car
-import it.unibo.pps.view.main_panel.ImageLoader
-import it.unibo.pps.view.ViewConstants.*
 
 trait EndRacePanel extends JPanel
 
@@ -31,7 +31,7 @@ object EndRacePanel:
     private def createStandingsPanel(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(900, 400))
+        _ <- panel.setPreferredSize(Dimension(FINAL_STANDING_PANEL_WIDTH, FINAL_STANDING_PANEL_HEIGHT))
       yield panel
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =
@@ -57,19 +57,13 @@ object EndRacePanel:
         position <- JLabel((elem._1 + 1).toString)
         name <- JLabel(elem._2.name)
         color <- JLabel()
-        /*<<<<<<< HEAD
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
-        _ <- color.setOpaque(true)
         img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
-=======*/
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
-        _ <- color.setOpaque(true)
-        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
-//>>>>>>> ce4c801a6798ee4ef0ee6dc6d79283477e2d753e
         tyre <- JLabel(elem._2.tyre.toString)
         time <- JLabel(controller.calcCarPosting(elem._2))
         fastestLap <- JLabel(controller.convertTimeToMinutes(elem._2.fastestLap))
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
+        paddingLabel <- JLabel()
+        paddingLabel1 <- JLabel()
         _ <- position.setPreferredSize(Dimension(20, 70))
         _ <- name.setPreferredSize(Dimension(100, 70))
         _ <- color.setPreferredSize(Dimension(20, 70))
@@ -80,7 +74,8 @@ object EndRacePanel:
         _ <- time.setPreferredSize(Dimension(90, 70))
         _ <-
           if controller.fastestCar.equals(elem._2.name) then fastestLapIcon.setVisible(true)
-          else fastestLapIcon.setVisible(false)
+          else 
+            fastestLapIcon.setVisible(false)
         _ <- p.add(position)
         _ <- p.add(name)
         _ <- p.add(color)
