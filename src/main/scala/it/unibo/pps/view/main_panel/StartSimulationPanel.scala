@@ -21,8 +21,8 @@ object StartSimulationPanel:
     private val colorSelected = Color(79, 195, 247)
     private val lapsLabel =
       createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 50, _ + 1)
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 20, _ - 1)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 30, _ + 1)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 1, _ - 1)
     private val lapsSelectedLabel =
       createLabel(
         controller.totalLaps.toString,

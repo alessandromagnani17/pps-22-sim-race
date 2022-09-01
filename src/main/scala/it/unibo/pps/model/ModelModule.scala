@@ -58,7 +58,7 @@ object ModelModule:
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
       private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
-      private var _totalLaps = 3
+      private var _totalLaps = 1
       private var _fastestLap = 0
       private var _fastestCar = ""
 
