@@ -39,7 +39,13 @@ object Constants:
     val STARS_BUTTON_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.08).toInt
     
   object StartingPositionsPanelConstants extends CommonConstants:
-    val TOP_LABEL_HEIGHT: Int = 0
+    val TOP_LABEL_HEIGHT: Int = (STARTING_POS_PANEL_HEIGHT * 0.15).toInt
+    val STANDINGS_LABEL_HEIGHT: Int = ((STARTING_POS_PANEL_HEIGHT * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
+    val CAR_MINIATURE_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.3).toInt
+    val CAR_MINIATURE_HEIGHT: Int = (STARTING_POS_PANEL_HEIGHT * 0.15).toInt
+    val CAR_POS_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.05).toInt
+    val CAR_POS_HEIGHT: Int = ((STARTING_POS_PANEL_HEIGHT * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
+    val CAR_NAME_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.13).toInt
 
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900

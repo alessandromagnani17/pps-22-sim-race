@@ -21,12 +21,12 @@ object StartingPositionsPanel:
       extends StartingPositionsPanel:
     self =>
 
-    private val topLabelHeight = (height * 0.15).toInt
-    private val numCars = 4
-    private val labelHeight = ((height * 0.75).toInt - topLabelHeight) / numCars
+    //private val topLabelHeight = (height * 0.15).toInt
+    //private val numCars = 4
+    private val labelHeight = ((height * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
     private val topLabel = createLabel(
       "Sets the order of the starting grid: ",
-      Dimension(width, topLabelHeight),
+      Dimension(width, TOP_LABEL_HEIGHT),
       SwingConstants.CENTER,
       false
     )
@@ -44,12 +44,12 @@ object StartingPositionsPanel:
       for i <- 0 until NUM_CARS do
         map += (i -> (createLabel(
           s"/cars/miniatures/$i.png",
-          Dimension((width * 0.3).toInt, (height * 0.15).toInt),
+          Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
           SwingConstants.CENTER,
           true
         ),
-        createLabel(s"${i + 1}. ", Dimension((width * 0.05).toInt, labelHeight), SwingConstants.LEFT, false),
-        createLabel(s"${CAR_NAMES(i)}", Dimension((width * 0.13).toInt, labelHeight), SwingConstants.LEFT, false),
+        createLabel(s"${i + 1}. ", Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, false),
+        createLabel(s"${CAR_NAMES(i)}", Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, false),
         if i == 0 then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
         else createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
         if i == (NUM_CARS - 1) then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
