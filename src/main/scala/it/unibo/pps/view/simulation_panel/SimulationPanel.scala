@@ -46,6 +46,8 @@ import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
+import scala.math.BigDecimal
+
 trait SimulationPanel extends JPanel:
 
   /** Renders the new snapshot of the simulation */
@@ -54,6 +56,7 @@ trait SimulationPanel extends JPanel:
   def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
   def updateCharts(snapshot: Snapshot): Unit
+  def updateFastestLapIcon(carName: String): Unit
 
 object SimulationPanel:
 
@@ -127,11 +130,34 @@ object SimulationPanel:
       yield panel
 
     // Posizione - Nome - Colore - Immagine - Gomma
-    private def createPositions(): Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
-      val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] = Map.empty
-
-      //controller.startingPositions.foreach(e => println(s"Index: ${e._1} | Car: ${e._2.name} | Tyre: ${e._2.tyre.toString}"))
-
+    private def createPositions(): Map[
+      Int,
+      (
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel]
+      )
+    ] =
+      val map: Map[
+        Int,
+        (
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel]
+        )
+      ] = Map.empty
       controller.startingPositions.foreach(e => {
         map += (e._1 -> (createLabel(
           (e._1 + 1).toString,
@@ -141,7 +167,11 @@ object SimulationPanel:
         createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
         createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
         createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false)))
+        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.fastestLap.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel("/fastest-lap-logo.png", null, true)))
       })
       map
 
@@ -156,8 +186,6 @@ object SimulationPanel:
       btn <- JButton("Final report")
       _ <- btn.setEnabled(false)
       _ <- btn.addActionListener { e =>
-        println("Classifica:")
-        controller.startingPositions.foreach(e => println(s"Posizione ${e._1} | Car: ${e._2.name}"))
         controller.displayEndRacePanel()
       }
     yield btn
@@ -165,8 +193,18 @@ object SimulationPanel:
     private val p = for
       cnv <- canvas
       scrollPanel <- chartsPanel
-      startButton <- createButton("Start", e => controller.notifyStart())
-      stopButton <- createButton("Stop", e => controller.notifyStop())
+      startButton <- createButton(
+        "Start",
+        e =>
+          e.getSource.asInstanceOf[JButton].setEnabled(false)
+          controller.notifyStart()
+      )
+      stopButton <- createButton(
+        "Stop",
+        e =>
+          startButton.setEnabled(true)
+          controller.notifyStop()
+      )
       incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
       reportButton <- reportButton
@@ -190,7 +228,20 @@ object SimulationPanel:
     p.runAsyncAndForget
 
     private def addToPanel(
-        elem: (Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])),
+        elem: (
+            Int,
+            (
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel],
+                Task[JLabel]
+            )
+        ),
         mainPanel: JPanel
     ): Task[Unit] =
       val start = 0
@@ -204,15 +255,18 @@ object SimulationPanel:
         color <- elem._2._3 // Colore
         img <- elem._2._4 // Immagine
         tyre <- elem._2._5 // Gomma
+        raceTime <- elem._2._6 // Race time
+        lapTime <- elem._2._7 // Lap Time
+        fastestTime <- elem._2._8 // Fastest time
+        fastestLapIcon <- elem._2._9 // Fastest time icon
 
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-
-        // Decidere se settare colore qui o nella createLabel().
         _ <- color.setBackground(controller.startingPositions(elem._1).drawingCarParams.color)
         _ <- color.setOpaque(true)
+        _ <- fastestLapIcon.setVisible(false)
 
         _ <- panel.add(pos)
         _ <- panel.add(name)
@@ -222,6 +276,10 @@ object SimulationPanel:
         _ <- panel.add(img)
         _ <- panel.add(paddingLabel)
         _ <- panel.add(tyre)
+        _ <- panel.add(raceTime)
+        _ <- panel.add(lapTime)
+        _ <- panel.add(fastestTime)
+        _ <- panel.add(fastestLapIcon)
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
@@ -256,7 +314,7 @@ object SimulationPanel:
     }
 
     override def updateDisplayedStanding(): Unit =
-      standingMap.foreach { e =>
+      standingMap.foreach(e =>
         e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
         e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).drawingCarParams.color))
         e._2._4.foreach(f =>
@@ -267,7 +325,20 @@ object SimulationPanel:
           )
         )
         e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
-      }
+        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1))))
+        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
+        e._2._8.foreach(f =>
+          f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).fastestLap))
+        )
+      )
+
+    override def updateFastestLapIcon(carName: String): Unit =
+      standingMap.foreach(e =>
+        e._2._2.foreach(f =>
+          if f.getText.equals(carName) then e._2._9.foreach(c => c.setVisible(true))
+          else e._2._9.foreach(c => c.setVisible(false))
+        )
+      )
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for

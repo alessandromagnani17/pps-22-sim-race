@@ -51,6 +51,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 
   def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
 
+  def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
+  
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
