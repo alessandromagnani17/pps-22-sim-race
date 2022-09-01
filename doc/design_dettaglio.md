@@ -48,6 +48,18 @@ Di seguito è riportata una sezione per la descrizione dettagliata di ogni modul
 ### View
 ![View](./imgs/cake-view.svg)
 
+Il modulo View viene utilizzato come punto di accesso alla GUI dell'applicativo, questa è stata sviluppata utilizzando la libreria Swing. Dato che tale libreria è stata sviluppata nel contesto della programmazione ad oggetti si è pensato di utilizzarla in accoppiata con la libreria [Monix](https://monix.io/) per ottenere una definizione monadica e dichiarativa dei vari componenti. Ad esempio, la definizione di un componente può avvenire nel seguente modo:
+```scala
+private lazy val canvas =
+      for
+        cnv <- new Environment(CANVAS_WIDTH, CANVAS_HEIGHT)
+        _ <- cnv.setPreferredSize(Dimension(CANVAS_WIDTH, CANVAS_HEIGHT))
+        _ <- cnv.setVisible(true)
+      yield cnv
+```
+Data la complessità delle varie schermate la gui è stata divisa, sfruttando la classe `JPanel`, in vari pannelli che vengono alternati a seconda delle azioni dell'utente. 
+![Panels](./imgs/panels.svg)
+
 ### Controller
 ![Controller](./imgs/cake-controller.svg)
 
