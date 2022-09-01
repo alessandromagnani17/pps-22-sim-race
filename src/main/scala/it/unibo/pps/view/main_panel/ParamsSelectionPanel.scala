@@ -64,7 +64,6 @@ object ParamsSelectionPanel:
       SwingConstants.BOTTOM
     )
     private val starSkillsButton = createSkillsStarButtons(true)
-
     private val initialRightPanel = createPanelAndAddAllComponents()
 
     initialRightPanel foreach (e => self.add(e))

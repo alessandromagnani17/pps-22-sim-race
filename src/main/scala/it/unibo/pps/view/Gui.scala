@@ -10,7 +10,7 @@ import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.model.{Car, Driver, Standing, Track, Tyre}
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.GuiConstants.*
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
