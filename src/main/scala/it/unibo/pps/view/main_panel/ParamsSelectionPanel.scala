@@ -4,6 +4,7 @@ import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.utility.Matcher
+import it.unibo.pps.view.Constants.ParamsSelectionPanelConstants.*
 import monix.eval.{Task, TaskLift}
 import monix.execution.Scheduler.Implicits.global
 
@@ -31,15 +32,9 @@ object ParamsSelectionPanel:
       extends ParamsSelectionPanel:
     self =>
     private val matcher = Matcher()
-    private val colorNotSelected = Color(238, 238, 238)
-    private val colorSelected = Color(79, 195, 247)
-    private val fileNameSelected = "/stars/selected-star.png"
-    private val fileNameNotSelected = "/stars/not-selected-star.png"
-    private val minSpeed = 200
-    private val maxSpeed = 350
     private val tyresLabel = createLabel(
       "Select tyres: ",
-      Dimension(width, (height * 0.05).toInt),
+      Dimension(width, TYRES_LABEL_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
@@ -50,21 +45,21 @@ object ParamsSelectionPanel:
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
     private val maxSpeedLabel = createLabel(
       "Select Maximum Speed (km/h):",
-      Dimension(width, (height * 0.1).toInt),
+      Dimension(width, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
     private val speedSelectedLabel = createLabel(
-      minSpeed.toString,
-      Dimension((width * 0.2).toInt, (height * 0.05).toInt),
+      CAR_MIN_SPEED.toString,
+      Dimension(SPEED_SELECTED_WIDTH, TYRES_LABEL_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.CENTER
     )
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > minSpeed, _ - _)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < maxSpeed, _ + _)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > CAR_MIN_SPEED, _ - _)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < CAR_MAX_SPEED, _ + _)
     private val starSkillsLabel = createLabel(
       "Select Driver Skills:",
-      Dimension(width, (height * 0.1).toInt),
+      Dimension(width, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
@@ -78,8 +73,8 @@ object ParamsSelectionPanel:
       tyresButtons.foreach(e =>
         e.foreach(b => {
           if b.getName.equals(controller.currentCar.tyre.toString) then
-            b.setBackground(colorSelected); b.setOpaque(true)
-          else b.setBackground(colorNotSelected)
+            b.setBackground(BUTTON_SELECTED_COLOR); b.setOpaque(true)
+          else b.setBackground(BUTTON_NOT_SELECTED_COLOR)
         })
       )
       speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
@@ -93,7 +88,7 @@ object ParamsSelectionPanel:
       for
         button <- JButton(ImageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(colorNotSelected)
+        _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.addActionListener(e => {
           if comparator(controller.currentCar.maxSpeed) then
             controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
@@ -106,22 +101,22 @@ object ParamsSelectionPanel:
         button <- JButton(text, ImageLoader.load(fileName))
         _ <- button.setName(tyre.toString)
         _ <-
-          if tyre.equals(Tyre.SOFT) then { button.setBackground(colorSelected); button.setOpaque(true) }
-          else button.setBackground(colorNotSelected)
-        _ <- button.setPreferredSize(Dimension((width * 0.3).toInt, (height * 0.09).toInt))
+          if tyre.equals(Tyre.SOFT) then { button.setBackground(BUTTON_SELECTED_COLOR); button.setOpaque(true) }
+          else button.setBackground(BUTTON_NOT_SELECTED_COLOR)
+        _ <- button.setPreferredSize(Dimension(TYRES_BUTTON_WIDTH, TYRES_BUTTON_HEIGHT))
         _ <- button.addActionListener(e => {
           tyresButtons.foreach(e =>
             e.foreach(f => {
               f.getText match
                 case b if button.getText.equals(f.getText) =>
-                  f.setBackground(colorSelected)
+                  f.setBackground(BUTTON_SELECTED_COLOR)
                   f.setOpaque(true)
                   controller.setTyre(tyre)
                   controller.setPath(
                     s"/cars/${controller.currentCarIndex}-${controller.currentCar.tyre.toString.toLowerCase}.png"
                   )
                   controller.updateDisplayedCar()
-                case _ => f.setBackground(colorNotSelected)
+                case _ => f.setBackground(BUTTON_NOT_SELECTED_COLOR)
             })
           )
         })
@@ -141,12 +136,12 @@ object ParamsSelectionPanel:
                                 ): Task[JButton] =
       for
         button <-
-          if name.equals("1") then JButton(ImageLoader.load(fileNameSelected))
-          else JButton(ImageLoader.load(fileNameNotSelected))
+          if name.equals("1") then JButton(ImageLoader.load("/stars/selected-star.png"))
+          else JButton(ImageLoader.load("/stars/not-selected-star.png"))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setPreferredSize(Dimension((width * 0.09).toInt, (height * 0.08).toInt))
+        _ <- button.setPreferredSize(Dimension(STARS_BUTTON_WIDTH, STARS_BUTTON_HEIGHT))
         _ <- button.setName(name)
-        _ <- button.setBackground(colorNotSelected)
+        _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.addActionListener { e =>
             updateStar(starSkillsButton, button.getName.toInt)
             controller.setSkills(button.getName.toInt)
@@ -159,8 +154,8 @@ object ParamsSelectionPanel:
     ): Unit =
       list.foreach(e =>
         e.foreach(f =>
-          if f.getName.toInt <= index then f.setIcon(ImageLoader.load(fileNameSelected))
-          else f.setIcon(ImageLoader.load(fileNameNotSelected))
+          if f.getName.toInt <= index then f.setIcon(ImageLoader.load("/stars/selected-star.png"))
+          else f.setIcon(ImageLoader.load("/stars/not-selected-star.png"))
         )
       )
 

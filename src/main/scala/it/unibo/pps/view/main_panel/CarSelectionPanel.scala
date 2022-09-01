@@ -66,7 +66,7 @@ object CarSelectionPanel:
       for
         button <- JButton(ImageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(BUTTON_NOT_SELECTED)
+        _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener { e =>
           val nextIndex = calcIndex(controller.currentCarIndex)
