@@ -36,7 +36,6 @@ object Movements:
       for
         x <- io(car.drawingCarParams.position._1)
         i <- io(if car.actualSector.id == 1 then 1 else -1)
-        _ <- io(println(s"$time"))
         newP <- io(newPositionStraight(x, car.actualSpeed, time, 1, i))
       yield (newP, car.drawingCarParams.position._2)
 
