@@ -81,7 +81,7 @@ object SimulationPanel:
     private def createCharts(): List[LineChart] =
       val chartVel = LineChart("Velocity", "Virtual Time", "Velocity")
       val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel")
-      val chartTyres = LineChart("Degradation", "Virtual Time", "Degradation")
+      val chartTyres = LineChart("Degradation", "Lap", "Degradation")
       val c = List(chartVel, chartFuel, chartTyres)
       c.foreach(addSeriesToChart(_))
       c
@@ -114,7 +114,7 @@ object SimulationPanel:
         case s: String if s.equals("Fuel") =>
           snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.fuel, car.name))
         case s: String if s.equals("Degradation") =>
-          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.degradation, car.name))
+          snapshot.cars.foreach(car => chart.addValue(car.actualLap, car.degradation, car.name))
         case _ =>
       }
 

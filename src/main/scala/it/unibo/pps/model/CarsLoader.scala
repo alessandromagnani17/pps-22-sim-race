@@ -59,7 +59,7 @@ object CarsLoader:
         0,
         0,
         fuel.toDouble,
-        0,
+        1,
         DrawingCarParams(startingPoint, carColor)
       )
   }
