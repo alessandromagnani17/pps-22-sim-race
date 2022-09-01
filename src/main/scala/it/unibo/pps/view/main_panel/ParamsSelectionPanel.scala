@@ -55,20 +55,14 @@ object ParamsSelectionPanel:
     )
     private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > minSpeed, _ - _)
     private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < maxSpeed, _ + _)
-    private val starAttackLabel = createLabel(
-      "Select Driver Attack Skills:",
+    private val starSkillsLabel = createLabel(
+      "Select Driver Skills:",
       Dimension(width, (height * 0.1).toInt),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starAttackButtons = createSkillsStarButtons(true)
-    private val starDefenseLabel = createLabel(
-      "Select Driver Defense Skills:",
-      Dimension(width, (height * 0.1).toInt),
-      SwingConstants.CENTER,
-      SwingConstants.BOTTOM
-    )
-    private val starDefenseButtons = createSkillsStarButtons(false)
+    private val starSkillsButton = createSkillsStarButtons(true)
+
     private val initialRightPanel = createPanelAndAddAllComponents()
 
     initialRightPanel foreach (e => self.add(e))
@@ -81,8 +75,7 @@ object ParamsSelectionPanel:
           b.setBackground(colorNotSelected)
       }))
       speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
-      updateStar(starAttackButtons, controller.currentCar.driver.attack)
-      updateStar(starDefenseButtons, controller.currentCar.driver.defense)
+      updateStar(starSkillsButton, controller.currentCar.driver.skills)
 
     private def createArrowButton(
                                    path: String,
@@ -128,13 +121,12 @@ object ParamsSelectionPanel:
                                        ): List[Task[JButton]] =
       val buttons = for
         index <- 1 until 6
-        button = createStarButton(index.toString, isAttack)
+        button = createStarButton(index.toString)
       yield button
       buttons.toList
 
     private def createStarButton(
-                                  name: String,
-                                  isAttack: Boolean
+                                  name: String
                                 ): Task[JButton] =
       for
         button <-
@@ -145,12 +137,8 @@ object ParamsSelectionPanel:
         _ <- button.setName(name)
         _ <- button.setBackground(colorNotSelected)
         _ <- button.addActionListener { e =>
-          if isAttack then
-            updateStar(starAttackButtons, button.getName.toInt)
-            controller.setAttack(button.getName.toInt)
-          else
-            updateStar(starDefenseButtons, button.getName.toInt)
-            controller.setDefense(button.getName.toInt)
+            updateStar(starSkillsButton, button.getName.toInt)
+            controller.setSkills(button.getName.toInt)
         }
       yield button
 
@@ -187,8 +175,7 @@ object ParamsSelectionPanel:
         speedSelectedLabel <- speedSelectedLabel
         rightArrowButton <- rightArrowButton
         leftArrowButton <- leftArrowButton
-        starAttackLabel <- starAttackLabel
-        starDefenseLabel <- starDefenseLabel
+        starSkillsLabel <- starSkillsLabel
         _ <- panel.add(tyresLabel)
         _ <- panel.add(hardTyresButton)
         _ <- panel.add(mediumTyresButton)
@@ -197,18 +184,12 @@ object ParamsSelectionPanel:
         _ <- panel.add(leftArrowButton)
         _ <- panel.add(speedSelectedLabel)
         _ <- panel.add(rightArrowButton)
-        attackPanel <- JPanel(BorderLayout())
-        _ <- attackPanel.add(starAttackLabel, BorderLayout.NORTH)
-        attackStarPanel <- JPanel()
-        defenseStarPanel <- JPanel()
-        _ <- addStarsToPanel(starAttackButtons, attackStarPanel)
-        _ <- attackPanel.add(attackStarPanel, BorderLayout.CENTER)
-        defensePanel <- JPanel(BorderLayout())
-        _ <- defensePanel.add(starDefenseLabel, BorderLayout.NORTH)
-        _ <- addStarsToPanel(starDefenseButtons, defenseStarPanel)
-        _ <- defensePanel.add(defenseStarPanel, BorderLayout.CENTER)
-        _ <- panel.add(attackPanel)
-        _ <- panel.add(defensePanel)
+        skillsPanel <- JPanel(BorderLayout())
+        _ <- skillsPanel.add(starSkillsLabel, BorderLayout.NORTH)
+        skillsStarPanel <- JPanel()
+        _ <- addStarsToPanel(starSkillsButton, skillsStarPanel)
+        _ <- skillsPanel.add(skillsStarPanel, BorderLayout.CENTER)
+        _ <- panel.add(skillsPanel)
         _ <- panel.setVisible(true)
       yield panel
 

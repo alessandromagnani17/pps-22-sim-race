@@ -36,8 +36,7 @@ object ControllerModule:
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
-    def setAttack(attack: Int): Unit
-    def setDefense(defense: Int): Unit
+    def setSkills(skills: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
     def displayEndRacePanel(): Unit
@@ -115,11 +114,8 @@ object ControllerModule:
 
       override def setMaxSpeed(speed: Int): Unit = context.model.cars(context.model.currentCarIndex).maxSpeed = speed
 
-      override def setAttack(attack: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.attack =
-        attack
-
-      override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense =
-        defense
+      override def setSkills(skills: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.skills =
+        skills
 
       override def displaySimulationPanel(): Unit =
         context.model.createStanding()
