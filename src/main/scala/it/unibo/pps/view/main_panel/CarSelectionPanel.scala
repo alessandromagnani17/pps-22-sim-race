@@ -3,7 +3,7 @@ package it.unibo.pps.view.main_panel
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.CarSelectionPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
@@ -24,7 +24,7 @@ object CarSelectionPanel:
     self =>
     private val carSelectedLabel = createLabel(
       s"Car selected: ${CAR_NAMES(0)}",
-      Dimension(width, (height * 0.2).toInt),
+      Dimension(width, CAR_SELECTED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.CENTER,
       false

@@ -11,11 +11,14 @@ object Constants:
     val BUTTON_NOT_SELECTED: Color = Color(238, 238, 238)
     val BUTTON_SELECTED: Color = Color(79, 195, 247)
     val CAR_NAMES = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-    
-  object MainPanelConstants extends CommonConstants:
     val SELECTION_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.48).toInt
     val SELECTION_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.65).toInt
     val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
+
+  object MainPanelConstants extends CommonConstants
+  
+  object CarSelectionPanelConstants extends CommonConstants:
+    val CAR_SELECTED_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.2).toInt
 
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900
