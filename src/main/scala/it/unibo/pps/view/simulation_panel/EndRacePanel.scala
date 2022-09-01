@@ -18,13 +18,11 @@ object EndRacePanel:
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): EndRacePanel =
     EndRacePanelImpl(width, height, controller)
 
-  private class EndRacePanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-    extends EndRacePanel:
+  private class EndRacePanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
 
     import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-    private val imageLoader = ImageLoader()
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()
 
@@ -59,12 +57,19 @@ object EndRacePanel:
         position <- JLabel((elem._1 + 1).toString)
         name <- JLabel(elem._2.name)
         color <- JLabel()
-        img <- JLabel(imageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
+        /*<<<<<<< HEAD
+        _ <- color.setBackground(elem._2.drawingCarParams.color)
+        _ <- color.setOpaque(true)
+        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
+=======*/
+        _ <- color.setBackground(elem._2.drawingCarParams.color)
+        _ <- color.setOpaque(true)
+        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
+//>>>>>>> ce4c801a6798ee4ef0ee6dc6d79283477e2d753e
         tyre <- JLabel(elem._2.tyre.toString)
         time <- JLabel(controller.calcCarPosting(elem._2))
         fastestLap <- JLabel(controller.convertTimeToMinutes(elem._2.fastestLap))
-        fastestLapIcon <- JLabel(imageLoader.load("/fastest-lap-logo.png"))
-
+        fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         _ <- position.setPreferredSize(Dimension(20, 70))
         _ <- name.setPreferredSize(Dimension(100, 70))
         _ <- color.setPreferredSize(Dimension(20, 70))
@@ -73,7 +78,9 @@ object EndRacePanel:
         _ <- tyre.setPreferredSize(Dimension(120, 70))
         _ <- fastestLap.setPreferredSize(Dimension(90, 70))
         _ <- time.setPreferredSize(Dimension(90, 70))
-        _ <- if controller.fastestCar.equals(elem._2.name) then fastestLapIcon.setVisible(true) else fastestLapIcon.setVisible(false)
+        _ <-
+          if controller.fastestCar.equals(elem._2.name) then fastestLapIcon.setVisible(true)
+          else fastestLapIcon.setVisible(false)
         _ <- p.add(position)
         _ <- p.add(name)
         _ <- p.add(color)
@@ -85,4 +92,3 @@ object EndRacePanel:
         _ <- panel.add(p)
       yield ()
       p.runSyncUnsafe()
-

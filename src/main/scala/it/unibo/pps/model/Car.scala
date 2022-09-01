@@ -10,7 +10,7 @@ case class Car(
     driver: Driver,
     var maxSpeed: Int,
     var actualLap: Int,
-    var actualSpeed: Double,
+    var actualSpeed: Int,
     var acceleration: Double,
     var actualSector: Sector,
     var raceTime: Int,
