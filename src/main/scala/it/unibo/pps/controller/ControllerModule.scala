@@ -3,22 +3,21 @@ package it.unibo.pps.controller
 import it.unibo.pps.engine.SimulationEngineModule
 import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Standing, Tyre}
 import it.unibo.pps.view.ViewModule
-import it.unibo.pps.view.main_panel.ImageLoader
 import monix.execution.Scheduler.Implicits.global
-import monix.execution.Cancelable
+import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.eval.Task
-import monix.execution.{Ack, Cancelable}
+
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
+import scala.math.BigDecimal
 
 object ControllerModule:
   trait Controller:
     def notifyStart(): Unit
     def notifyStop(): Unit
-    //def notifyFinish(): Unit
     def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
     def startingPositions: Map[Int, Car]
@@ -26,13 +25,16 @@ object ControllerModule:
     def currentCarIndex: Int
     def standings: Standing
     def totalLaps: Int
+    def fastestLap: Int
+    def fastestCar: String
     def currentCarIndex_=(index: Int): Unit
     def totalLaps_=(lap: Int): Unit
+    def fastestLap_=(lap: Int): Unit
+    def fastestCar_=(carName: String): Unit
     def setPath(path: String): Unit
     def setTyre(tyre: Tyre): Unit
     def setMaxSpeed(speed: Int): Unit
-    def setAttack(attack: Int): Unit
-    def setDefense(defense: Int): Unit
+    def setSkills(skills: Int): Unit
     def displaySimulationPanel(): Unit
     def displayStartingPositionsPanel(): Unit
     def displayEndRacePanel(): Unit
@@ -40,6 +42,8 @@ object ControllerModule:
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
     def registerReactiveChartCallback(): Unit
+    def convertTimeToMinutes(time: Int): String
+    def calcCarPosting(car: Car): String
 
   trait Provider:
     val controller: Controller
@@ -50,7 +54,6 @@ object ControllerModule:
     context: Requirements =>
     class ControllerImpl extends Controller:
 
-      private val imageLoader = ImageLoader()
       private val numCars = 4
       private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var stopFuture: Option[Cancelable] = None
@@ -66,7 +69,6 @@ object ControllerModule:
       )
 
       override def notifyStop(): Unit =
-        println("hdfghuefgheuygfe")
         stopFuture --> (_.cancel())
         stopFuture = None
 
@@ -87,13 +89,21 @@ object ControllerModule:
 
       override def currentCarIndex: Int = context.model.currentCarIndex
 
+      override def standings: Standing = context.model.standing
+
       override def totalLaps: Int = context.model.totalLaps
 
-      override def standings: Standing = context.model.standing
+      override def fastestLap: Int = context.model.fastestLap
+
+      override def fastestCar: String = context.model.fastestCar
 
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
+
+      override def fastestLap_=(lap: Int): Unit = context.model.fastestLap = lap
+
+      override def fastestCar_=(carName: String): Unit = context.model.fastestCar = carName
 
       override def setPath(path: String): Unit = context.model.cars(context.model.currentCarIndex).path = path
 
@@ -101,18 +111,19 @@ object ControllerModule:
 
       override def setMaxSpeed(speed: Int): Unit = context.model.cars(context.model.currentCarIndex).maxSpeed = speed
 
-      override def setAttack(attack: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.attack =
-        attack
-
-      override def setDefense(defense: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.defense =
-        defense
+      override def setSkills(skills: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.skills =
+        skills
 
       override def displaySimulationPanel(): Unit =
         context.model.createStanding()
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standing)
-        context.view.updateCars(context.model.standing._standing.values.toList, context.model.actualLap, context.model.totalLaps)
+        context.view.updateCars(
+          context.model.standing._standing.values.toList,
+          context.model.actualLap,
+          context.model.totalLaps
+        )
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
@@ -144,6 +155,18 @@ object ControllerModule:
         val onError = (t: Throwable) => ()
         val onComplete = () => ()
         context.model.registerCallbackHistory(onNext, onError, onComplete)
+
+      override def convertTimeToMinutes(time: Int): String =
+        val minutes: Int = time / 60
+        val seconds: Double = time % 60
+        BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
+
+      override def calcCarPosting(car: Car): String =
+        if standings._standing(0).equals(car) then convertTimeToMinutes(car.raceTime)
+        else
+          val posting = car.raceTime - standings._standing(0).raceTime
+          if posting > 0 then s"+${convertTimeToMinutes(posting)}"
+          else "+0:00"
 
   trait Interface extends Provider with Component:
     self: Requirements =>

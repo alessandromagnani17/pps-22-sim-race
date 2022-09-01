@@ -22,7 +22,7 @@ given Conversion[String, Color] = _ match {
   case s: String if s.equals("Red") => Color.RED
   case s: String if s.equals("Cyan") => Color.CYAN
   case s: String if s.equals("Blue") => Color.BLUE
-  case s: String if s.equals("Green") => Color.GREEN
+  case s: String if s.equals("Orange") => Color.ORANGE
 }
 
 object CarsLoader:
@@ -31,10 +31,10 @@ object CarsLoader:
 
   def load(track: Track): List[Car] =
     val variables =
-      List("Path", "Name", "Tyre", "Attack", "Defense", "MaxSpeed", "Acceleration", "ActualSector", "Fuel", "Color")
+      List("Path", "Name", "Tyre", "Skills", "MaxSpeed", "Acceleration", "ActualSector", "Fuel", "Color")
     for
       sol <- engine(
-        "car(path(Path), name(Name), tyre(Tyre), driver(Attack, Defense), maxSpeed(MaxSpeed)," +
+        "car(path(Path), name(Name), tyre(Tyre), driver(Skills), maxSpeed(MaxSpeed)," +
           "acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel), color(Color))."
       )
       x = Scala2P.extractTermsToListOfStrings(sol, variables)
@@ -42,19 +42,22 @@ object CarsLoader:
     yield car
 
   private def mkCar(params: List[String], track: Track): Car = params match {
-    case List(path, name, tyre, attack, defense, maxSpeed, acceleration, actualSector, fuel, carColor) =>
+    case List(path, name, tyre, skills, maxSpeed, acceleration, actualSector, fuel, carColor) =>
       val position = carsInitial(name)
       val startingPoint = track.startingGrid(position).drawingParams.position
       Car(
         path,
         name,
         tyre,
-        Driver(attack, defense),
+        Driver(skills),
         maxSpeed,
         1,
         0,
         acceleration.toDouble,
         track.sectors.head,
+        0,
+        0,
+        0,
         fuel.toDouble,
         0,
         DrawingCarParams(startingPoint, carColor)
