@@ -13,6 +13,5 @@ enum Tyre:
   case SOFT
 
 object Tyre:
-
   def degradation(tyreType: Tyre, distance: Double, velocity: Double, lap: Int): Double =
     (distance + velocity + lap) / (3000 + 50 * tyreType)
