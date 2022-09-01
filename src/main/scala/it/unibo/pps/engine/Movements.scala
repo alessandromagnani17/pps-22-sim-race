@@ -74,16 +74,16 @@ object Movements:
       else p
 
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, i: Int): Int =
-      query(s"computeNewPositionForStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $i, Np)", "Np")
+      query(s"newPositionStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $i, Np)", "Np")
 
     override def newVelocityStraightAcc(car: Car, time: Int): Int =
       query(
-        s"computeNewVelocity(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)",
+        s"newVelocityAcceleration(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)",
         "Ns"
       )
 
     override def newVelocityStraightDec(car: Car, time: Int): Int =
-      query(s"computeNewVelocityDeceleration(${car.actualSpeed}, 1, $time, ${car.degradation}, ${car.fuel}, Ns)", "Ns")
+      query(s"newVelocityDeceleration(${car.actualSpeed}, Ns)", "Ns")
 
     private def query(q: String, output: String): Int =
       engine(q)
