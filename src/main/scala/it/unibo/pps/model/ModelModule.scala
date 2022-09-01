@@ -5,9 +5,12 @@ import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.reactive.MulticastStrategy
 import monix.reactive.subjects.ConcurrentSubject
 import monix.execution.Scheduler.Implicits.global
+
 import scala.collection.mutable.Map
 import java.awt.Color
 import monix.execution.{Ack, Cancelable}
+
+import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
 
 object ModelModule:
@@ -19,12 +22,16 @@ object ModelModule:
     def actualLap: Int
     def totalLaps: Int
     def standing: Standing
+    def fastestLap: Int
+    def fastestCar: String
     def getLastSnapshot(): Snapshot
     def initSnapshot(): Unit
     def currentCarIndex_=(index: Int): Unit
     def startingPositions_=(startingPos: Map[Int, Car]): Unit
     def actualLap_=(lap: Int): Unit
     def totalLaps_(lap: Int): Unit
+    def fastestLap_=(lap: Int): Unit
+    def fastestCar_=(carName: String): Unit
     def setS(standings: Standing): Unit
     def createStanding(): Unit
     def addSnapshot(snapshot: Snapshot): Unit
@@ -41,145 +48,6 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackBuilder().createBaseTrack()
-
-      /*private var _cars: List[Car] = List(
-        Car(
-          "/cars/3-hard.png",
-          "McLaren",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          128,
-          DrawingCarParams((313, 155), Color.GREEN)
-          //DrawingCarParams((725, 155), Color.GREEN)
-        ),
-        Car(
-          "/cars/2-hard.png",
-          "Red Bull",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          141,
-          DrawingCarParams((293, 142), Color.BLUE)
-          //DrawingCarParams((725, 142), Color.BLUE)
-        ),
-        Car(
-          "/cars/1-hard.png",
-          "Mercedes",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          154,
-          DrawingCarParams((273, 129), Color.CYAN)
-          //DrawingCarParams((725, 129), Color.CYAN)
-        ),
-        Car(
-          "/cars/0-hard.png",
-          "Ferrari",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          0,
-          2,
-          _track.sectors.head,
-          168,
-          DrawingCarParams((253, 115), Color.RED)
-          //DrawingCarParams((725, 115), Color.RED)
-        )
-      )*/
-
-      /*private var _cars: List[Car] = List(
-        Car(
-          "/cars/0-hard.png",
-          "Ferrari",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //128,
-          130,
-          DrawingCarParams((313, 155), Color.RED)
-=======
-          168, // era 168
-          DrawingCarParams((313, 115), Color.RED)
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 115), Color.RED)
-        ),
-        Car(
-          "/cars/1-hard.png",
-          "Mercedes",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //141,
-          130,
-          DrawingCarParams((293, 142), Color.CYAN)
-=======
-          154, //era 154
-          DrawingCarParams((313, 129), Color.CYAN) // 293
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 129), Color.CYAN)
-        ),
-        Car(
-          "/cars/2-hard.png",
-          "Red Bull",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //154,
-          130,
-          DrawingCarParams((273, 129), Color.BLUE)
-=======
-          141,
-          DrawingCarParams((313, 142), Color.BLUE) // 273
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 142), Color.BLUE)
-        ),
-        Car(
-          "/cars/3-hard.png",
-          "McLaren",
-          Tyre.SOFT,
-          Driver(1, 1),
-          200,
-          1,
-          0,
-          2,
-          _track.sectors.head,
-<<<<<<< HEAD
-          //168,
-          130,
-          DrawingCarParams(X, Color.GREEN)
-=======
-          128, // 128
-          DrawingCarParams((313, 155), Color.GREEN) // 253
->>>>>>> 05e8a3ae3dbadf3320470a261fba9fd23a309ae5
-          //DrawingCarParams((725, 155), Color.GREEN)
-        )
-      )*/
-
       private var _cars: List[Car] = CarsLoader.load(track)
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
@@ -190,7 +58,9 @@ object ModelModule:
       private var _startingPositions: Map[Int, Car] = Map(0 -> cars.head, 1 -> cars(1), 2 -> cars(2), 3 -> cars(3))
       private var _actualLap = 1
       private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
-      private var _totalLaps = 10
+      private var _totalLaps = 3
+      private var _fastestLap = 0
+      private var _fastestCar = ""
 
       override def registerCallbackHistory(
           onNext: List[Snapshot] => Future[Ack],
@@ -206,6 +76,8 @@ object ModelModule:
       override def actualLap: Int = _actualLap
       override def totalLaps: Int = _totalLaps
       override def standing: Standing = _standing
+      override def fastestLap: Int = _fastestLap
+      override def fastestCar: String = _fastestCar
       override def getLastSnapshot(): Snapshot = history.last
       override def addSnapshot(snapshot: Snapshot): Unit =
         history = history :+ snapshot
@@ -216,10 +88,15 @@ object ModelModule:
       override def setS(standings: Standing): Unit = _standing = standings
 
       override def initSnapshot(): Unit =
-        val c = _cars.map(car => car.copy(maxSpeed = (car.maxSpeed * 0.069).toInt))
+        val c = _cars
+          .map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
         addSnapshot(Snapshot(c, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
+
+      override def fastestLap_=(lap: Int): Unit = _fastestLap = lap
+
+      override def fastestCar_=(carName: String): Unit = _fastestCar = carName
 
       override def createStanding(): Unit = _standing = Standing(startingPositions)
 
