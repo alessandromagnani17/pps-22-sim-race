@@ -2,6 +2,7 @@ package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.Constants.StartSimulationPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
@@ -17,26 +18,24 @@ object StartSimulationPanel:
   private class StartSimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends StartSimulationPanel:
     self =>
-    private val colorNotSelected = Color(238, 238, 238)
-    private val colorSelected = Color(79, 195, 247)
     private val lapsLabel =
-      createLabel("Select laps:", Dimension((width * 0.06).toInt, (height * 0.06).toInt), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < 30, _ + 1)
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > 1, _ - 1)
+      createLabel("Select laps:", Dimension(LAPS_LABEL_WIDTH, LAPS_LABEL_HEIGHT), SwingConstants.LEFT)
+    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < MAX_LAPS, _ + 1)
+    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > MIN_LAPS, _ - 1)
     private val lapsSelectedLabel =
       createLabel(
         controller.totalLaps.toString,
-        Dimension((width * 0.04).toInt, (height * 0.06).toInt),
+        Dimension(LAPS_SELECTED_LABEL_WIDTH, LAPS_LABEL_HEIGHT),
         SwingConstants.CENTER
       )
     private val startingPositionsButton = createButton(
       "Set up the Starting Positions",
-      Dimension((width * 0.2).toInt, (height * 0.2).toInt),
+      Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT),
       () => controller.displayStartingPositionsPanel()
     )
     private val startButton = createButton(
       "Start Simulation",
-      Dimension((width * 0.2).toInt, (height * 0.2).toInt),
+      Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT),
       () => controller.displaySimulationPanel()
     )
     private val startSimulationPanel = createPanelAndAddAllComponents()
@@ -62,7 +61,7 @@ object StartSimulationPanel:
       for
         button <- JButton(ImageLoader.load(path))
         _ <- button.setBorder(BorderFactory.createEmptyBorder())
-        _ <- button.setBackground(colorNotSelected)
+        _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.addActionListener(e => {
           if comparator(controller.totalLaps) then
             controller.totalLaps = function(controller.totalLaps)
@@ -84,9 +83,9 @@ object StartSimulationPanel:
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         paddingLabel2 <- JLabel()
-        _ <- paddingLabel.setPreferredSize(Dimension(width, (height * 0.03).toInt))
-        _ <- paddingLabel1.setPreferredSize(Dimension(width, (height * 0.03).toInt))
-        _ <- paddingLabel2.setPreferredSize(Dimension(width, (height * 0.01).toInt))
+        _ <- paddingLabel.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT))
+        _ <- paddingLabel2.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT1))
         _ <- panel.add(paddingLabel)
         _ <- panel.add(lapsLabel)
         _ <- panel.add(leftArrowButton)

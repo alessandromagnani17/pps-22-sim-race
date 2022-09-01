@@ -9,6 +9,8 @@ object Constants:
     val FRAME_HEIGHT = 810
     val BUTTON_NOT_SELECTED_COLOR: Color = Color(238, 238, 238)
     val BUTTON_SELECTED_COLOR: Color = Color(79, 195, 247)
+    val MAX_LAPS = 30
+    val MIN_LAPS = 1
     val NUM_CARS = 4
     val CAR_NAMES = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
     val CAR_MAX_SPEED = 350
@@ -37,6 +39,15 @@ object Constants:
     val TYRES_BUTTON_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.09).toInt
     val STARS_BUTTON_WIDTH: Int = (SELECTION_PANEL_WIDTH * 0.09).toInt
     val STARS_BUTTON_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.08).toInt
+
+  object StartSimulationPanelConstants extends CommonConstants:
+    val LAPS_LABEL_WIDTH: Int = (FRAME_WIDTH * 0.06).toInt
+    val LAPS_LABEL_HEIGHT: Int = (START_PANEL_HEIGHT * 0.06).toInt
+    val LAPS_SELECTED_LABEL_WIDTH: Int = (FRAME_WIDTH * 0.04).toInt
+    val BUTTONS_WIDTH: Int = (FRAME_WIDTH * 0.2).toInt
+    val BUTTONS_HEIGHT: Int = (START_PANEL_HEIGHT * 0.2).toInt
+    val PADDING_LABEL_HEIGHT: Int = (START_PANEL_HEIGHT * 0.03).toInt
+    val PADDING_LABEL_HEIGHT1: Int = (START_PANEL_HEIGHT * 0.01).toInt
     
   object StartingPositionsPanelConstants extends CommonConstants:
     val TOP_LABEL_HEIGHT: Int = (STARTING_POS_PANEL_HEIGHT * 0.15).toInt
