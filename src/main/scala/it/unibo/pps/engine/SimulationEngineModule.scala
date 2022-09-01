@@ -99,7 +99,7 @@ object SimulationEngineModule:
             if car.actualLap > context.model.totalLaps then getFinalPositions(car) else updatePosition(car, globalTime)
           )
           newFuel <- io(updateFuel(car, newPosition))
-          newDegradation <- io(updateDegradation(car, newPosition, newVelocity))
+          newDegradation <- io(Tyre.degradation(car.tyre, car.actualLap))
           newDrawingParams <- io(car.drawingCarParams.copy(position = newPosition))
         yield car.copy(
           actualSpeed = newVelocity,
@@ -121,17 +121,6 @@ object SimulationEngineModule:
           val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
           car.fuel - l * 0.0015
-        updateParameter(car.actualSector, onStraight, onTurn)
-
-      private def updateDegradation(car: Car, newPosition: Tuple2[Int, Int], v: Double): Double =
-        val onStraight = () =>
-          val oldPosition = car.drawingCarParams.position
-          car.degradation + Tyre.degradation(car.tyre, Math.abs(oldPosition._1 - newPosition._1) * 2, v, car.actualLap)
-        val onTurn = () =>
-          val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-          val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
-          val l = circularArc(teta, r)
-          car.degradation + Tyre.degradation(car.tyre, l, v, car.actualLap)
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateVelocity(car: Car, time: Int): Int =
