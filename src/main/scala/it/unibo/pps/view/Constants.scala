@@ -1,12 +1,21 @@
 package it.unibo.pps.view
 
+import java.awt.Color
+
 object Constants:
 
   sealed trait CommonConstants:
     val NUM_CARS = 4
     val FRAME_WIDTH = 1296
     val FRAME_HEIGHT = 810
+    val BUTTON_NOT_SELECTED: Color = Color(238, 238, 238)
+    val BUTTON_SELECTED: Color = Color(79, 195, 247)
     val CAR_NAMES = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
+    
+  object MainPanelConstants extends CommonConstants:
+    val SELECTION_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.48).toInt
+    val SELECTION_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.65).toInt
+    val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
 
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900
