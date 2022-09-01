@@ -2,15 +2,15 @@ package it.unibo.pps.view.end_race_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Car
-import it.unibo.pps.view.ViewConstants.EndRacePanelConstants
 import it.unibo.pps.view.main_panel.ImageLoader
-import it.unibo.pps.view.simulation_panel.EndRacePanel
+import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
 import scala.collection.mutable.Map
+import it.unibo.pps.view.Constants.EndRacePanelConstants.*
 
 trait EndRacePanel extends JPanel
 
@@ -31,7 +31,7 @@ object EndRacePanel:
     private def createStandingsPanel(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(FINAL_STANDING_PANEL_WIDTH, FINAL_STANDING_PANEL_HEIGHT))
+        _ <- panel.setPreferredSize(Dimension(STANDINGS_PANEL_WIDTH, STANDINGS_PANEL_HEIGHT))
       yield panel
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =
@@ -64,22 +64,27 @@ object EndRacePanel:
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
-        _ <- position.setPreferredSize(Dimension(20, 70))
-        _ <- name.setPreferredSize(Dimension(100, 70))
-        _ <- color.setPreferredSize(Dimension(20, 70))
+        _ <- paddingLabel.setPreferredSize(Dimension(STANDINGS_PADDING_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(STANDINGS_PADDING_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- position.setPreferredSize(Dimension(STANDINGS_POSITION_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- name.setPreferredSize(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- color.setPreferredSize(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_COLOR_HEIGHT))
         _ <- color.setBackground(elem._2.drawingCarParams.color)
         _ <- color.setOpaque(true)
-        _ <- tyre.setPreferredSize(Dimension(120, 70))
-        _ <- fastestLap.setPreferredSize(Dimension(90, 70))
-        _ <- time.setPreferredSize(Dimension(90, 70))
+        _ <- tyre.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- time.setPreferredSize(Dimension(STANDINGS_TIME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- time.setHorizontalAlignment(SwingConstants.CENTER)
+        _ <- fastestLap.setPreferredSize(Dimension(STANDINGS_TIME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- fastestLap.setHorizontalAlignment(SwingConstants.CENTER)
         _ <-
           if controller.fastestCar.equals(elem._2.name) then fastestLapIcon.setVisible(true)
-          else 
-            fastestLapIcon.setVisible(false)
+          else fastestLapIcon.setVisible(false)
         _ <- p.add(position)
         _ <- p.add(name)
         _ <- p.add(color)
+        _ <- p.add(paddingLabel)
         _ <- p.add(img)
+        _ <- p.add(paddingLabel1)
         _ <- p.add(tyre)
         _ <- p.add(time)
         _ <- p.add(fastestLap)
