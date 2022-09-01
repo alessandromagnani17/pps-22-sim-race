@@ -16,9 +16,10 @@ object Constants:
     val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
 
   object MainPanelConstants extends CommonConstants
-  
+
   object CarSelectionPanelConstants extends CommonConstants:
     val CAR_SELECTED_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.2).toInt
+    val CAR_IMAGE_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.35).toInt
 
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900

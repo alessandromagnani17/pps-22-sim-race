@@ -22,6 +22,9 @@ object CarSelectionPanel:
   private class CarSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
       extends CarSelectionPanel:
     self =>
+
+    // TODO VEDERE SE LASCIARE width e height passati o se usare solo costanti
+
     private val carSelectedLabel = createLabel(
       s"Car selected: ${CAR_NAMES(0)}",
       Dimension(width, CAR_SELECTED_HEIGHT),
@@ -37,8 +40,7 @@ object CarSelectionPanel:
       "/arrows/arrow-bottom.png",
       e => if (e - 1) < 0 then (NUM_CARS - 1).toString else (e - 1).toString
     )
-
-    private val labelImage = createLabel("/cars/0-soft.png", Dimension(width, (height * 0.35).toInt), SwingConstants.CENTER, 9, true)
+    private val labelImage = createLabel("/cars/0-soft.png", Dimension(width, CAR_IMAGE_HEIGHT), SwingConstants.CENTER, SwingConstants.CENTER, true)
     private val carSelectionPanel = createPanelAndAddAllComponents()
 
     carSelectionPanel foreach (e => self.add(e))
