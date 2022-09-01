@@ -3,6 +3,7 @@ package it.unibo.pps.model
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.model.CarColors
 import java.awt.Color
 import it.unibo.pps.utility.Constants.*
 
@@ -19,10 +20,10 @@ given Conversion[String, Tyre] = _ match {
 }
 
 given Conversion[String, Color] = _ match {
-  case s: String if s.equals("Red") => Color.RED
-  case s: String if s.equals("Cyan") => Color.CYAN
-  case s: String if s.equals("Blue") => Color.BLUE
-  case s: String if s.equals("Orange") => Color.ORANGE
+  case s: String if s.equals("Ferrari") => CarColors.getColor("Ferrari")
+  case s: String if s.equals("Mercedes") => CarColors.getColor("Mercedes")
+  case s: String if s.equals("Red Bull") => CarColors.getColor("Red Bull")
+  case s: String if s.equals("McLaren") => CarColors.getColor("McLaren")
 }
 
 object CarsLoader:
