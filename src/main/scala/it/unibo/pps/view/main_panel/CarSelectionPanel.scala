@@ -37,8 +37,8 @@ object CarSelectionPanel:
       "/arrows/arrow-bottom.png",
       e => if (e - 1) < 0 then (NUM_CARS - 1).toString else (e - 1).toString
     )
-    private val labelImage =
-      createLabel("/cars/0-hard.png", Dimension(width, (height * 0.35).toInt), SwingConstants.CENTER, 9, true)
+
+    private val labelImage = createLabel("/cars/0-soft.png", Dimension(width, (height * 0.35).toInt), SwingConstants.CENTER, 9, true)
     private val carSelectionPanel = createPanelAndAddAllComponents()
 
     carSelectionPanel foreach (e => self.add(e))
