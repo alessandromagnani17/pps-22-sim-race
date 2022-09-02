@@ -136,7 +136,9 @@ Nello sviluppo del progetto, inizialmente, mi sono occupato insieme a Matteucci 
 - `Environment`
 - `TrackBuilder`
 - `CarsLoader`
+
 Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEgine` legata al movimento delle macchine durante la simulazione.
+
 Infine, in autonomia, ho sviluppato:
 - Gestione dei grafici, classe `LineChart` e aggiornamento automatico tramite programmazione reattiva;
 - Object `PimpScala`, in cui vengono arricchite alcune entità esistenti come: Int, Tuple2, Option, HashMap e JPanel;
