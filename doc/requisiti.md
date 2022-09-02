@@ -27,19 +27,15 @@ Di seguito sono riportati i requisiti individuati durante lo studio del dominio 
 - Ogni vettura sarà caratterizzata da: 
     - Gomme (`carTyres`), suddivise in:
         - Tipologia gomme (`carTyres.type`);
-        - Usura delle gomme durante la gara (`carTyres.usury`);
+        - Degrado delle gomme durante la gara (`carTyres.degradation`);
     - Velocità della vettura (`carVelocity`), suddivisa in:
         - Velocità massima (`carVelocity.max`);
         - Velocità corrente (`carVelocity.current`);
-    - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`), suddivisa in:
-        - Abilita di attacco (`carDriverSkill.attack`);
-        - Abilita di difesa (`carDriverSkill.defense`);
+    - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`)
+       
 - L'usura delle gomme di ogni vettura aumenterà di giro in giro considerando la tipologia di gomma usata;
 - La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima e l'usura delle gomme;
-- Ogni qualvolta che due vetture si trovano ad una distanza minore o uguale a *X-da definire* metri, verrà eseguito l'algoritmo relativo al sorpasso per decretare quale vettura sarà davanti alla fine dell'iterazione. Nello specifico, l'algoritmo relativo ai sorpassi valuterà i seguenti parametri:
-    - Attacco e difesa dei due piloti;
-    - Velocità corrente delle due vetture;
-    - Velocità massima delle due vetture.
+
 
 
 ### Requisiti non Funzionali
