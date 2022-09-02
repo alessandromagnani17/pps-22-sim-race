@@ -43,19 +43,20 @@ object Movements:
 
     override def turn(car: Car, time: Int, velocity: Double, d: DrawingParams): Tuple2[Int, Int] = d match
       case DrawingTurnParams(center, p, _, _, _, direction, endX) =>
-        val x = car.drawingCarParams.position._1
-        val teta_t = 0.5 * car.acceleration * (time ** 2)
-        val r = car.drawingCarParams.position euclideanDistance center
-        val turnRadius = center euclideanDistance p
-        val alpha = direction match
-          case Direction.Forward => 0
-          case Direction.Backward => 180
-        val newX = center._1 + (r * Math.sin(Math.toRadians(teta_t + alpha)))
-        val newY = center._2 - (r * Math.cos(Math.toRadians(teta_t + alpha)))
-        var np = (newX.toInt, newY.toInt)
-        np = checkBounds(np, center, turnRadius, direction)
-        np = checkEnd(np, endX, direction)
-        np
+        for
+          x <- io(car.drawingCarParams.position._1)
+          teta_t <- io(0.5 * car.acceleration * (time ** 2))
+          r <- io(car.drawingCarParams.position euclideanDistance center)
+          turnRadius <- io(center euclideanDistance p)
+          alpha <- io(direction match
+            case Direction.Forward => 0
+            case Direction.Backward => 180
+          )
+          newX <- io((center._1 + (r * Math.sin(Math.toRadians(teta_t + alpha)))).toInt)
+          newY <- io((center._2 - (r * Math.cos(Math.toRadians(teta_t + alpha)))).toInt)
+          np <- io(checkBounds((newX, newY), center, turnRadius, direction))
+          position <- io(checkEnd(np, endX, direction))
+        yield position
 
     private def checkBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
       var dx = (p._1 + 12, p._2) euclideanDistance center
