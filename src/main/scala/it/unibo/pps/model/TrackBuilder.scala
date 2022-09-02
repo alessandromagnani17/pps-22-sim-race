@@ -11,6 +11,7 @@ import it.unibo.pps.view.simulation_panel.{
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
 import it.unibo.pps.model.StartingPoint
+import it.unibo.pps.given
 
 trait TrackBuilder:
 
@@ -90,7 +91,7 @@ object TrackBuilder:
           (x_SP_I, y_SP_I),
           (x_EP_E, y_EP_E),
           (x_EP_I, y_EP_I),
-          direction,
+          if direction.equals("1") then Direction.Forward else Direction.Backward,
           end
         )
         Turn(id, d)

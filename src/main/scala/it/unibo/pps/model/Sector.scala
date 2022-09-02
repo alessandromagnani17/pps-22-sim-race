@@ -1,8 +1,13 @@
 package it.unibo.pps.model
 
-import scala.Tuple2 as Point2d
+import scala.{Tuple2 => Point2d}
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.view.simulation_panel.{DrawingParams, DrawingStraightParams, DrawingTurnParams}
+import it.unibo.pps.given
+
+enum Direction:
+  case Forward
+  case Backward
 
 enum Phase:
   case Acceleration

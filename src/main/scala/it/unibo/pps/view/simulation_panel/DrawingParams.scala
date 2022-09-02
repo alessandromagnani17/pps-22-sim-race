@@ -1,6 +1,8 @@
 package it.unibo.pps.view.simulation_panel
 
-import scala.{Tuple2 => Point2d}
+import it.unibo.pps.model.Direction
+
+import scala.Tuple2 as Point2d
 import java.awt.Color
 
 sealed trait DrawingParams
@@ -42,7 +44,7 @@ case class DrawingTurnParams(
     startPointI: Point2d[Int, Int],
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
-    direction: Int,
+    direction: Direction,
     endX: Int
 ) extends DrawingParams
 
