@@ -65,10 +65,86 @@ context.simulationEngine
     }
 ```
 
+#### Mixins
+Il meccanismo dei mixins permette di aggregare insieme più classi mediante composizione, invece che mediante ereditarietà. Un esempio di utilizzo è presente nella classe `ControllerModule`:
+```scala
+trait Interface extends Provider with Component:
+```
 
-#### Type-members
+### Programmazione asincrona
 
-#### Mix-in
+La programmazione asincrona è stata sfruttata per avere un'interfaccia responsive delegando le computazioni pesanti (e.g. la simulazione vera e propria) ad entità terze. Per raggiungere questo obiettivo sono stati sfruttati i Task di Monix. Un esempio di facile comprensione è il metodo `notifyStart` della classe `ControllerModule`:
+```scala
+override def notifyStart(): Unit = stopFuture = Some(
+    context.simulationEngine
+      .simulationStep()
+      .loopForever
+      .runAsync {
+        case Left(exp) => global.reportFailure(exp)
+        case _ =>
+      }
+)
+```
+
+### Programmazione reattiva
+La programmazione reattiva è stata sfruttata per implementare l'aggiornamento automatico i grafici, difatti, ogni volta che uno `snapshot` viene aggiunto alla `history` della simulazione viene, in automatico, richiamato il metodo di aggiornamento dei vari grafici. Anche questa parte è stata realizzata sfruttando le API di Monix. Nella `ModelModule`, che contiene la storia della simulazione, è necessario aggiungere tre elementi:
+1. Un wrapper della `history` che rappresenta l'entità da osservare;
+```scala
+private var history: List[Snapshot] = List.empty
+private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+```
+2. Un metodo per registrare le callback su tale subject;
+```scala
+override def registerCallbackHistory(onNext: List[Snapshot] => Future[Ack], onError: Throwable => Unit, onComplete: () => Unit): Cancelable =
+  historySubject.subscribe(onNext, onError, onComplete)
+```
+3. La chiamata al metodo di notifica del subject per comunicare una sua variazione, nel nostro caso ogni volta che viene aggiunto uno snapshot.
+```scala
+override def addSnapshot(snapshot: Snapshot): Unit =
+  history = history :+ snapshot
+  historySubject.onNext(history)
+```
+
+L'ultimo passo necessario è la chiamata effettiva al metodo per registrare la callback, questa avviene nel `ControllerModule`:
+```scala
+ override def registerReactiveChartCallback(): Unit =
+    val onNext = (l: List[Snapshot]) => {
+      context.view.updateCharts(l)
+      Ack.Continue
+    }
+    val onError = (t: Throwable) => ()
+    val onComplete = () => ()
+    context.model.registerCallbackHistory(onNext, onError, onComplete)
+
+```
+
+### Programmazione logica
+Il paradigma di programmazione logico è stato utilizzato, all'interno di questo progetto, per due scopi diversi:
+1. Avere una sorta di database lightweight per fornire all'applicativo la pista e le vetture. Dunque se si volesse implementare una nuova pista basterebbe: implementare nella classe `TrackBuilder` il metodo di caricamento di tale pista e fornire un nuovo file prolog contenente le regole che descrivono i suoi settori, come ad esempio:
+  ```prolog
+  straight(id(1), startPointE(181, 113), endPointE(725, 113), startPointI(181, 170), endPointI(725, 170)).
+  ```
+  
+2. Effettuare i calcoli per i movimenti delle macchine nei rettilinei.
+
+
+
+
+
+
+### Sezioni personali
+
+#### Davide Domini
+
+#### Alessandro Magnani
+
+#### Andrea Matteucci
+
+#### Simone Montanari
+      
+
+
+
 
 
 
