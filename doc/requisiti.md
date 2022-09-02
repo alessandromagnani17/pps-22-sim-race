@@ -34,7 +34,7 @@ Di seguito sono riportati i requisiti individuati durante lo studio del dominio 
     - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`)
        
 - L'usura delle gomme di ogni vettura aumenterà di giro in giro considerando la tipologia di gomma usata;
-- La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima e l'usura delle gomme;
+- La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima, il carburante e l'usura delle gomme;
 
 
 
@@ -49,7 +49,7 @@ Di seguito sono descritti i requisiti non funzionali dell'applicativo:
 ### Requisiti di implementazione
 Di seguito vengono riportati i requisiti relativi all'implementazione del sistema:
 
-* Il sistema sarà sviluppato in Scala 3.* e per eventuali feature sarà possibile integrare delle teorie Prolog (?);
+* Il sistema sarà sviluppato in Scala 3.1.3 e per eventuali feature sarà possibile integrare delle teorie Prolog;
 * Il sistema farà riferimento al JDK 11, eventuali librerie esterne utilizzate dovranno supportare almeno tale versione;
 * Il testing del sistema sarà effettuato utilizzando ScalaTest, in questo modo sarà minimizzata la presenza di errori e facilitato l'aggiornamento di eventuali funzionalità;
-* Il codice sorgente sarà verificato mediante l'utilizzo del linter ScalaFMT. (?)
+* Il codice sorgente sarà verificato mediante l'utilizzo del linter ScalaFMT.
