@@ -133,7 +133,7 @@ object SimulationEngineModule:
               val v = movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
               if v > (80 * 0.069) then v else (80 * 0.069).toInt
             case _ => car.actualSpeed
-        val onTurn = () => car.actualSpeed
+        val onTurn = () => (car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] =
