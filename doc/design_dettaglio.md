@@ -48,8 +48,14 @@ Di seguito è riportata una sezione per la descrizione dettagliata di ogni modul
 ![Model_dettaglio](./imgs/model.svg)
 
 #### Tyre
-
-![degradation](./img/degradation_chart.png)
+Tyre è una `enum` che rappresenta il tipo di gomme che una macchina può montare durante la gara. In base al tipo, la gomma, subirà un degrado variabile durante la gara. Il degrado di una data gomma ad un dato giro si può ottenere attraverso il metodo `degradation` presente nel companion object di Tyre, questo metodo effettua i calcoli utilizzando le seguenti funzioni:
+<div align="center">
+<img src="./imgs/degradation_chart.png" width="500" height="406"/>
+</div>
+Nello specifico:
+- Una gomma di tipo *Soft* subirà un minor degrado, quindi, seguirà la funzione verde;
+- Una gomma di tipo *Hard* subirà un maggior degrado, quindi, seguirà la funzione rossa;
+- Una gomma di tipo *Medium* subirà un degrado medio rispetto agli altri due tipi, quindi, seguirà la funzione blu.
 
 ### View
 ![View](./imgs/cake-view.svg)
