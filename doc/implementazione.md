@@ -128,13 +128,20 @@ Il paradigma di programmazione logico è stato utilizzato, all'interno di questo
 2. Effettuare i calcoli per i movimenti delle macchine nei rettilinei.
 
 
-
-
-
-
 ### Sezioni personali
 
 #### Davide Domini
+Nello sviluppo del progetto, inizialmente, mi sono occupato insieme a Matteucci della realizzazione della schermata per visualizzare l'andamento della simulazione. Questo comprende lo sviluppo delle classi:
+- `SimulationPanel`
+- `Environment`
+- `TrackBuilder`
+- `CarsLoader`
+Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEgine` legata al movimento delle macchine durante la simulazione.
+Infine, in autonomia, ho sviluppato:
+- Gestione dei grafici, classe `LineChart` e aggiornamento automatico tramite programmazione reattiva;
+- Object `PimpScala`, in cui vengono arricchite alcune entità esistenti come: Int, Tuple2, Option, HashMap e JPanel;
+- Meccanismo per calcolare il degrado delle gomme;
+- Start e stop della simulazione tramite programmazione asincrona.
 
 #### Alessandro Magnani
 
