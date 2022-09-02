@@ -79,9 +79,9 @@ object SimulationPanel:
       yield cnv
 
     private def createCharts(): List[LineChart] =
-      val chartVel = LineChart("Velocity", "Virtual Time", "Velocity")
-      val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel")
-      val chartTyres = LineChart("Degradation", "Lap", "Degradation")
+      val chartVel = LineChart("Velocity", "Virtual Time", "Velocity (km/h)")
+      val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel (l)")
+      val chartTyres = LineChart("Degradation", "Lap", "Degradation (%)")
       val c = List(chartVel, chartFuel, chartTyres)
       c.foreach(addSeriesToChart(_))
       c
