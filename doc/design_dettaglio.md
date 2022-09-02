@@ -47,6 +47,10 @@ Di seguito è riportata una sezione per la descrizione dettagliata di ogni modul
 
 ![Model_dettaglio](./imgs/model.svg)
 
+#### Tyre
+
+![degradation](./img/degradation_chart.png)
+
 ### View
 ![View](./imgs/cake-view.svg)
 
