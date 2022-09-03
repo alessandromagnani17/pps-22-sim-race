@@ -53,7 +53,7 @@ override def notifyStart(): Unit = stopFuture = Some(
 ```
 
 #### Either
-Questo meccanismo è utilizzato per la gestione delle eccezioni, un valore di `Either[+A, +B]` rappresenta un valore che potrebbe assumere sia tipo `A` che tipo `B`. Questo rende particolarmente comodo la gestione delle eccezioni in quanto si può usare un valore di `Either[Throwable, A]`. Nel caso specifico è stato utilizzato nella `ControllerModule` dato che viene ritornato dal metodo `runAsync` dei Task di Monix. Una volta ottenuto un valore di questo tipo lo si può gestire con una partial function che esprime le computazioni da intraprendere nei due casi.
+Questo meccanismo è utilizzato per la gestione delle eccezioni, un valore di tipo `Either[+A, +B]` rappresenta un valore che potrebbe assumere sia tipo `A` che tipo `B`. Questo rende particolarmente comodo la gestione delle eccezioni in quanto si può usare un valore di tipo `Either[Throwable, A]`. Nel caso specifico è stato utilizzato nella classe `ControllerModule` dato che viene ritornato dal metodo `runAsync` dei Task di Monix. Una volta ottenuto un valore di questo tipo lo si può gestire con una partial function che esprime le computazioni da intraprendere nei due casi.
 
 ```scala
 context.simulationEngine
