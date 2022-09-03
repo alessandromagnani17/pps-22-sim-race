@@ -147,10 +147,9 @@ object ControllerModule:
         context.model.startingPositions(nextIndex).renderCarParams.position = position
 
       override def registerReactiveChartCallback(): Unit =
-        val onNext = (l: List[Snapshot]) => {
+        val onNext = (l: List[Snapshot]) =>
           context.view.updateCharts(l)
           Ack.Continue
-        }
         val onError = (t: Throwable) => ()
         val onComplete = () => ()
         context.model.registerCallbackHistory(onNext, onError, onComplete)
