@@ -2,7 +2,7 @@ package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.view.simulation_panel.RenderCarParams
+
 import java.awt.Color
 import it.unibo.pps.utility.Constants.*
 

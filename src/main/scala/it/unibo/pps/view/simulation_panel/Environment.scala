@@ -1,12 +1,11 @@
 package it.unibo.pps.view.simulation_panel
 
-import it.unibo.pps.model.{Sector, Track}
+import it.unibo.pps.model.{Car, RenderStraightParams, RenderTurnParams, Sector, Straight, Track, Turn}
 import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
-import it.unibo.pps.utility.PimpScala.RichTuple2._
-import scala.{Tuple2 => Point2d}
+import it.unibo.pps.utility.PimpScala.RichTuple2.*
+import scala.Tuple2 as Point2d
 import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.model.{Car, Straight, Turn}
 import it.unibo.pps.given
 
 class Environment(val w: Int, val h: Int) extends JPanel:

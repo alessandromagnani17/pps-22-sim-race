@@ -1,7 +1,6 @@
 package it.unibo.pps.model
 
 import javax.swing.Icon
-import it.unibo.pps.view.simulation_panel.RenderCarParams
 
 case class Car(
     var path: String,

@@ -2,13 +2,12 @@ package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.model.Car
+import it.unibo.pps.model.{Car, Direction, RenderParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.utility.monadic.io
-import it.unibo.pps.view.simulation_panel.{RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.RenderTurnParams
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.model.Direction
 import it.unibo.pps.given
 
 trait Movements:

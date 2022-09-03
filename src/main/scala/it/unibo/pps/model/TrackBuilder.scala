@@ -2,12 +2,7 @@ package it.unibo.pps.model
 
 import it.unibo.pps.utility.GivenConversion.TrackBuilderGivenConversion.given
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.view.simulation_panel.{
-  RenderCarParams,
-  RenderStartingPointParams,
-  RenderStraightParams,
-  RenderTurnParams
-}
+import it.unibo.pps.model.RenderStartingPointParams
 import it.unibo.pps.prolog.Scala2P
 import monix.eval.Task
 import it.unibo.pps.model.StartingPoint

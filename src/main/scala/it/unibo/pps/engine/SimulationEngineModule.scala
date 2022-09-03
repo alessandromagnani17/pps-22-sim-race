@@ -3,10 +3,22 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, ModelModule, Phase, Sector, Snapshot, Standing, Straight, Turn, Tyre}
+import it.unibo.pps.model.{
+  Car,
+  ModelModule,
+  Phase,
+  RenderStraightParams,
+  Sector,
+  Snapshot,
+  Standing,
+  Straight,
+  Turn,
+  Tyre
+}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
+
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -14,7 +26,7 @@ import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
-import it.unibo.pps.view.simulation_panel.{RenderCarParams, RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.RenderCarParams
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*

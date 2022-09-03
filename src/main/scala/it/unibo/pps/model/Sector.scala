@@ -2,7 +2,7 @@ package it.unibo.pps.model
 
 import scala.{Tuple2 => Point2d}
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.view.simulation_panel.{RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.RenderTurnParams
 import it.unibo.pps.given
 
 enum Direction:

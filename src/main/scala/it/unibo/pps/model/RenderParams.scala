@@ -1,9 +1,9 @@
-package it.unibo.pps.view.simulation_panel
+package it.unibo.pps.model
 
 import it.unibo.pps.model.Direction
 
-import scala.Tuple2 as Point2d
 import java.awt.Color
+import scala.Tuple2 as Point2d
 
 sealed trait RenderParams
 

@@ -1,6 +1,5 @@
 package it.unibo.pps.model
 
-import it.unibo.pps.view.simulation_panel.RenderStraightParams
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

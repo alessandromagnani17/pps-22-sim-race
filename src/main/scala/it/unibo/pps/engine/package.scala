@@ -1,10 +1,10 @@
 package it.unibo.pps
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.{RenderParams, RenderTurnParams, Tyre}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.view.simulation_panel.{RenderParams, RenderTurnParams}
+import it.unibo.pps.model.RenderTurnParams
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
