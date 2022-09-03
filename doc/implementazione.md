@@ -14,7 +14,7 @@ override def simulationStep(): Task[Unit] =
     _ <- moveCars()
     _ <- updateStanding()
     _ <- updateView()
-    _ <- waitFor(speedManager._simulationSpeed)
+    _ <- waitFor(speedManager.simulationSpeed)
     _ <- checkEnd()
   yield ()
 ```
