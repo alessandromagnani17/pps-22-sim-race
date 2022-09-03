@@ -108,10 +108,9 @@ override def addSnapshot(snapshot: Snapshot): Unit =
 L'ultimo passo necessario è la chiamata effettiva al metodo per registrare la callback, questa avviene nel `ControllerModule`:
 ```scala
  override def registerReactiveChartCallback(): Unit =
-    val onNext = (l: List[Snapshot]) => {
+    val onNext = (l: List[Snapshot]) => 
       context.view.updateCharts(l)
       Ack.Continue
-    }
     val onError = (t: Throwable) => ()
     val onComplete = () => ()
     context.model.registerCallbackHistory(onNext, onError, onComplete)
