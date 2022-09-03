@@ -137,7 +137,9 @@ Nello sviluppo del progetto, inizialmente, mi sono occupato insieme a Matteucci 
 - `TrackBuilder`
 - `CarsLoader`
 
-Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEgine` legata al movimento delle macchine durante la simulazione.
+Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEngine` legata al movimento delle macchine durante la simulazione. Questo comprende le classi:
+- `SimulationEngineModule`
+- `Movements`
 
 Infine, in autonomia, ho sviluppato:
 - Gestione dei grafici, classe `LineChart` e aggiornamento automatico tramite programmazione reattiva;
