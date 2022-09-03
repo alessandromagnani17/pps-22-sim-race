@@ -14,7 +14,7 @@ class TestTrack extends AnyFlatSpec with Matchers:
 
   "After adding a sector the track" should "be non-empty" in {
     val t = Track()
-    val sector = Straight(1, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0, Direction.Forward))
+    val sector = Straight(1, Direction.Forward, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0))
     t.addSector(sector)
     assert(t.sectors.size > 0)
   }

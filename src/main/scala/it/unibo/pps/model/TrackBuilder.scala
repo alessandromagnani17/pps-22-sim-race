@@ -72,10 +72,10 @@ object TrackBuilder:
           (xP1Ex, yP1Ex),
           (xP0In, yP0In),
           (xP1In, yP1In),
-          end,
-          if direction.equals("1") then Direction.Forward else Direction.Backward
+          end
         )
-        Straight(id, d)
+        val dir = if direction.equals("1") then Direction.Forward else Direction.Backward
+        Straight(id, dir, d)
     }
 
     private def mkTurn(l: List[String]): Turn = l match {
@@ -87,10 +87,10 @@ object TrackBuilder:
           (x_SP_I, y_SP_I),
           (x_EP_E, y_EP_E),
           (x_EP_I, y_EP_I),
-          if direction.equals("1") then Direction.Forward else Direction.Backward,
           end
         )
-        Turn(id, d)
+        val dir = if direction.equals("1") then Direction.Forward else Direction.Backward
+        Turn(id, dir, d)
     }
 
     private def mkStartingPoint(l: List[String]): StartingPoint = l match {

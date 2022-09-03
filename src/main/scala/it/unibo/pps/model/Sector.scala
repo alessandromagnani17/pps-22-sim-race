@@ -17,10 +17,12 @@ enum Phase:
 sealed trait Sector:
   def id: Int
   def renderParams: RenderParams
+  def direction: Direction
   def phase(p: (Int, Int)): Phase
 
-case class Straight(_id: Int, _drawingParams: RenderStraightParams) extends Sector:
+case class Straight(_id: Int, _direction: Direction, _drawingParams: RenderStraightParams) extends Sector:
   override def id: Int = _id
+  override def direction: Direction = _direction
   override def phase(p: (Int, Int)): Phase =
     val d = Math.abs(_drawingParams.endX - p._1)
     if d > 225 then Phase.Acceleration
@@ -28,10 +30,11 @@ case class Straight(_id: Int, _drawingParams: RenderStraightParams) extends Sect
     else Phase.Ended
   override def renderParams: RenderParams = _drawingParams
 
-case class Turn(_id: Int, _drawingParams: RenderTurnParams) extends Sector:
+case class Turn(_id: Int, _direction: Direction, _drawingParams: RenderTurnParams) extends Sector:
   override def id: Int = _id
+  override def direction: Direction = _direction
   override def phase(p: (Int, Int)): Phase =
-    val d = (p._1 - _drawingParams.endX) * _drawingParams.direction
+    val d = (p._1 - _drawingParams.endX) * _direction
     if d >= 0 then Phase.Acceleration
     else Phase.Ended
   override def renderParams: RenderParams = _drawingParams

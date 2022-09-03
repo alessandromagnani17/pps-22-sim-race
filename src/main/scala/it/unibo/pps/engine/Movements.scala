@@ -27,7 +27,7 @@ object Movements:
     override def acceleration(car: Car, time: Int): Task[(Int, Int)] =
       for
         x <- io(car.renderCarParams.position._1)
-        direction <- io(car.actualSector.renderParams.asInstanceOf[RenderStraightParams].direction)
+        direction <- io(car.actualSector.direction)
         velocity <- io(car.actualSpeed)
         acceleration <- io(car.acceleration)
         newP <- io(newPositionStraight(x, velocity, time, acceleration, direction))
@@ -36,15 +36,16 @@ object Movements:
     override def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
-        direction <- io(car.actualSector.renderParams.asInstanceOf[RenderStraightParams].direction)
+        direction <- io(car.actualSector.direction)
         newP <- io(newPositionStraight(x, car.actualSpeed, time, 1, direction))
       yield (newP, car.renderCarParams.position._2)
 
     override def turn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
-      case RenderTurnParams(center, p, _, _, _, direction, endX) =>
+      case RenderTurnParams(center, p, _, _, _, endX) =>
         for
           x <- io(car.renderCarParams.position._1)
           teta_t <- io(0.5 * car.acceleration * (time ** 2))
+          direction <- io(car.actualSector.direction)
           r <- io(car.renderCarParams.position euclideanDistance center)
           turnRadius <- io(center euclideanDistance p)
           alpha <- io(direction match

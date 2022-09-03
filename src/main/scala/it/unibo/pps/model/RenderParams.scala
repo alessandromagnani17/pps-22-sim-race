@@ -22,8 +22,7 @@ case class RenderStraightParams(
     p1External: Point2d[Int, Int],
     p0Internal: Point2d[Int, Int],
     p1Internal: Point2d[Int, Int],
-    endX: Int,
-    direction: Direction
+    endX: Int
 ) extends RenderParams
 
 /** Params needed to render a Turn sector: a turn is composed by two concentrics circumference arcs, one external and
@@ -45,7 +44,6 @@ case class RenderTurnParams(
     startPointI: Point2d[Int, Int],
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
-    direction: Direction,
     endX: Int
 ) extends RenderParams
 

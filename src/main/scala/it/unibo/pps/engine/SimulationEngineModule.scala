@@ -162,7 +162,7 @@ object SimulationEngineModule:
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             val i = if car.actualSector.id == 1 then 1 else -1
             car.actualSector.renderParams match
-              case RenderStraightParams(_, _, _, _, endX, _) => //TODO - fare un metodo di check
+              case RenderStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
                 val d = (p._1 - endX) * i
                 if d >= 0 then
                   sectorTimes(car.name) = 3
@@ -219,10 +219,10 @@ object SimulationEngineModule:
           .sortWith(_._1.id >= _._1.id)
           .foreach(e => {
             e._1 match
-              case Straight(id, _) =>
+              case Straight(id, _, _) =>
                 if id == 1 then l1 = l1.concat(sortCars(e._2, _ > _, true))
                 else l1 = l1.concat(sortCars(e._2, _ < _, true))
-              case Turn(id, _) =>
+              case Turn(id, _, _) =>
                 if id == 2 then
                   l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
                   l1 = l1.concat(
