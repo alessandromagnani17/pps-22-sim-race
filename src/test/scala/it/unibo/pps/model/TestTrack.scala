@@ -1,6 +1,6 @@
 package it.unibo.pps.model
 
-import it.unibo.pps.view.simulation_panel.DrawingStraightParams
+import it.unibo.pps.view.simulation_panel.RenderStraightParams
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -15,7 +15,7 @@ class TestTrack extends AnyFlatSpec with Matchers:
 
   "After adding a sector the track" should "be non-empty" in {
     val t = Track()
-    val sector = Straight(1, DrawingStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0))
+    val sector = Straight(1, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0, Direction.Forward))
     t.addSector(sector)
     assert(t.sectors.size > 0)
   }

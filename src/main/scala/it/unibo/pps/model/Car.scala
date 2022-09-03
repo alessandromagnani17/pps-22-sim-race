@@ -1,7 +1,7 @@
 package it.unibo.pps.model
 
 import javax.swing.Icon
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.view.simulation_panel.RenderCarParams
 
 case class Car(
     var path: String,
@@ -18,5 +18,5 @@ case class Car(
     var fastestLap: Int,
     val fuel: Double,
     val degradation: Double,
-    var drawingCarParams: DrawingCarParams
+    var renderCarParams: RenderCarParams
 )

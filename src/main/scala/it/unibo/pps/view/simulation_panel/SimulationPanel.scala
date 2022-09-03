@@ -264,7 +264,7 @@ object SimulationPanel:
         paddingLabel1 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-        _ <- color.setBackground(controller.startingPositions(elem._1).drawingCarParams.color)
+        _ <- color.setBackground(controller.startingPositions(elem._1).renderCarParams.color)
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
 
@@ -316,7 +316,7 @@ object SimulationPanel:
     override def updateDisplayedStanding(): Unit =
       standingMap.foreach(e =>
         e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).drawingCarParams.color))
+        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).renderCarParams.color))
         e._2._4.foreach(f =>
           f.setIcon(
             ImageLoader.load(

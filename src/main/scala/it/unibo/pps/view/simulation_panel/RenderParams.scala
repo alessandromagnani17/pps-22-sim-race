@@ -5,7 +5,7 @@ import it.unibo.pps.model.Direction
 import scala.Tuple2 as Point2d
 import java.awt.Color
 
-sealed trait DrawingParams
+sealed trait RenderParams
 
 /** Params needed to render a Straight sector: a straight is composed by two lines, one external and one internal
   * @param p0External
@@ -17,13 +17,14 @@ sealed trait DrawingParams
   * @param p1Internal
   *   Bottom right point2d of the straight
   */
-case class DrawingStraightParams(
+case class RenderStraightParams(
     p0External: Point2d[Int, Int],
     p1External: Point2d[Int, Int],
     p0Internal: Point2d[Int, Int],
     p1Internal: Point2d[Int, Int],
-    endX: Int
-) extends DrawingParams
+    endX: Int,
+    direction: Direction
+) extends RenderParams
 
 /** Params needed to render a Turn sector: a turn is composed by two concentrics circumference arcs, one external and
   * one internal
@@ -38,7 +39,7 @@ case class DrawingStraightParams(
   * @param endPointI
   *   Bottom point2d of the internal circumference
   */
-case class DrawingTurnParams(
+case class RenderTurnParams(
     center: Point2d[Int, Int],
     startPointE: Point2d[Int, Int],
     startPointI: Point2d[Int, Int],
@@ -46,7 +47,7 @@ case class DrawingTurnParams(
     endPointI: Point2d[Int, Int],
     direction: Direction,
     endX: Int
-) extends DrawingParams
+) extends RenderParams
 
 /** Parames needed to render a car
   *
@@ -55,14 +56,14 @@ case class DrawingTurnParams(
   * @param color
   *   The color of the car
   */
-case class DrawingCarParams(
+case class RenderCarParams(
     var position: Point2d[Int, Int],
     color: Color
-) extends DrawingParams
+) extends RenderParams
 
 /** Parames needed to render a StartingPoint
   *
   * @param position
   *   The position of the car
   */
-case class DrawingStartingPointParams(position: Point2d[Int, Int]) extends DrawingParams
+case class RenderStartingPointParams(position: Point2d[Int, Int]) extends RenderParams

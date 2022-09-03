@@ -6,7 +6,7 @@ import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.view.simulation_panel.RenderCarParams
 import monix.eval.Task
 
 import java.awt.Color
@@ -142,10 +142,10 @@ object ControllerModule:
         context.model.startingPositions(prevIndex) = context.model.startingPositions(nextIndex)
         context.model.startingPositions(nextIndex) = car
 
-        val position = context.model.startingPositions(prevIndex).drawingCarParams.position
-        context.model.startingPositions(prevIndex).drawingCarParams.position =
-          context.model.startingPositions(nextIndex).drawingCarParams.position
-        context.model.startingPositions(nextIndex).drawingCarParams.position = position
+        val position = context.model.startingPositions(prevIndex).renderCarParams.position
+        context.model.startingPositions(prevIndex).renderCarParams.position =
+          context.model.startingPositions(nextIndex).renderCarParams.position
+        context.model.startingPositions(nextIndex).renderCarParams.position = position
 
       override def registerReactiveChartCallback(): Unit =
         val onNext = (l: List[Snapshot]) => {

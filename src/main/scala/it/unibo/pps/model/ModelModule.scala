@@ -1,7 +1,7 @@
 package it.unibo.pps.model
 
 import it.unibo.pps.model.Car
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.view.simulation_panel.RenderCarParams
 import monix.reactive.MulticastStrategy
 import monix.reactive.subjects.ConcurrentSubject
 import monix.execution.Scheduler.Implicits.global

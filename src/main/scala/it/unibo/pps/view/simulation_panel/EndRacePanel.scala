@@ -57,15 +57,9 @@ object EndRacePanel:
         position <- JLabel((elem._1 + 1).toString)
         name <- JLabel(elem._2.name)
         color <- JLabel()
-        /*<<<<<<< HEAD
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
+        _ <- color.setBackground(elem._2.renderCarParams.color)
         _ <- color.setOpaque(true)
         img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
-=======*/
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
-        _ <- color.setOpaque(true)
-        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
-//>>>>>>> ce4c801a6798ee4ef0ee6dc6d79283477e2d753e
         tyre <- JLabel(elem._2.tyre.toString)
         time <- JLabel(controller.calcCarPosting(elem._2))
         fastestLap <- JLabel(controller.convertTimeToMinutes(elem._2.fastestLap))
@@ -73,7 +67,7 @@ object EndRacePanel:
         _ <- position.setPreferredSize(Dimension(20, 70))
         _ <- name.setPreferredSize(Dimension(100, 70))
         _ <- color.setPreferredSize(Dimension(20, 70))
-        _ <- color.setBackground(elem._2.drawingCarParams.color)
+        _ <- color.setBackground(elem._2.renderCarParams.color)
         _ <- color.setOpaque(true)
         _ <- tyre.setPreferredSize(Dimension(120, 70))
         _ <- fastestLap.setPreferredSize(Dimension(90, 70))

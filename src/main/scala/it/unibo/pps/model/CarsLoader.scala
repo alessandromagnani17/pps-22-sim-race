@@ -2,7 +2,7 @@ package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
+import it.unibo.pps.view.simulation_panel.RenderCarParams
 import java.awt.Color
 import it.unibo.pps.utility.Constants.*
 
@@ -44,7 +44,7 @@ object CarsLoader:
   private def mkCar(params: List[String], track: Track): Car = params match {
     case List(path, name, tyre, skills, maxSpeed, acceleration, actualSector, fuel, carColor) =>
       val position = carsInitial(name)
-      val startingPoint = track.startingGrid(position).drawingParams.position
+      val startingPoint = track.startingGrid(position).renderParams.position
       Car(
         path,
         name,
@@ -60,6 +60,6 @@ object CarsLoader:
         0,
         fuel.toDouble,
         1,
-        DrawingCarParams(startingPoint, carColor)
+        RenderCarParams(startingPoint, carColor)
       )
   }

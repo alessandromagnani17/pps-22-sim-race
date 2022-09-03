@@ -14,7 +14,7 @@ import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
-import it.unibo.pps.view.simulation_panel.{DrawingCarParams, DrawingParams, DrawingStraightParams, DrawingTurnParams}
+import it.unibo.pps.view.simulation_panel.{RenderCarParams, RenderParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
@@ -100,12 +100,12 @@ object SimulationEngineModule:
           )
           newFuel <- io(updateFuel(car, newPosition))
           newDegradation <- io(Tyre.degradation(car.tyre, car.actualLap))
-          newDrawingParams <- io(car.drawingCarParams.copy(position = newPosition))
+          newRenderParams <- io(car.renderCarParams.copy(position = newPosition))
         yield car.copy(
           actualSpeed = newVelocity,
           fuel = newFuel,
           degradation = newDegradation,
-          drawingCarParams = newDrawingParams
+          renderCarParams = newRenderParams
         )
 
       private def updateParameter[E](sector: Sector, onStraight: () => E, onTurn: () => E): E = sector match
@@ -114,18 +114,18 @@ object SimulationEngineModule:
 
       private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double =
         val onStraight = () =>
-          val oldPosition = car.drawingCarParams.position
+          val oldPosition = car.renderCarParams.position
           car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
         val onTurn = () =>
-          val r = computeRadius(car.actualSector.drawingParams, car.drawingCarParams.position)
-          val teta = angleBetweenPoints(car.drawingCarParams.position, newPosition, r)
+          val r = computeRadius(car.actualSector.renderParams, car.renderCarParams.position)
+          val teta = angleBetweenPoints(car.renderCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
           car.fuel - l * 0.0015
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          car.actualSector.phase(car.drawingCarParams.position) match
+          car.actualSector.phase(car.renderCarParams.position) match
             case Phase.Acceleration =>
               val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
@@ -140,7 +140,7 @@ object SimulationEngineModule:
         updateParameter(car.actualSector, () => straightMovement(car, time), () => turnMovement(car, time))
 
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
-        car.actualSector.phase(car.drawingCarParams.position) match
+        car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.acceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
@@ -149,8 +149,8 @@ object SimulationEngineModule:
             val p = movementsManager.deceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             val i = if car.actualSector.id == 1 then 1 else -1
-            car.actualSector.drawingParams match
-              case DrawingStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
+            car.actualSector.renderParams match
+              case RenderStraightParams(_, _, _, _, endX, _) => //TODO - fare un metodo di check
                 val d = (p._1 - endX) * i
                 if d >= 0 then
                   sectorTimes(car.name) = 3
@@ -162,9 +162,9 @@ object SimulationEngineModule:
             turnMovement(car, time)
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
-        car.actualSector.phase(car.drawingCarParams.position) match
+        car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
-            val p = movementsManager.turn(car, sectorTimes(car.name), car.actualSpeed, car.actualSector.drawingParams)
+            val p = movementsManager.turn(car, sectorTimes(car.name), car.actualSpeed, car.actualSector.renderParams)
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             p
           case Phase.Ended =>
@@ -212,25 +212,25 @@ object SimulationEngineModule:
                 else l1 = l1.concat(sortCars(e._2, _ < _, true))
               case Turn(id, _) =>
                 if id == 2 then
-                  l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 390), _ < _, true))
+                  l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
                   l1 = l1.concat(
                     sortCars(
-                      e._2.filter(c => c.drawingCarParams.position._2 >= 175 && c.drawingCarParams.position._2 < 390),
+                      e._2.filter(c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390),
                       _ > _,
                       false
                     )
                   )
-                  l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 175), _ > _, true))
+                  l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 < 175), _ > _, true))
                 else
-                  l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 < 175), _ > _, true))
+                  l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 < 175), _ > _, true))
                   l1 = l1.concat(
                     sortCars(
-                      e._2.filter(c => c.drawingCarParams.position._2 >= 175 && c.drawingCarParams.position._2 < 390),
+                      e._2.filter(c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390),
                       _ < _,
                       false
                     )
                   )
-                  l1 = l1.concat(sortCars(e._2.filter(_.drawingCarParams.position._2 >= 390), _ < _, true))
+                  l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
           })
       })
       Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
@@ -239,11 +239,11 @@ object SimulationEngineModule:
       var l: List[Car] = List.empty
       if isHorizontal then
         cars
-          .sortWith((c1, c2) => f(c1.drawingCarParams.position._1, c2.drawingCarParams.position._1))
+          .sortWith((c1, c2) => f(c1.renderCarParams.position._1, c2.renderCarParams.position._1))
           .foreach(e => l = l.concat(List(e)))
       else
         cars
-          .sortWith((c1, c2) => f(c1.drawingCarParams.position._2, c2.drawingCarParams.position._2))
+          .sortWith((c1, c2) => f(c1.renderCarParams.position._2, c2.renderCarParams.position._2))
           .foreach(e => l = l.concat(List(e)))
       l
 

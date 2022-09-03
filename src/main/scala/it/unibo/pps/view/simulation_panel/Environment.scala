@@ -37,7 +37,7 @@ class Environment(val w: Int, val h: Int) extends JPanel:
 
     g.drawLine(200, 113, 200, 170)
 
-    _cars.foreach(c => drawCar(c.drawingCarParams.position, c.drawingCarParams.color, g))
+    _cars.foreach(c => drawCar(c.renderCarParams.position, c.renderCarParams.color, g))
 
     g.setColor(Color.BLACK)
 
@@ -48,14 +48,14 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     _track.sectors.foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
-  private def drawStraigth(s: Straight, g: Graphics): Unit = s.drawingParams match {
-    case DrawingStraightParams(p0External, p1External, p0Internal, p1Internal, _) =>
+  private def drawStraigth(s: Straight, g: Graphics): Unit = s.renderParams match {
+    case RenderStraightParams(p0External, p1External, p0Internal, p1Internal, _, _) =>
       g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
   }
 
-  private def drawTurn(t: Turn, g: Graphics): Unit = t.drawingParams match {
-    case DrawingTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction, _) =>
+  private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match {
+    case RenderTurnParams(center, startPointE, startPointI, endPointE, endPointI, direction, _) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
       drawSingleTurn(externalRadius, center, 2 * externalRadius, direction, g)
