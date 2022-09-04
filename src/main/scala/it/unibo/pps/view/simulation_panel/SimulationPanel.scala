@@ -1,7 +1,6 @@
 package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
-
 import java.awt.{
   BorderLayout,
   Color,
@@ -34,24 +33,24 @@ import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Car, Sector, Snapshot, Standing, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
-
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
 import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
-
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
 
   /** Renders the new snapshot of the simulation */
   def render(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
+
+  /** Renders the track, it must be used when showing simulation panel for first time */
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
   def updateDisplayedStanding(): Unit
@@ -59,8 +58,6 @@ trait SimulationPanel extends JPanel:
   def updateFastestLapIcon(carName: String): Unit
 
 object SimulationPanel:
-
-  import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
   def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
     new SimulationPanelImpl(width, height, controller)
@@ -78,27 +75,13 @@ object SimulationPanel:
         _ <- cnv.setVisible(true)
       yield cnv
 
-    private def createCharts(): List[LineChart] =
-      val chartVel = LineChart("Velocity", "Virtual Time", "Velocity (km/h)")
-      val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel (l)")
-      val chartTyres = LineChart("Degradation", "Lap", "Degradation (%)")
-      val c = List(chartVel, chartFuel, chartTyres)
-      c.foreach(addSeriesToChart(_))
-      c
-
-    private def addSeriesToChart(chart: LineChart): Unit =
-      chart.addSeries("Ferrari", Color.RED)
-      chart.addSeries("Mercedes", Color.CYAN)
-      chart.addSeries("Red Bull", Color.BLUE)
-      chart.addSeries("McLaren", Color.GREEN)
-
     private val charts = createCharts()
 
     private lazy val chartsPanel =
       for
         p <- new JPanel()
         _ <- p.setLayout(new BoxLayout(p, 1))
-        chPanels <- Task(charts.map(_.wrapToPanel()))
+        chPanels <- Task(charts.map(_.wrapToPanel))
         _ <- chPanels.foreach(_.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT)))
         _ <- p.addAll(chPanels)
         sp <- new JScrollPane(p)
@@ -106,20 +89,6 @@ object SimulationPanel:
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
         _ <- controller.registerReactiveChartCallback()
       yield sp
-
-    private val matchChart = (chart: LineChart, snapshot: Snapshot) =>
-      chart.title match {
-        case s: String if s.equals("Velocity") =>
-          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
-        case s: String if s.equals("Fuel") =>
-          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.fuel, car.name))
-        case s: String if s.equals("Degradation") =>
-          snapshot.cars.foreach(car => chart.addValue(car.actualLap, car.degradation, car.name))
-        case _ =>
-      }
-
-    override def updateCharts(snapshot: Snapshot): Unit =
-      charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
     private lazy val standingMap = createPositions()
 
@@ -129,60 +98,7 @@ object SimulationPanel:
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_PANEL_HEIGHT))
       yield panel
 
-    // Posizione - Nome - Colore - Immagine - Gomma
-    private def createPositions(): Map[
-      Int,
-      (
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel]
-      )
-    ] =
-      val map: Map[
-        Int,
-        (
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel]
-        )
-      ] = Map.empty
-      controller.startingPositions.foreach(e => {
-        map += (e._1 -> (createLabel(
-          (e._1 + 1).toString,
-          Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT),
-          false
-        ),
-        createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.fastestLap.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("/fastest-lap-logo.png", null, true)))
-      })
-      map
-
-    private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
-      for
-        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
-        _ <- label.setPreferredSize(dimension)
-        _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
-      yield label
-
-    private val reportButton = for
+    private lazy val reportButton = for
       btn <- JButton("Final report")
       _ <- btn.setEnabled(false)
       _ <- btn.addActionListener { e =>
@@ -190,7 +106,7 @@ object SimulationPanel:
       }
     yield btn
 
-    private val p = for
+    private lazy val p = for
       cnv <- canvas
       scrollPanel <- chartsPanel
       startButton <- createButton(
@@ -226,6 +142,96 @@ object SimulationPanel:
       _ <- self.add(buttonsPanel)
     yield ()
     p.runAsyncAndForget
+
+    override def render(cars: List[Car], actualLap: Int, totalLaps: Int): Unit = SwingUtilities.invokeLater { () =>
+      val p = for
+        cnv <- canvas
+        _ <- cnv.cars = cars
+        _ <- cnv.actualLap = actualLap
+        _ <- cnv.totalLaps = totalLaps
+        _ <- cnv.invalidate()
+        _ <- cnv.repaint()
+      yield ()
+      p.runSyncUnsafe()
+    }
+
+    override def setFinalReportEnabled(): Unit =
+      val p = for
+        reportButton <- reportButton
+        _ <- reportButton.setEnabled(true)
+      yield ()
+      p.runSyncUnsafe()
+
+    override def renderTrack(track: Track): Unit = SwingUtilities.invokeLater { () =>
+      val p = for
+        cnv <- canvas
+        _ <- cnv.track = track
+        _ <- cnv.invalidate()
+        _ <- cnv.repaint()
+      yield ()
+      p.runSyncUnsafe()
+    }
+
+    private val matchChart = (chart: LineChart, snapshot: Snapshot) =>
+      chart.title match
+        case s: String if s.equals("Velocity") =>
+          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.actualSpeed, car.name))
+        case s: String if s.equals("Fuel") =>
+          snapshot.cars.foreach(car => chart.addValue(snapshot.time, car.fuel, car.name))
+        case s: String if s.equals("Degradation") =>
+          snapshot.cars.foreach(car => chart.addValue(car.actualLap, car.degradation, car.name))
+        case _ =>
+
+    override def updateCharts(snapshot: Snapshot): Unit =
+      charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
+
+    override def updateDisplayedStanding(): Unit =
+      standingMap.foreach(e =>
+        e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
+        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).renderCarParams.color))
+        e._2._4.foreach(f =>
+          f.setIcon(
+            ImageLoader.load(
+              s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
+            )
+          )
+        )
+        e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
+        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1))))
+        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
+        e._2._8.foreach(f =>
+          f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).fastestLap))
+        )
+      )
+
+    override def updateFastestLapIcon(carName: String): Unit =
+      standingMap.foreach(e =>
+        e._2._2.foreach(f =>
+          if f.getText.equals(carName) then e._2._9.foreach(c => c.setVisible(true))
+          else e._2._9.foreach(c => c.setVisible(false))
+        )
+      )
+
+    private def createCharts(): List[LineChart] =
+      val chartVel = LineChart("Velocity", "Virtual Time", "Velocity (km/h)")
+      val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel (l)")
+      val chartTyres = LineChart("Degradation", "Lap", "Degradation (%)")
+      val c = List(chartVel, chartFuel, chartTyres)
+      c.foreach(addSeriesToChart(_))
+      c
+
+    private def addSeriesToChart(chart: LineChart): Unit =
+      chart.addSeries("Ferrari", Color.RED)
+      chart.addSeries("Mercedes", Color.CYAN)
+      chart.addSeries("Red Bull", Color.BLUE)
+      chart.addSeries("McLaren", Color.GREEN)
+
+    private def createButton(title: String, listener: ActionListener): Task[JButton] =
+      for
+        jb <- new JButton()
+        _ <- jb.setText(title)
+        _ <- jb.addActionListener(listener)
+      yield jb
 
     private def addToPanel(
         elem: (
@@ -284,69 +290,55 @@ object SimulationPanel:
       yield ()
       p.runAsyncAndForget
 
-    override def render(cars: List[Car], actualLap: Int, totalLaps: Int): Unit = SwingUtilities.invokeLater { () =>
-      val p = for
-        cnv <- canvas
-        _ <- cnv.cars = cars
-        _ <- cnv.actualLap = actualLap
-        _ <- cnv.totalLaps = totalLaps
-        _ <- cnv.invalidate()
-        _ <- cnv.repaint()
-      yield ()
-      p.runSyncUnsafe()
-    }
-
-    override def setFinalReportEnabled(): Unit =
-      val p = for
-        reportButton <- reportButton
-        _ <- reportButton.setEnabled(true)
-      yield ()
-      p.runSyncUnsafe()
-
-    override def renderTrack(track: Track): Unit = SwingUtilities.invokeLater { () =>
-      val p = for
-        cnv <- canvas
-        _ <- cnv.track = track
-        _ <- cnv.invalidate()
-        _ <- cnv.repaint()
-      yield ()
-      p.runSyncUnsafe()
-    }
-
-    override def updateDisplayedStanding(): Unit =
-      standingMap.foreach(e =>
-        e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).renderCarParams.color))
-        e._2._4.foreach(f =>
-          f.setIcon(
-            ImageLoader.load(
-              s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
-            )
-          )
-        )
-        e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
-        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1))))
-        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
-        e._2._8.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).fastestLap))
-        )
+    // Posizione - Nome - Colore - Immagine - Gomma
+    private def createPositions(): Map[
+      Int,
+      (
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel]
       )
-
-    override def updateFastestLapIcon(carName: String): Unit =
-      standingMap.foreach(e =>
-        e._2._2.foreach(f =>
-          if f.getText.equals(carName) then e._2._9.foreach(c => c.setVisible(true))
-          else e._2._9.foreach(c => c.setVisible(false))
+    ] =
+      val map: Map[
+        Int,
+        (
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel]
         )
-      )
+      ] = Map.empty
+      controller.startingPositions.foreach(e => {
+        map += (e._1 -> (createLabel(
+          (e._1 + 1).toString,
+          Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT),
+          false
+        ),
+        createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(s"/cars/miniatures/${e._1}.png", null, true),
+        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel(e._2.fastestLap.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
+        createLabel("/fastest-lap-logo.png", null, true)))
+      })
+      map
 
-    private def createButton(title: String, listener: ActionListener): Task[JButton] =
+    private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
       for
-        jb <- new JButton()
-        _ <- jb.setText(title)
-        _ <- jb.addActionListener(listener)
-      yield jb
-
-    private def createChart(title: String, xLabel: String, yLabel: String): Task[LineChart] =
-      for chart <- LineChart(title, xLabel, yLabel)
-      yield chart
+        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
+        _ <- label.setPreferredSize(dimension)
+        _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
+      yield label
