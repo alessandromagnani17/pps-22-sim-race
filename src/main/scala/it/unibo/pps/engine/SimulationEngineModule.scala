@@ -137,14 +137,8 @@ object SimulationEngineModule:
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          car.actualSector.phase(car.renderCarParams.position) match
-            case Phase.Acceleration =>
-              val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
-              if v > car.maxSpeed then car.maxSpeed else v
-            case Phase.Deceleration =>
-              movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
-            case _ => car.actualSpeed
-        val onTurn = () => (car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt
+          movementsManager.updateVelocityStaight(car, time, car.actualSector.phase(car.renderCarParams.position))
+        val onTurn = () => movementsManager.updateVelocityTurn(car)
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] =
@@ -153,11 +147,11 @@ object SimulationEngineModule:
       private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
-            val p = movementsManager.acceleration(car, sectorTimes(car.name))
+            val p = movementsManager.updatePositionStraightAcceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             p
           case Phase.Deceleration =>
-            val p = movementsManager.deceleration(car, sectorTimes(car.name))
+            val p = movementsManager.updatePositionStraightDeceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             val i = if car.actualSector.id == 1 then 1 else -1
             car.actualSector.renderParams match
@@ -175,7 +169,12 @@ object SimulationEngineModule:
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
-            val p = movementsManager.turn(car, sectorTimes(car.name), car.actualSpeed, car.actualSector.renderParams)
+            val p = movementsManager.updatePositionTurn(
+              car,
+              sectorTimes(car.name),
+              car.actualSpeed,
+              car.actualSector.renderParams
+            )
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             p
           case Phase.Ended =>

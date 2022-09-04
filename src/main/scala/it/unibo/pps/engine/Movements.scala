@@ -2,20 +2,19 @@ package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.model.{Car, Direction, RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.utility.monadic.io
-import it.unibo.pps.model.RenderTurnParams
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.given
 
 trait Movements:
-  def newVelocityStraightAcc(car: Car, time: Int): Int
-  def newVelocityStraightDec(car: Car, time: Int): Int
-  def acceleration(car: Car, time: Int): Task[(Int, Int)]
-  def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
-  def turn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int]
+  def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int
+  def updateVelocityTurn(car: Car): Int
+  def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)]
+  def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
+  def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int]
 
 object Movements:
   def apply(): Movements = new MovementsImpl()
@@ -24,7 +23,17 @@ object Movements:
 
     private val engine = Scala2P.createEngine("/prolog/movements.pl")
 
-    override def acceleration(car: Car, time: Int): Task[(Int, Int)] =
+    override def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int = phase match
+      case Phase.Acceleration =>
+        val v = updateVelocityStraightAccelleration(car, time)
+        if v > car.maxSpeed then car.maxSpeed else v
+      case Phase.Deceleration => updateVelocityStraightDeceleration(car, time)
+      case Phase.Ended => car.actualSpeed
+
+    override def updateVelocityTurn(car: Car): Int =
+      (car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt
+
+    override def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
@@ -33,14 +42,14 @@ object Movements:
         newP <- io(newPositionStraight(x, velocity, time, acceleration, direction))
       yield (newP, car.renderCarParams.position._2)
 
-    override def deceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
+    override def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
         newP <- io(newPositionStraight(x, car.actualSpeed, time, 1, direction))
       yield (newP, car.renderCarParams.position._2)
 
-    override def turn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
+    override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
       case RenderTurnParams(center, p, _, _, _, endX) =>
         for
           x <- io(car.renderCarParams.position._1)
@@ -76,13 +85,13 @@ object Movements:
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, direction: Int): Int =
       query(s"newPositionStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $direction, Np)", "Np")
 
-    override def newVelocityStraightAcc(car: Car, time: Int): Int =
+    private def updateVelocityStraightAccelleration(car: Car, time: Int): Int =
       query(
         s"newVelocityAcceleration(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)",
         "Ns"
       )
 
-    override def newVelocityStraightDec(car: Car, time: Int): Int =
+    private def updateVelocityStraightDeceleration(car: Car, time: Int): Int =
       query(s"newVelocityDeceleration(${car.actualSpeed}, Ns)", "Ns")
 
     private def query(q: String, output: String): Int =
