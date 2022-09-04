@@ -122,7 +122,7 @@ Facade è un pattern molto utile per nascondere la complessità di alcuni blocch
 /** Scala facade for a 2D JFreeChart Line Chart */
 trait LineChart:
   def addValue(x: Double, y: Double, series: String): Unit
-  def wrapToPanel(): ChartPanel
+  def wrapToPanel: ChartPanel
   def addSeries(name: String, color: Color): Unit
   def title: String
 
