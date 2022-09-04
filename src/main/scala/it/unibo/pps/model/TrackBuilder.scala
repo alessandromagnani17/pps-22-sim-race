@@ -35,10 +35,10 @@ object TrackBuilder:
       track
 
     private def loadStraights(): List[Straight] =
-      val l = List("ID", "X0_E", "Y0_E", "X1_E", "Y1_E", "X0_I", "Y0_I", "X1_I", "Y1_I", "D")
+      val l = List("ID", "X0_E", "Y0_E", "X1_E", "Y1_E", "X0_I", "Y0_I", "X1_I", "Y1_I", "END", "D")
       for
         s <- engine(
-          "straight(id(ID), startPointE(X0_E, Y0_E), endPointE(X1_E, Y1_E), startPointI(X0_I, Y0_I), endPointI(X1_I, Y1_I), direction(D))"
+          "straight(id(ID), startPointE(X0_E, Y0_E), endPointE(X1_E, Y1_E), startPointI(X0_I, Y0_I), endPointI(X1_I, Y1_I), end(END), direction(D))"
         )
         x = Scala2P.extractTermsToListOfStrings(s, l)
         straight = mkStraight(x)
@@ -64,9 +64,8 @@ object TrackBuilder:
         startingPoint = mkStartingPoint(x)
       yield startingPoint
 
-    private def mkStraight(l: List[String]): Straight = l match {
-      case List(id, xP0Ex, yP0Ex, xP1Ex, yP1Ex, xP0In, yP0In, xP1In, yP1In, direction) =>
-        val end = if id.equals("1") then 725 else 181
+    private def mkStraight(l: List[String]): Straight = l match
+      case List(id, xP0Ex, yP0Ex, xP1Ex, yP1Ex, xP0In, yP0In, xP1In, yP1In, end, direction) =>
         val d = RenderStraightParams(
           (xP0Ex, yP0Ex),
           (xP1Ex, yP1Ex),
@@ -74,25 +73,19 @@ object TrackBuilder:
           (xP1In, yP1In),
           end
         )
-        val dir = if direction.equals("1") then Direction.Forward else Direction.Backward
-        Straight(id, dir, d)
-    }
+        Straight(id, direction, d)
 
-    private def mkTurn(l: List[String]): Turn = l match {
+    private def mkTurn(l: List[String]): Turn = l match
       case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction) =>
-        val end = if id.equals("2") then 725 else 181
         val d = RenderTurnParams(
           (x_center, y_center),
           (x_SP_E, y_SP_E),
           (x_SP_I, y_SP_I),
           (x_EP_E, y_EP_E),
           (x_EP_I, y_EP_I),
-          end
+          x_center
         )
-        val dir = if direction.equals("1") then Direction.Forward else Direction.Backward
-        Turn(id, dir, d)
-    }
+        Turn(id, direction, d)
 
-    private def mkStartingPoint(l: List[String]): StartingPoint = l match {
+    private def mkStartingPoint(l: List[String]): StartingPoint = l match
       case List(id, x, y) => StartingPoint(id, RenderStartingPointParams((x, y)))
-    }
