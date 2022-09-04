@@ -142,8 +142,7 @@ object SimulationEngineModule:
               val v = movementsManager.newVelocityStraightAcc(car, sectorTimes(car.name))
               if v > car.maxSpeed then car.maxSpeed else v
             case Phase.Deceleration =>
-              val v = movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
-              if v > (80 * 0.069) then v else (80 * 0.069).toInt
+              movementsManager.newVelocityStraightDec(car, sectorTimes(car.name))
             case _ => car.actualSpeed
         val onTurn = () => (car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt
         updateParameter(car.actualSector, onStraight, onTurn)
