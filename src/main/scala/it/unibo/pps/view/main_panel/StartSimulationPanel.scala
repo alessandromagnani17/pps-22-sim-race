@@ -43,7 +43,7 @@ object StartSimulationPanel:
     private def createButton(text: String, action: () => Unit): Task[JButton] =
       for
         button <- JButton(text)
-        _ <- button.setPreferredSize(BUTTONS_WIDTH, BUTTONS_HEIGHT)
+        _ <- button.setPreferredSize(Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT))
         _ <- button.addActionListener(e => action())
       yield button
 
