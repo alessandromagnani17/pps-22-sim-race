@@ -19,7 +19,6 @@ object Constants:
     val CAR_MIN_SPEED = 200
     val SELECTION_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.48).toInt
     val SELECTION_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.65).toInt
-    val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
 
   object MainPanelConstants extends CommonConstants
 
@@ -43,6 +42,7 @@ object Constants:
     val MAX_SKILL_STARS = 5
 
   object StartSimulationPanelConstants extends CommonConstants:
+    val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
     val LAPS_LABEL_WIDTH: Int = (FRAME_WIDTH * 0.06).toInt
     val LAPS_LABEL_HEIGHT: Int = (START_PANEL_HEIGHT * 0.06).toInt
     val LAPS_SELECTED_LABEL_WIDTH: Int = (FRAME_WIDTH * 0.04).toInt
