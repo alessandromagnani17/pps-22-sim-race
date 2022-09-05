@@ -3,18 +3,7 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{
-  Car,
-  ModelModule,
-  Phase,
-  RenderStraightParams,
-  Sector,
-  Snapshot,
-  Standing,
-  Straight,
-  Turn,
-  Tyre
-}
+import it.unibo.pps.model.{Car, Direction, ModelModule, Phase, RenderCarParams, RenderStraightParams, Sector, Snapshot, Standing, Straight, Turn, Tyre, RenderParams}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -26,8 +15,8 @@ import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
-import it.unibo.pps.model.RenderCarParams
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
+import it.unibo.pps.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
@@ -153,18 +142,19 @@ object SimulationEngineModule:
           case Phase.Deceleration =>
             val p = movementsManager.updatePositionStraightDeceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
-            val i = if car.actualSector.id == 1 then 1 else -1
-            car.actualSector.renderParams match
-              case RenderStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
-                val d = (p._1 - endX) * i
-                if d >= 0 then
-                  sectorTimes(car.name) = 3
-                  (endX, p._2)
-                else p
+            checkEndStraight(car, p)
           case Phase.Ended =>
             sectorTimes(car.name) = 3
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
+
+      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] = car.actualSector.renderParams match
+        case RenderStraightParams(_, _, _, _, endX) =>
+          val d = (p._1 - endX) * car.actualSector.direction
+          if d >= 0 then
+            sectorTimes(car.name) = 3
+            (endX, p._2)
+          else p
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
