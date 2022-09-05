@@ -39,6 +39,8 @@ object Constants:
     val TYRES_BUTTON_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.09).toInt
     val STARS_BUTTON_WIDTH: Int = (SELECTION_PANEL_WIDTH * 0.09).toInt
     val STARS_BUTTON_HEIGHT: Int = (SELECTION_PANEL_HEIGHT * 0.08).toInt
+    val MAX_SPEED_STEP = 10
+    val MAX_SKILL_STARS = 5
 
   object StartSimulationPanelConstants extends CommonConstants:
     val LAPS_LABEL_WIDTH: Int = (FRAME_WIDTH * 0.06).toInt

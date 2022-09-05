@@ -28,7 +28,7 @@ object MainPanel:
     self =>
 
     private val carSelectionPanel = CarSelectionPanel(controller)
-    private val paramsSelectionPanel = ParamsSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
+    private val paramsSelectionPanel = ParamsSelectionPanel(controller)
     private val startSimulationPanel = StartSimulationPanel(FRAME_WIDTH, START_PANEL_HEIGHT, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
 
