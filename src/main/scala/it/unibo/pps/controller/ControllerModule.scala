@@ -43,6 +43,7 @@ object ControllerModule:
     def registerReactiveChartCallback(): Unit
     def convertTimeToMinutes(time: Int): String
     def calcCarPosting(car: Car): String
+    def cars: List[Car]
 
   trait Provider:
     val controller: Controller
@@ -165,6 +166,8 @@ object ControllerModule:
           val posting = car.raceTime - standings._standing(0).raceTime
           if posting > 0 then s"+${convertTimeToMinutes(posting)}"
           else "+0:00"
+
+      override def cars: List[Car] = context.model.cars
 
   trait Interface extends Provider with Component:
     self: Requirements =>

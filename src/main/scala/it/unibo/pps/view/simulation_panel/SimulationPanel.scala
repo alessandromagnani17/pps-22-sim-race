@@ -221,10 +221,9 @@ object SimulationPanel:
       c
 
     private def addSeriesToChart(chart: LineChart): Unit =
-      chart.addSeries("Ferrari", Color.RED)
-      chart.addSeries("Mercedes", Color.CYAN)
-      chart.addSeries("Red Bull", Color.BLUE)
-      chart.addSeries("McLaren", Color.GREEN)
+      controller.cars.foreach(
+        c => chart.addSeries(c.name, CarColors.getColor(c.name))
+      )
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for
