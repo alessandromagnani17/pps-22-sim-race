@@ -15,6 +15,7 @@ object ViewModule:
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
     def setFinalReportEnabled(): Unit
+    def updateFastestLapIcon(carName: String): Unit
 
   trait Provider:
     val view: View
@@ -30,7 +31,7 @@ object ViewModule:
         gui.updateDisplayedCar()
 
       override def updateDisplayedStanding(): Unit = gui.updateDisplayedStanding()
-
+      
       override def displaySimulationPanel(track: Track, standing: Standing): Unit =
         gui.displaySimulationPanel(track, standing)
 
@@ -51,6 +52,9 @@ object ViewModule:
 
       override def setFinalReportEnabled(): Unit =
         gui.setFinalReportEnabled()
+
+      override def updateFastestLapIcon(carName: String): Unit =
+        gui.updateFastestLapIcon(carName)
 
   trait Interface extends Provider with Component:
     self: Requirements =>

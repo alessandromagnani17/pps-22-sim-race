@@ -23,7 +23,7 @@ trait LineChart:
   def addValue(x: Double, y: Double, series: String): Unit
 
   /** Method that wraps the chart into a panel */
-  def wrapToPanel(): ChartPanel
+  def wrapToPanel: ChartPanel
 
   /** Method that adds an empty serie to the chart
     * @param name
@@ -49,7 +49,7 @@ object LineChart:
       series ?--> (seriesName, _.add(x, y))
       chart.getXYPlot.setDataset(mkDataset())
 
-    override def wrapToPanel(): ChartPanel = ChartPanel(chart)
+    override def wrapToPanel: ChartPanel = ChartPanel(chart)
 
     override def addSeries(name: String, color: Color): Unit =
       series = series + (name -> XYSeries(name))

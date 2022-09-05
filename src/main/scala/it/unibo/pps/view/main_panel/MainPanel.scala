@@ -13,7 +13,7 @@ import java.awt.*
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.MainPanelConstants.*
 
 trait MainPanel extends JPanel:
   def updateDisplayedCar(): Unit
@@ -27,9 +27,9 @@ object MainPanel:
   private class MainPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
-    private val carSelectionPanel = CarSelectionPanel(CAR_SELECT_PANEL_WIDTH, CAR_SELECT_PANEL_HEIGHT, controller)
-    private val paramsSelectionPanel = ParamsSelectionPanel(CAR_SELECT_PANEL_WIDTH, CAR_SELECT_PANEL_HEIGHT, controller)
-    private val startSimulationPanel = StartSimulationPanel(width, height - CAR_SELECT_PANEL_HEIGHT, controller)
+    private val carSelectionPanel = CarSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
+    private val paramsSelectionPanel = ParamsSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
+    private val startSimulationPanel = StartSimulationPanel(width, START_PANEL_HEIGHT, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
 
     mainPanel foreach (p => self.add(p))

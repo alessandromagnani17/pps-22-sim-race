@@ -2,7 +2,6 @@ package it.unibo.pps.model
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import java.awt.Color
 import it.unibo.pps.utility.Constants.*
 
@@ -19,10 +18,10 @@ given Conversion[String, Tyre] = _ match {
 }
 
 given Conversion[String, Color] = _ match {
-  case s: String if s.equals("Red") => Color.RED
-  case s: String if s.equals("Cyan") => Color.CYAN
-  case s: String if s.equals("Blue") => Color.BLUE
-  case s: String if s.equals("Green") => Color.GREEN
+  case s: String if s.equals("Ferrari") => CarColors.getColor("Ferrari")
+  case s: String if s.equals("Mercedes") => CarColors.getColor("Mercedes")
+  case s: String if s.equals("Red Bull") => CarColors.getColor("Red Bull")
+  case s: String if s.equals("McLaren") => CarColors.getColor("McLaren")
 }
 
 object CarsLoader:
@@ -31,10 +30,10 @@ object CarsLoader:
 
   def load(track: Track): List[Car] =
     val variables =
-      List("Path", "Name", "Tyre", "Attack", "Defense", "MaxSpeed", "Acceleration", "ActualSector", "Fuel", "Color")
+      List("Path", "Name", "Tyre", "Skills", "MaxSpeed", "Acceleration", "ActualSector", "Fuel", "Color")
     for
       sol <- engine(
-        "car(path(Path), name(Name), tyre(Tyre), driver(Attack, Defense), maxSpeed(MaxSpeed)," +
+        "car(path(Path), name(Name), tyre(Tyre), driver(Skills), maxSpeed(MaxSpeed)," +
           "acceleration(Acceleration), actualSector(ActualSector), fuel(Fuel), color(Color))."
       )
       x = Scala2P.extractTermsToListOfStrings(sol, variables)
@@ -42,21 +41,24 @@ object CarsLoader:
     yield car
 
   private def mkCar(params: List[String], track: Track): Car = params match {
-    case List(path, name, tyre, attack, defense, maxSpeed, acceleration, actualSector, fuel, carColor) =>
+    case List(path, name, tyre, skills, maxSpeed, acceleration, actualSector, fuel, carColor) =>
       val position = carsInitial(name)
-      val startingPoint = track.startingGrid(position).drawingParams.position
+      val startingPoint = track.startingGrid(position).renderParams.position
       Car(
         path,
         name,
         tyre,
-        Driver(attack, defense),
+        Driver(skills),
         maxSpeed,
         1,
         0,
         acceleration.toDouble,
         track.sectors.head,
-        fuel.toDouble,
         0,
-        DrawingCarParams(startingPoint, carColor)
+        0,
+        0,
+        fuel.toDouble,
+        1,
+        RenderCarParams(startingPoint, carColor)
       )
   }
