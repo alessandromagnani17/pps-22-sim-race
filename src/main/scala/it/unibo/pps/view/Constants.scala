@@ -77,8 +77,7 @@ object Constants:
     val STANDINGS_SUBLABEL_WIDTH: Int = (CANVAS_WIDTH * 0.1).toInt
     val STANDINGS_NAME_WIDTH: Int = (CANVAS_WIDTH * 0.15).toInt
     val STANDINGS_COLOR_WIDTH: Int = (CANVAS_WIDTH * 0.03).toInt
-
-
+  
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900
     val STANDINGS_PANEL_HEIGHT = 400

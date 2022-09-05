@@ -27,7 +27,7 @@ object MainPanel:
   private class MainPanelImpl(controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
-    private val carSelectionPanel = CarSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
+    private val carSelectionPanel = CarSelectionPanel(controller)
     private val paramsSelectionPanel = ParamsSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
     private val startSimulationPanel = StartSimulationPanel(FRAME_WIDTH, START_PANEL_HEIGHT, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
