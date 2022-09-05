@@ -14,23 +14,19 @@ import javax.swing.*
 trait StartingPositionsPanel extends JPanel
 
 object StartingPositionsPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): StartingPositionsPanel =
-    StartingPositionsPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): StartingPositionsPanel =
+    StartingPositionsPanelImpl(controller)
 
-  private class StartingPositionsPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+  private class StartingPositionsPanelImpl(controller: ControllerModule.Controller)
       extends StartingPositionsPanel:
     self =>
 
-    //private val topLabelHeight = (height * 0.15).toInt
-    //private val numCars = 4
-    private val labelHeight = ((height * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
     private val topLabel = createLabel(
-      "Sets the order of the starting grid: ",
-      Dimension(width, TOP_LABEL_HEIGHT),
+      Dimension(STARTING_POS_PANEL_WIDTH, TOP_LABEL_HEIGHT),
       SwingConstants.CENTER,
-      false
+      () => Left("Sets the order of the starting grid: ")
     )
-    private val positionPanel = createPanel(Dimension(width, height - (height * 0.22).toInt))
+    private val positionPanel = createPanel()
     private val positions = createMap()
     private val startingPositionsPanel = createPanelAndAddAllComponents()
 
@@ -43,22 +39,23 @@ object StartingPositionsPanel:
       val map: Map[Int, (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = Map.empty
       for i <- 0 until NUM_CARS do
         map += (i -> (createLabel(
-          s"/cars/miniatures/$i.png",
           Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
           SwingConstants.CENTER,
-          true
+          () => Right(ImageLoader.load(s"/cars/miniatures/$i.png"))
         ),
-        createLabel(s"${i + 1}. ", Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, false),
-        createLabel(s"${CAR_NAMES(i)}", Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, false),
+        createLabel(Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${i + 1}. ")),
+        createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${CAR_NAMES(i)}")),
         if i == 0 then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
         else createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
         if i == (NUM_CARS - 1) then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
         else createButton(i, "/arrows/arrow-bottom.png", e => if e == (NUM_CARS - 1) then e else e + 1)))
       map
 
-    private def createLabel(text: String, dim: Dimension, horizontal: Int, isImage: Boolean): Task[JLabel] =
+    private def createLabel(dim: Dimension, horizontal: Int, f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
-        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
+        label <- f() match
+          case Left(s: String) => JLabel(s)
+          case Right(i: ImageIcon) => JLabel(i)
         _ <- label.setPreferredSize(dim)
         _ <- label.setHorizontalAlignment(horizontal)
       yield label
@@ -98,16 +95,16 @@ object StartingPositionsPanel:
       yield ()
       p.runSyncUnsafe()
 
-    private def createPanel(dim: Dimension): Task[JPanel] =
+    private def createPanel(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(dim)
+        _ <- panel.setPreferredSize(Dimension(STARTING_POS_PANEL_WIDTH, STARTING_POS_SUBPANEL_HEIGHT))
       yield panel
 
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(width, height))
+        _ <- panel.setPreferredSize(Dimension(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT))
         topLabel <- topLabel
         positionPanel <- positionPanel
         _ <- positions.foreach(e => addToPanel(e._2, positionPanel))

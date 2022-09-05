@@ -25,7 +25,7 @@ object ViewModule:
   trait Component:
     context: Requirements =>
     class ViewImpl extends View:
-      val gui = new Gui(FRAME_WIDTH, FRAME_HEIGHT, context.controller)
+      val gui = new Gui(context.controller)
 
       override def updateDisplayedCar(): Unit =
         gui.updateDisplayedCar()

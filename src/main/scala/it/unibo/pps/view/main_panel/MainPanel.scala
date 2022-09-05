@@ -21,15 +21,15 @@ trait MainPanel extends JPanel:
 
 
 object MainPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): MainPanel =
-    MainPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): MainPanel =
+    MainPanelImpl(controller)
 
-  private class MainPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends MainPanel:
+  private class MainPanelImpl(controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
     private val carSelectionPanel = CarSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
     private val paramsSelectionPanel = ParamsSelectionPanel(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT, controller)
-    private val startSimulationPanel = StartSimulationPanel(width, START_PANEL_HEIGHT, controller)
+    private val startSimulationPanel = StartSimulationPanel(FRAME_WIDTH, START_PANEL_HEIGHT, controller)
     private val mainPanel = createMainPanelAndAddAllComponents()
 
     mainPanel foreach (p => self.add(p))
@@ -43,7 +43,7 @@ object MainPanel:
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =
       for
         mainp <- JPanel()
-        _ <- mainp.setPreferredSize(Dimension(width, height))
+        _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
         _ <- mainp.add(carSelectionPanel)
         _ <- mainp.add(paramsSelectionPanel)
         _ <- mainp.add(startSimulationPanel)

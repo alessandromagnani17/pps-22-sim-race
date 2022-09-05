@@ -15,10 +15,10 @@ import it.unibo.pps.view.Constants.EndRacePanelConstants.*
 trait EndRacePanel extends JPanel
 
 object EndRacePanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): EndRacePanel =
-    EndRacePanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): EndRacePanel =
+    EndRacePanelImpl(controller)
 
-  private class EndRacePanelImpl(width: Int, height: Int, controller: ControllerModule.Controller) extends EndRacePanel:
+  private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
 
     import it.unibo.pps.utility.GivenConversion.GuiConversion.given
@@ -37,9 +37,9 @@ object EndRacePanel:
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(width, height))
+        _ <- panel.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
         titleLabel <- JLabel("Final Standings:")
-        _ <- titleLabel.setPreferredSize(Dimension(width, 150))
+        _ <- titleLabel.setPreferredSize(Dimension(FRAME_WIDTH, 150)) // TODO
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel

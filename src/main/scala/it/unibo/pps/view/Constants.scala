@@ -18,8 +18,6 @@ object Constants:
     val SELECTION_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.48).toInt
     val SELECTION_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.65).toInt
     val START_PANEL_HEIGHT: Int = FRAME_HEIGHT - SELECTION_PANEL_HEIGHT
-    val STARTING_POS_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.4).toInt
-    val STARTING_POS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.4).toInt
 
   object MainPanelConstants extends CommonConstants
 
@@ -50,6 +48,9 @@ object Constants:
     val PADDING_LABEL_HEIGHT1: Int = (START_PANEL_HEIGHT * 0.01).toInt
     
   object StartingPositionsPanelConstants extends CommonConstants:
+    val STARTING_POS_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.4).toInt
+    val STARTING_POS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.4).toInt
+    val STARTING_POS_SUBPANEL_HEIGHT: Int = STARTING_POS_PANEL_HEIGHT - (STARTING_POS_PANEL_HEIGHT * 0.22).toInt
     val TOP_LABEL_HEIGHT: Int = (STARTING_POS_PANEL_HEIGHT * 0.15).toInt
     val STANDINGS_LABEL_HEIGHT: Int = ((STARTING_POS_PANEL_HEIGHT * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
     val CAR_MINIATURE_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.3).toInt

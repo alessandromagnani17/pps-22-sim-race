@@ -59,10 +59,10 @@ trait SimulationPanel extends JPanel:
 
 object SimulationPanel:
 
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
-    new SimulationPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): SimulationPanel =
+    new SimulationPanelImpl(controller)
 
-  private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+  private class SimulationPanelImpl(controller: ControllerModule.Controller)
       extends SimulationPanel:
     self =>
 
@@ -126,7 +126,7 @@ object SimulationPanel:
       reportButton <- reportButton
       s <- standing
       buttonsPanel = new JPanel()
-      _ <- buttonsPanel.setPreferredSize(Dimension(width, BUTTONS_PANEL_HEIGHT))
+      _ <- buttonsPanel.setPreferredSize(Dimension(FRAME_WIDTH, BUTTONS_PANEL_HEIGHT))
       mainPanel = new JPanel()
       _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT * 0.9).toInt))
       _ <- buttonsPanel.add(startButton)
