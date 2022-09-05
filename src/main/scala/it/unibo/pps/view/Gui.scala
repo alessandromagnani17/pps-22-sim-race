@@ -2,7 +2,6 @@ package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.view.main_panel.MainPanel
-import it.unibo.pps.view.simulation_panel.EndRacePanel
 import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.simulation_panel.SimulationPanel
 import monix.eval.Task
@@ -11,7 +10,8 @@ import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.model.{Car, Driver, Standing, Track, Tyre}
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.GuiConstants.*
+import it.unibo.pps.view.end_race_panel.EndRacePanel
 
 class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
 

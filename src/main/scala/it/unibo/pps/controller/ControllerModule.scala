@@ -95,7 +95,7 @@ object ControllerModule:
       override def fastestLap: Int = context.model.fastestLap
 
       override def fastestCar: String = context.model.fastestCar
-
+      
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
