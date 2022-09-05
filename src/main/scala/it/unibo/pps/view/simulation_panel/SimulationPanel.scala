@@ -1,48 +1,28 @@
 package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  Graphics,
-  GridBagConstraints,
-  GridBagLayout,
-  GridLayout
-}
-import javax.swing.{
-  BorderFactory,
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingConstants,
-  SwingUtilities,
-  WindowConstants
-}
+
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
+import javax.swing.{BorderFactory, BoxLayout, ImageIcon, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, Sector, Snapshot, Standing, Track, TrackBuilder, CarColors}
+import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standing, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
+
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.SimulationPanelConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
+
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
@@ -66,8 +46,6 @@ object SimulationPanel:
       extends SimulationPanel:
     self =>
 
-    private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
-
     private lazy val canvas =
       for
         cnv <- new Environment(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -80,7 +58,7 @@ object SimulationPanel:
     private lazy val chartsPanel =
       for
         p <- new JPanel()
-        _ <- p.setLayout(new BoxLayout(p, 1))
+        _ <- p.setLayout(new BoxLayout(p, AXIS_CHARTS_PANEL))
         chPanels <- Task(charts.map(_.wrapToPanel))
         _ <- chPanels.foreach(_.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT)))
         _ <- p.addAll(chPanels)
@@ -192,7 +170,7 @@ object SimulationPanel:
         e._2._4.foreach(f =>
           f.setIcon(
             ImageLoader.load(
-              s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
+              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
             )
           )
         )
@@ -290,7 +268,6 @@ object SimulationPanel:
       yield ()
       p.runAsyncAndForget
 
-    // Posizione - Nome - Colore - Immagine - Gomma
     private def createPositions(): Map[
       Int,
       (
@@ -321,24 +298,26 @@ object SimulationPanel:
       ] = Map.empty
       controller.startingPositions.foreach(e => {
         map += (e._1 -> (createLabel(
-          (e._1 + 1).toString,
-          Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT),
-          false
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)),
+          () => Left((e._1 + 1).toString)
         ),
-        createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.fastestLap.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("/fastest-lap-logo.png", null, true)))
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.name)),
+        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left("")),
+        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${e._1}.png"))),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.fastestLap.toString)),
+        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
       })
       map
 
-    private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
+    private def createLabel(dim: Option[Dimension], f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
-        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
-        _ <- label.setPreferredSize(dimension)
-        _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
+        label <- f() match
+          case Left(s: String) => JLabel(s)
+          case Right(i: ImageIcon) => JLabel(i)
+        _ <- if dim.isDefined then
+          label.setPreferredSize(dim.get)
+          label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label

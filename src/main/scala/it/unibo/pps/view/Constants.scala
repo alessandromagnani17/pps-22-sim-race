@@ -1,5 +1,7 @@
 package it.unibo.pps.view
 
+import it.unibo.pps.view.ViewConstants.{FRAME_HEIGHT, FRAME_WIDTH, STANDING_PANEL_HEIGHT}
+
 import java.awt.Color
 
 object Constants:
@@ -58,6 +60,24 @@ object Constants:
     val CAR_POS_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.05).toInt
     val CAR_POS_HEIGHT: Int = ((STARTING_POS_PANEL_HEIGHT * 0.75).toInt - TOP_LABEL_HEIGHT) / NUM_CARS
     val CAR_NAME_WIDTH: Int = (STARTING_POS_PANEL_WIDTH * 0.13).toInt
+
+  object SimulationPanelConstants extends CommonConstants:
+    val AXIS_CHARTS_PANEL = 1
+    val CANVAS_WIDTH: Int = (FRAME_WIDTH * 0.70).toInt
+    val CANVAS_HEIGHT: Int = (FRAME_HEIGHT * 0.6).toInt
+    val CHART_WIDTH: Int = (FRAME_WIDTH * 0.25).toInt
+    val CHART_HEIGHT = 300
+    val CHART_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.28).toInt
+    val CHART_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.9).toInt
+    val VERTICAL_SCROLLBAR_AS_NEEDED = 22
+    val STANDING_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.29).toInt
+    val BUTTONS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.05).toInt
+    val STANDING_SUBPANEL_HEIGHT: Int = (STANDING_PANEL_HEIGHT / NUM_CARS) - 7
+    val PADDING_LABEL_WIDTH = 30
+    val STANDINGS_SUBLABEL_WIDTH: Int = (CANVAS_WIDTH * 0.1).toInt
+    val STANDINGS_NAME_WIDTH: Int = (CANVAS_WIDTH * 0.15).toInt
+    val STANDINGS_COLOR_WIDTH: Int = (CANVAS_WIDTH * 0.03).toInt
+
 
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900
