@@ -1,18 +1,18 @@
 package it.unibo.pps
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.{RenderParams, RenderTurnParams, Tyre}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.view.simulation_panel.{DrawingParams, DrawingTurnParams}
+import it.unibo.pps.model.RenderTurnParams
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 
 package object engine:
 
-  val computeRadius = (d: DrawingParams, position: Tuple2[Int, Int]) =>
+  val computeRadius = (d: RenderParams, position: Tuple2[Int, Int]) =>
     d match
-      case DrawingTurnParams(center, _, _, _, _, _, _) => center euclideanDistance position
+      case RenderTurnParams(center, _, _, _, _, _) => center euclideanDistance position
 
   val angleBetweenPoints = (a: Tuple2[Int, Int], b: Tuple2[Int, Int], radius: Int) =>
     val distance = a euclideanDistance b

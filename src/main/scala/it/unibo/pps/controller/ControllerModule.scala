@@ -1,12 +1,11 @@
 package it.unibo.pps.controller
 
 import it.unibo.pps.engine.SimulationEngineModule
-import it.unibo.pps.model.{Car, Driver, ModelModule, Snapshot, Standing, Tyre}
+import it.unibo.pps.model.{Car, Driver, ModelModule, RenderCarParams, Snapshot, Standing, Tyre}
 import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.eval.Task
 
 import java.awt.Color
@@ -96,7 +95,7 @@ object ControllerModule:
       override def fastestLap: Int = context.model.fastestLap
 
       override def fastestCar: String = context.model.fastestCar
-
+      
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
@@ -142,16 +141,15 @@ object ControllerModule:
         context.model.startingPositions(prevIndex) = context.model.startingPositions(nextIndex)
         context.model.startingPositions(nextIndex) = car
 
-        val position = context.model.startingPositions(prevIndex).drawingCarParams.position
-        context.model.startingPositions(prevIndex).drawingCarParams.position =
-          context.model.startingPositions(nextIndex).drawingCarParams.position
-        context.model.startingPositions(nextIndex).drawingCarParams.position = position
+        val position = context.model.startingPositions(prevIndex).renderCarParams.position
+        context.model.startingPositions(prevIndex).renderCarParams.position =
+          context.model.startingPositions(nextIndex).renderCarParams.position
+        context.model.startingPositions(nextIndex).renderCarParams.position = position
 
       override def registerReactiveChartCallback(): Unit =
-        val onNext = (l: List[Snapshot]) => {
+        val onNext = (l: List[Snapshot]) =>
           context.view.updateCharts(l)
           Ack.Continue
-        }
         val onError = (t: Throwable) => ()
         val onComplete = () => ()
         context.model.registerCallbackHistory(onNext, onError, onComplete)

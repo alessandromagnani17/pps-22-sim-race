@@ -1,7 +1,6 @@
 package it.unibo.pps.model
 
 import it.unibo.pps.model.Car
-import it.unibo.pps.view.simulation_panel.DrawingCarParams
 import monix.reactive.MulticastStrategy
 import monix.reactive.subjects.ConcurrentSubject
 import monix.execution.Scheduler.Implicits.global
@@ -89,7 +88,7 @@ object ModelModule:
 
       override def initSnapshot(): Unit =
         val c = _cars
-          .map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
+        //.map(car => car.copy(maxSpeed = car.maxSpeed - car.tyre))
         addSnapshot(Snapshot(c, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap

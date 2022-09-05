@@ -2,10 +2,10 @@ package it.unibo.pps.model
 
 import it.unibo.pps.model.Tyre.{HARD, MEDIUM, SOFT}
 
-given Conversion[Tyre, Int] = _ match
-  case HARD => 10
-  case MEDIUM => 5
-  case SOFT => 1
+given Conversion[Tyre, Double] = _ match
+  case HARD => 2.0
+  case MEDIUM => 3.0
+  case SOFT => 4.0
 
 enum Tyre:
   case HARD
@@ -13,6 +13,4 @@ enum Tyre:
   case SOFT
 
 object Tyre:
-
-  def degradation(tyreType: Tyre, distance: Double, velocity: Double, lap: Int): Double =
-    (distance + velocity + lap) / (3000 + 50 * tyreType)
+  def degradation(tyreType: Tyre, lap: Double): Double = Math.exp((-1 / tyreType) * (lap / 10))
