@@ -17,6 +17,7 @@ object Constants:
     val CAR_NAMES = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
     val CAR_MAX_SPEED = 350
     val CAR_MIN_SPEED = 200
+    val MAX_FUEL = 130
     val SELECTION_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.48).toInt
     val SELECTION_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.65).toInt
 
