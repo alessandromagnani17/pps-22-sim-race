@@ -71,7 +71,7 @@ object SimulationEngineModule:
           _ <- moveCars()
           _ <- updateStanding()
           _ <- updateView()
-          _ <- waitFor(speedManager._simulationSpeed)
+          _ <- waitFor(speedManager.speed)
           _ <- checkEnd()
         yield ()
 
