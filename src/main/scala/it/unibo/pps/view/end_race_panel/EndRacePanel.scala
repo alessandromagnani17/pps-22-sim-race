@@ -39,7 +39,7 @@ object EndRacePanel:
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
         titleLabel <- JLabel("Final Standings:")
-        _ <- titleLabel.setPreferredSize(Dimension(FRAME_WIDTH, 150)) // TODO
+        _ <- titleLabel.setPreferredSize(Dimension(FRAME_WIDTH, STANDINGS_TITLE_LABEL_HEIGHT))
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
