@@ -2,7 +2,7 @@ package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams, Tyre}
 import it.unibo.pps.utility.monadic.io
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
@@ -10,7 +10,7 @@ import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.given
 
 trait Movements:
-  def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int
+  def updateVelocityStraight(car: Car, time: Int, phase: Phase): Int
   def updateVelocityTurn(car: Car): Int
   def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)]
   def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
@@ -23,9 +23,9 @@ object Movements:
 
     private val engine = Scala2P.createEngine("/prolog/movements.pl")
 
-    override def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int = phase match
+    override def updateVelocityStraight(car: Car, time: Int, phase: Phase): Int = phase match
       case Phase.Acceleration =>
-        val v = updateVelocityStraightAccelleration(car, time)
+        val v = updateVelocityStraightAcceleration(car, time)
         if v > car.maxSpeed then car.maxSpeed else v
       case Phase.Deceleration => updateVelocityStraightDeceleration(car, time)
       case Phase.Ended => car.actualSpeed
@@ -85,11 +85,18 @@ object Movements:
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, direction: Int): Int =
       query(s"newPositionStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $direction, Np)", "Np")
 
-    private def updateVelocityStraightAccelleration(car: Car, time: Int): Int =
-      query(
+    private def calcLimitation(t: Tyre, lap: Int): Double = t match
+      case Tyre.SOFT => Math.exp((2.0 / 11.0) * (lap / 10)) - 0.9
+      case Tyre.MEDIUM => 0.4
+      case Tyre.HARD => Math.exp((-1.0 / 3.0) * (lap / 10)) - 0.25
+
+    private def updateVelocityStraightAcceleration(car: Car, time: Int): Int =
+      val v = query(
         s"newVelocityAcceleration(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)",
         "Ns"
       )
+      val offset: Int = ((v / 5) * calcLimitation(car.tyre, car.actualLap)).toInt
+      v - offset
 
     private def updateVelocityStraightDeceleration(car: Car, time: Int): Int =
       query(s"newVelocityDeceleration(${car.actualSpeed}, Ns)", "Ns")

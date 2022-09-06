@@ -3,7 +3,21 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Direction, ModelModule, Phase, RenderCarParams, RenderStraightParams, Sector, Snapshot, Standing, Straight, Turn, Tyre, RenderParams}
+import it.unibo.pps.model.{
+  Car,
+  Direction,
+  ModelModule,
+  Phase,
+  RenderCarParams,
+  RenderStraightParams,
+  Sector,
+  Snapshot,
+  Standing,
+  Straight,
+  Turn,
+  Tyre,
+  RenderParams
+}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -126,7 +140,7 @@ object SimulationEngineModule:
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          movementsManager.updateVelocityStaight(car, time, car.actualSector.phase(car.renderCarParams.position))
+          movementsManager.updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
         val onTurn = () => movementsManager.updateVelocityTurn(car)
         updateParameter(car.actualSector, onStraight, onTurn)
 
@@ -148,13 +162,14 @@ object SimulationEngineModule:
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
 
-      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] = car.actualSector.renderParams match
-        case RenderStraightParams(_, _, _, _, endX) =>
-          val d = (p._1 - endX) * car.actualSector.direction
-          if d >= 0 then
-            sectorTimes(car.name) = 3
-            (endX, p._2)
-          else p
+      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] =
+        car.actualSector.renderParams match
+          case RenderStraightParams(_, _, _, _, endX) =>
+            val d = (p._1 - endX) * car.actualSector.direction
+            if d >= 0 then
+              sectorTimes(car.name) = 3
+              (endX, p._2)
+            else p
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match

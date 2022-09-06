@@ -5,7 +5,7 @@ newPositionStraight(Coord, Velocity, Time, Acceleration, Direction, Np) :-
 newVelocityAcceleration(Speed, Acc, Time, Deg, Fuel, Ns) :- limitation(Deg, Fuel, Z), Temp is Speed + (Acc * Time), Ns is Temp - (Temp * Z).
 newVelocityDeceleration(Speed, Ns) :- Ns is Speed * 0.95.
 
-limitation(Deg, Fuel, Z) :- x(Deg, X), y(Fuel, Y), Z is (X + Y) / 6.
+limitation(Deg, Fuel, Z) :-  x(Deg, X), y(Fuel, Y), Z is (X + Y) / 6.
 x(Deg, X) :- X is 1 - Deg.
 y(Fuel, Y) :- Y is Fuel / 120.
 
