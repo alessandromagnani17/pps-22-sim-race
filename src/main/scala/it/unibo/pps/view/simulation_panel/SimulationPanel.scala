@@ -294,17 +294,17 @@ object SimulationPanel:
         )
       ] = Map.empty
       controller.startingPositions.foreach(e => {
-        map += (e._1 -> (createLabel(
+        map += (controller.standings._standings.indexOf(e) -> (createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)),
-          () => Left((e._1 + 1).toString)
+          () => Left((controller.standings._standings.indexOf(e) + 1).toString)
         ),
-        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.name)),
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.name)),
         createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left("")),
-        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${e._1}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e._2.fastestLap.toString)),
+        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings._standings.indexOf(e)}.png"))),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
         createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
       })
       map

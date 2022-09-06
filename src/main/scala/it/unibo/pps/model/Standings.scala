@@ -5,15 +5,11 @@ import scala.collection.mutable.Map
 trait Standings:
 
   /** @return the current standing */
-  def _standings: Map[Int, Car]
-
-  /** Method that updates the standing after an overtake happened */
-  def overtake(): Unit
+  def _standings: List[Car]
 
 object Standings:
-  def apply(standings: Map[Int, Car]): Standings = new StadingImpl(standings)
+  def apply(standings: List[Car]): Standings = new StandingsImpl(standings)
 
-  private class StadingImpl(standings: Map[Int, Car]) extends Standings:
+  private class StandingsImpl(standings: List[Car]) extends Standings:
 
-    override def _standings: Map[Int, Car] = standings
-    override def overtake(): Unit = ???
+    override def _standings: List[Car] = standings

@@ -49,20 +49,19 @@ object EndRacePanel:
         _ <- panel.setVisible(true)
       yield panel
 
-    // Posizione - Nome - Colore - Immagine - Gomme - Tempo
-    private def addToPanel(elem: (Int, Car), panel: JPanel): Unit =
+    private def addToPanel(car: Car, panel: JPanel): Unit =
       val p = for
         p <- JPanel()
         _ <- p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        position <- JLabel((elem._1 + 1).toString)
-        name <- JLabel(elem._2.name)
+        position <- JLabel((controller.standings._standings.indexOf(car) + 1).toString)
+        name <- JLabel(car.name)
         color <- JLabel()
-        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(elem._2.name)).get._1}.png"))
-        tyre <- JLabel(elem._2.tyre.toString)
-        degradation <- JLabel(s"${(elem._2.degradation * 100).toInt}%")
-        fuel <- JLabel(s"${elem._2.fuel.toInt} / ${MAX_FUEL}L")
-        time <- JLabel(controller.calcCarPosting(elem._2))
-        fastestLap <- JLabel(controller.convertTimeToMinutes(elem._2.fastestLap))
+        img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(car.name)).get._1}.png"))
+        tyre <- JLabel(car.tyre.toString)
+        degradation <- JLabel(s"${(car.degradation * 100).toInt}%")
+        fuel <- JLabel(s"${car.fuel.toInt} / ${MAX_FUEL}L")
+        time <- JLabel(controller.calcCarPosting(car))
+        fastestLap <- JLabel(controller.convertTimeToMinutes(car.fastestLap))
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
@@ -71,7 +70,7 @@ object EndRacePanel:
         _ <- position.setPreferredSize(Dimension(STANDINGS_POSITION_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- name.setPreferredSize(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- color.setPreferredSize(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_COLOR_HEIGHT))
-        _ <- color.setBackground(elem._2.renderCarParams.color)
+        _ <- color.setBackground(car.renderCarParams.color)
         _ <- color.setOpaque(true)
         _ <- tyre.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- degradation.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
@@ -81,7 +80,7 @@ object EndRacePanel:
         _ <- fastestLap.setPreferredSize(Dimension(STANDINGS_TIME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- fastestLap.setHorizontalAlignment(SwingConstants.CENTER)
         _ <-
-          if controller.fastestCar.equals(elem._2.name) then fastestLapIcon.setVisible(true)
+          if controller.fastestCar.equals(car.name) then fastestLapIcon.setVisible(true)
           else fastestLapIcon.setVisible(false)
         _ <- p.add(position)
         _ <- p.add(name)

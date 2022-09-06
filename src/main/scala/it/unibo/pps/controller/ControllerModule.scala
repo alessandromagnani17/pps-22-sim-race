@@ -19,7 +19,7 @@ object ControllerModule:
     def notifyStop(): Unit
     def notifyDecreaseSpeed(): Unit
     def notifyIncreaseSpeed(): Unit
-    def startingPositions: Map[Int, Car]
+    def startingPositions: List[Car]
     def currentCar: Car
     def currentCarIndex: Int
     def standings: Standings
@@ -82,7 +82,7 @@ object ControllerModule:
       override def notifyIncreaseSpeed(): Unit =
         context.simulationEngine.increaseSpeed()
 
-      override def startingPositions: mutable.Map[Int, Car] = context.model.startingPositions
+      override def startingPositions: List[Car] = context.model.startingPositions
 
       override def currentCar: Car = context.model.cars(context.model.currentCarIndex)
 
@@ -119,7 +119,7 @@ object ControllerModule:
         context.view.updateDisplayedStanding()
         context.view.displaySimulationPanel(context.model.track, context.model.standings)
         context.view.updateCars(
-          context.model.standings._standings.values.toList,
+          context.model.standings._standings,
           context.model.actualLap,
           context.model.totalLaps
         )
@@ -137,9 +137,9 @@ object ControllerModule:
         context.view.updateDisplayedCar()
 
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
-        val car = context.model.startingPositions(prevIndex)
-        context.model.startingPositions(prevIndex) = context.model.startingPositions(nextIndex)
-        context.model.startingPositions(nextIndex) = car
+        val car: Car = context.model.startingPositions(prevIndex)
+        context.model.startingPositions = context.model.startingPositions.updated(prevIndex, context.model.startingPositions(nextIndex))
+        context.model.startingPositions = context.model.startingPositions.updated(nextIndex, car)
 
         val position = context.model.startingPositions(prevIndex).renderCarParams.position
         context.model.startingPositions(prevIndex).renderCarParams.position =

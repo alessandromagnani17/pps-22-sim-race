@@ -58,7 +58,8 @@ object SimulationEngineModule:
       private var carsArrived = 0
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(context.model.standings._standings.find(_._2.equals(car)).get._1)
+        //finalPositions(context.model.standings._standings.find(_._2.equals(car)).get._1)
+        finalPositions(context.model.standings._standings.indexOf(car))
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -243,7 +244,8 @@ object SimulationEngineModule:
                   l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
           })
       })
-      Standings(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
+      Standings(l1)
+      //Standings(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
     private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
       var l: List[Car] = List.empty
