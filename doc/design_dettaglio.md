@@ -60,8 +60,8 @@ Tyre è una `enum` che rappresenta il tipo di gomme che una macchina può montar
 <img src="./imgs/degradation_chart.png" width="500" height="406"/>
 </div>
 Nello specifico:
-- Una gomma di tipo *Soft* subirà un minor degrado, quindi, seguirà la funzione verde;
-- Una gomma di tipo *Hard* subirà un maggior degrado, quindi, seguirà la funzione rossa;
+- Una gomma di tipo *Soft* subirà un maggior degrado, quindi, seguirà la funzione rossa;
+- Una gomma di tipo *Hard* subirà un minor degrado, quindi, seguirà la funzione verde;
 - Una gomma di tipo *Medium* subirà un degrado medio rispetto agli altri due tipi, quindi, seguirà la funzione blu.
 
 ### View
