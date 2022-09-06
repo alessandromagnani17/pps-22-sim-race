@@ -46,5 +46,7 @@ object MainPanel:
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
-        _ <- mainp.addAll(List(carSelectionPanel, paramsSelectionPanel, startSimulationPanel))
+        _ <- mainp.add(carSelectionPanel)
+        _ <- mainp.add(paramsSelectionPanel)
+        _ <- mainp.add(startSimulationPanel)
       yield mainp

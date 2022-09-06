@@ -242,7 +242,7 @@ object SimulationPanel:
         _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-        _ <- panel.addAll(List(pos, name, paddingLabel, color, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon))
+        _ <- panel.addAll(List(pos, name, paddingLabel, color, img, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon))
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget

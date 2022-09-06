@@ -87,6 +87,9 @@ object CarSelectionPanel:
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
-        _ <- panel.addAll(List(carSelectedLabel, topArrowButton, labelImage, bottomArrowButton))
+        _ <- panel.add(carSelectedLabel)
+        _ <- panel.add(topArrowButton)
+        _ <- panel.add(labelImage)
+        _ <- panel.add(bottomArrowButton)
         _ <- panel.setVisible(true)
       yield panel
