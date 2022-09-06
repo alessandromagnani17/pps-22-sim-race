@@ -53,8 +53,6 @@ object ControllerModule:
     context: Requirements =>
     class ControllerImpl extends Controller:
 
-      private val numCars = 4
-      private val carNames = List("Ferrari", "Mercedes", "Red Bull", "McLaren")
       private var stopFuture: Option[Cancelable] = None
 
       override def notifyStart(): Unit = stopFuture = Some(
@@ -70,11 +68,6 @@ object ControllerModule:
       override def notifyStop(): Unit =
         stopFuture --> (_.cancel())
         stopFuture = None
-
-      //override def notifyFinish(): Unit =
-      //notifyStop()
-
-      //displayEndRacePanel()
 
       override def notifyDecreaseSpeed(): Unit =
         context.simulationEngine.decreaseSpeed()
