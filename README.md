@@ -19,4 +19,4 @@
 - [Guida utente](doc/guida.md)
 
 ## Download
-Racing simulator può essere scricato [qui](https://github.com/davidedomini/pps-22-sim-race/releases)
+Racing simulator può essere scaricato [qui](https://github.com/davidedomini/pps-22-sim-race/releases)
