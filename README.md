@@ -17,3 +17,6 @@
 - [Implementazione](doc/implementazione.md)
 - [Sviluppi futuri](doc/sviluppi_futuri.md)
 - [Guida utente](doc/guida.md)
+
+## Download
+Racing simulator può essere scricato [qui](https://github.com/davidedomini/pps-22-sim-race/releases)
