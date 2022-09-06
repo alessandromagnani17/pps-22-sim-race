@@ -6,7 +6,6 @@ import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.Constants.StartingPositionsPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
-import scala.collection.mutable.Map
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout, GridBagConstraints, GridBagLayout}
 import javax.swing.*
