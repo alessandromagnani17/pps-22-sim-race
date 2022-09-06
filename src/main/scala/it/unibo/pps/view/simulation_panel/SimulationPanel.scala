@@ -216,14 +216,12 @@ object SimulationPanel:
       val chartVel = LineChart("Velocity", "Virtual Time", "Velocity (km/h)")
       val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel (l)")
       val chartTyres = LineChart("Degradation", "Lap", "Degradation (%)")
-      val c = List(chartVel, chartFuel, chartTyres)
+      val c = List(chartVel, chartTyres, chartFuel)
       c.foreach(addSeriesToChart(_))
       c
 
     private def addSeriesToChart(chart: LineChart): Unit =
-      controller.cars.foreach(
-        c => chart.addSeries(c.name, CarColors.getColor(c.name))
-      )
+      controller.cars.foreach(c => chart.addSeries(c.name, CarColors.getColor(c.name)))
 
     private def createButton(title: String, listener: ActionListener): Task[JButton] =
       for
