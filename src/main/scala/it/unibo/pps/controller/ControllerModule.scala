@@ -109,7 +109,7 @@ object ControllerModule:
       override def displaySimulationPanel(): Unit =
         context.model.createStandings()
         context.model.initSnapshot()
-        context.view.updateDisplayedStanding()
+        context.view.updateDisplayedStandings()
         context.view.displaySimulationPanel(context.model.track, context.model.standings)
         context.view.updateCars(
           context.model.standings._standings,

@@ -70,7 +70,7 @@ object SimulationEngineModule:
       override def simulationStep(): Task[Unit] =
         for
           _ <- moveCars()
-          _ <- updateStanding()
+          _ <- updateStandings()
           _ <- updateView()
           _ <- waitFor(speedManager._simulationSpeed)
           _ <- checkEnd()
@@ -200,15 +200,15 @@ object SimulationEngineModule:
           car.raceTime = time
           carsArrived = carsArrived + 1
 
-    private def updateStanding(): Task[Unit] =
+    private def updateStandings(): Task[Unit] =
       for
         lastSnap <- io(context.model.getLastSnapshot())
-        newStanding = calcNewStanding(lastSnap)
-        _ <- io(context.model.setS(newStanding))
-        _ <- io(context.view.updateDisplayedStanding())
+        newStandings = calcNewStandings(lastSnap)
+        _ <- io(context.model.setS(newStandings))
+        _ <- io(context.view.updateDisplayedStandings())
       yield ()
 
-    private def calcNewStanding(snap: Snapshot): Standings =
+    private def calcNewStandings(snap: Snapshot): Standings =
       val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
       var l1: List[Car] = List.empty
 

@@ -33,7 +33,7 @@ trait SimulationPanel extends JPanel:
   /** Renders the track, it must be used when showing simulation panel for first time */
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
-  def updateDisplayedStanding(): Unit
+  def updateDisplayedStandings(): Unit
   def updateCharts(snapshot: Snapshot): Unit
   def updateFastestLapIcon(carName: String): Unit
 
@@ -68,12 +68,12 @@ object SimulationPanel:
         _ <- controller.registerReactiveChartCallback()
       yield sp
 
-    private lazy val standingMap = createPositions()
+    private lazy val standingsMap = createPositions()
 
-    private lazy val standing =
+    private lazy val standings =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_PANEL_HEIGHT))
+        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDINGS_PANEL_HEIGHT))
       yield panel
 
     private lazy val reportButton = for
@@ -102,14 +102,14 @@ object SimulationPanel:
       incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
       reportButton <- reportButton
-      s <- standing
+      s <- standings
       buttonsPanel = new JPanel()
       _ <- buttonsPanel.setPreferredSize(Dimension(FRAME_WIDTH, BUTTONS_PANEL_HEIGHT))
       mainPanel = new JPanel()
       _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT * 0.9).toInt))
       _ <- buttonsPanel.addAll(List(startButton, stopButton, incVelocityButton, decVelocityButton, reportButton))
       _ <- mainPanel.addAll(List(cnv, s))
-      _ <- standingMap.foreach(e => addToPanel(e, s))
+      _ <- standingsMap.foreach(e => addToPanel(e, s))
       _ <- self.addAll(List(mainPanel, scrollPanel, buttonsPanel))
     yield ()
     p.runAsyncAndForget
@@ -156,9 +156,9 @@ object SimulationPanel:
     override def updateCharts(snapshot: Snapshot): Unit =
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
-    override def updateDisplayedStanding(): Unit =
+    override def updateDisplayedStandings(): Unit =
       var index = 0
-      standingMap.foreach(e =>
+      standingsMap.foreach(e =>
         val car = controller.standings._standings(index)
         e._2.foreach(f => f.setText(car.name))
         e._3.foreach(f => f.setBackground(car.renderCarParams.color))
@@ -179,7 +179,7 @@ object SimulationPanel:
       )
 
     override def updateFastestLapIcon(carName: String): Unit =
-      standingMap.foreach(e =>
+      standingsMap.foreach(e =>
         e._2.foreach(f =>
           if f.getText.equals(carName) then e._9.foreach(c => c.setVisible(true))
           else e._9.foreach(c => c.setVisible(false))
@@ -224,7 +224,7 @@ object SimulationPanel:
       val start = 0
       val p = for
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
-        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_SUBPANEL_HEIGHT))
+        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
         pos <- elem._1
         name <- elem._2
@@ -237,8 +237,8 @@ object SimulationPanel:
         fastestLapIcon <- elem._9
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
-        _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-        _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
+        _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
         _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
@@ -251,16 +251,16 @@ object SimulationPanel:
       var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])]= List.empty
       controller.startingPositions.foreach(e => {
         l = l :+ ((createLabel(
-          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)),
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
           () => Left((controller.standings._standings.indexOf(e) + 1).toString)
         ),
-        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.name)),
-        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left("")),
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.name)),
+        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
         createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings._standings.indexOf(e)}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
         createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
       })
       l

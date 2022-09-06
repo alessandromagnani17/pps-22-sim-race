@@ -1,6 +1,6 @@
 package it.unibo.pps.view
 
-import it.unibo.pps.view.ViewConstants.{FRAME_HEIGHT, FRAME_WIDTH, STANDING_PANEL_HEIGHT}
+import it.unibo.pps.view.ViewConstants.{FRAME_HEIGHT, FRAME_WIDTH, STANDINGS_PANEL_HEIGHT}
 
 import java.awt.Color
 
@@ -73,9 +73,9 @@ object Constants:
     val CHART_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.28).toInt
     val CHART_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.9).toInt
     val VERTICAL_SCROLLBAR_AS_NEEDED = 22
-    val STANDING_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.29).toInt
+    val STANDINGS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.29).toInt
     val BUTTONS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.05).toInt
-    val STANDING_SUBPANEL_HEIGHT: Int = (STANDING_PANEL_HEIGHT / NUM_CARS) - 7
+    val STANDINGS_SUBPANEL_HEIGHT: Int = (STANDINGS_PANEL_HEIGHT / NUM_CARS) - 7
     val PADDING_LABEL_WIDTH = 30
     val STANDINGS_SUBLABEL_WIDTH: Int = (CANVAS_WIDTH * 0.1).toInt
     val STANDINGS_NAME_WIDTH: Int = (CANVAS_WIDTH * 0.15).toInt

@@ -49,14 +49,14 @@ class Gui(controller: ControllerModule.Controller):
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
 
-  def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
+  def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
 
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
   
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
-  def displaySimulationPanel(track: Track, standing: Standings): Unit = SwingUtilities.invokeLater { () =>
+  def displaySimulationPanel(track: Track, standings: Standings): Unit = SwingUtilities.invokeLater { () =>
     lazy val p = for
       fr <- frame
       _ <- _simulationPanel.renderTrack(track)
