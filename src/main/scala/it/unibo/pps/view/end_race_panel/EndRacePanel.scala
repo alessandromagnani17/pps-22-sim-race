@@ -2,10 +2,12 @@ package it.unibo.pps.view.end_race_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Car
+import it.unibo.pps.utility.PimpScala
 import it.unibo.pps.view.main_panel.ImageLoader
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
@@ -74,7 +76,7 @@ object EndRacePanel:
         _ <- color.setOpaque(true)
         _ <- tyre.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- degradation.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
-        _ <- fuel.setPreferredSize(Dimension(STANDINGS_TYRE_WIDTH, STANDINGS_COMPONENT_HEIGHT))
+        _ <- fuel.setPreferredSize(Dimension(STANDINGS_FUEL_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- time.setPreferredSize(Dimension(STANDINGS_TIME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
         _ <- time.setHorizontalAlignment(SwingConstants.CENTER)
         _ <- fastestLap.setPreferredSize(Dimension(STANDINGS_TIME_WIDTH, STANDINGS_COMPONENT_HEIGHT))
@@ -82,18 +84,7 @@ object EndRacePanel:
         _ <-
           if controller.fastestCar.equals(car.name) then fastestLapIcon.setVisible(true)
           else fastestLapIcon.setVisible(false)
-        _ <- p.add(position)
-        _ <- p.add(name)
-        _ <- p.add(color)
-        _ <- p.add(paddingLabel)
-        _ <- p.add(img)
-        _ <- p.add(paddingLabel1)
-        _ <- p.add(tyre)
-        _ <- p.add(degradation)
-        _ <- p.add(fuel)
-        _ <- p.add(time)
-        _ <- p.add(fastestLap)
-        _ <- p.add(fastestLapIcon)
+        _ <- p.addAll(List(position, name, color, paddingLabel, img, paddingLabel1, tyre, degradation, fuel, time, fastestLap, fastestLapIcon))
         _ <- panel.add(p)
       yield ()
       p.runSyncUnsafe()

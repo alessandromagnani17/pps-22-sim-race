@@ -6,6 +6,8 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.Constants.CarSelectionPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
+
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.*
@@ -85,9 +87,6 @@ object CarSelectionPanel:
         topArrowButton <- topArrowButton
         bottomArrowButton <- bottomArrowButton
         labelImage <- labelImage
-        _ <- panel.add(carSelectedLabel)
-        _ <- panel.add(topArrowButton)
-        _ <- panel.add(labelImage)
-        _ <- panel.add(bottomArrowButton)
+        _ <- panel.addAll(List(carSelectedLabel, topArrowButton, labelImage, bottomArrowButton))
         _ <- panel.setVisible(true)
       yield panel

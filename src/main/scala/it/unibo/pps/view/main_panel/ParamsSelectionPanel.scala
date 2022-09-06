@@ -7,6 +7,7 @@ import it.unibo.pps.utility.Matcher
 import it.unibo.pps.view.Constants.ParamsSelectionPanelConstants.*
 import monix.eval.{Task, TaskLift}
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.{
@@ -179,14 +180,7 @@ object ParamsSelectionPanel:
         rightArrowButton <- rightArrowButton
         leftArrowButton <- leftArrowButton
         starSkillsLabel <- starSkillsLabel
-        _ <- panel.add(tyresLabel)
-        _ <- panel.add(hardTyresButton)
-        _ <- panel.add(mediumTyresButton)
-        _ <- panel.add(softTyresButton)
-        _ <- panel.add(maxSpeedLabel)
-        _ <- panel.add(leftArrowButton)
-        _ <- panel.add(speedSelectedLabel)
-        _ <- panel.add(rightArrowButton)
+        _ <- panel.addAll(List(tyresLabel, hardTyresButton, mediumTyresButton, softTyresButton, maxSpeedLabel, leftArrowButton, speedSelectedLabel, rightArrowButton))
         skillsPanel <- JPanel(BorderLayout())
         _ <- skillsPanel.add(starSkillsLabel, BorderLayout.NORTH)
         skillsStarPanel <- JPanel()

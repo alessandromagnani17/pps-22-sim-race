@@ -6,6 +6,7 @@ import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.Constants.StartingPositionsPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout, GridBagConstraints, GridBagLayout}
 import javax.swing.*
@@ -104,8 +105,7 @@ object StartingPositionsPanel:
         topLabel <- topLabel
         positionPanel <- positionPanel
         _ <- positions.foreach(e => addToPanel(e, positionPanel))
-        _ <- panel.add(topLabel)
-        _ <- panel.add(positionPanel)
+        _ <- panel.addAll(List(topLabel, positionPanel))
         _ <- panel.setVisible(true)
       yield panel
 
@@ -122,12 +122,9 @@ object StartingPositionsPanel:
         upButton <- elem._4
         downButton <- elem._5
         blank <- JLabel(ImageLoader.load("/arrows/blank_background.png"))
-        _ <- panel.add(pos)
-        _ <- panel.add(name)
-        _ <- panel.add(img)
+        _ <- panel.addAll(List(pos, name, img))
         _ <- if pos.getText.equals("4. ") then panel.add(blank)
-        _ <- panel.add(upButton)
-        _ <- panel.add(downButton)
+        _ <- panel.addAll(List(upButton, downButton))
         _ <- if pos.getText.equals("1. ") then panel.add(blank)
         _ <- posPanel.add(panel)
       yield ()

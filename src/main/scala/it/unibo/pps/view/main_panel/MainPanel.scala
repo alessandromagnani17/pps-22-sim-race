@@ -6,6 +6,8 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.main_panel.{CarSelectionPanel, MainPanel, ParamsSelectionPanel, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
+
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
@@ -44,7 +46,5 @@ object MainPanel:
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
-        _ <- mainp.add(carSelectionPanel)
-        _ <- mainp.add(paramsSelectionPanel)
-        _ <- mainp.add(startSimulationPanel)
+        _ <- mainp.addAll(List(carSelectionPanel, paramsSelectionPanel, startSimulationPanel))
       yield mainp
