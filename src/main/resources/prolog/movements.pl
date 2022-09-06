@@ -1,5 +1,6 @@
 %x0 + v * t + 0.5 * acc * t^2
-newPositionStraight(Coord, Vel, Time, Acc, I, Np) :- pow(Time, 2, TimeSquared), Np is Coord + (((Vel * Time + 0.5 * Acc * TimeSquared) / 40) * I).
+newPositionStraight(Coord, Velocity, Time, Acceleration, Direction, Np) :-
+    pow(Time, 2, TimeSquared), Np is Coord + (((Velocity * Time + 0.5 * Acceleration * TimeSquared) / 40) * Direction).
 
 newVelocityAcceleration(Speed, Acc, Time, Deg, Fuel, Ns) :- limitation(Deg, Fuel, Z), Temp is Speed + (Acc * Time), Ns is Temp - (Temp * Z).
 newVelocityDeceleration(Speed, Ns) :- Ns is Speed * 0.95.
