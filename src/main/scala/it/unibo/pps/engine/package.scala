@@ -25,8 +25,3 @@ package object engine:
   given Conversion[String, Term] = Term.createTerm(_)
   given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
   given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
-/*given Conversion[Tyre, Int] = _ match {
-    case Tyre.HARD => 10
-    case Tyre.MEDIUM => 5
-    case Tyre.SOFT => 1
-  }*/
