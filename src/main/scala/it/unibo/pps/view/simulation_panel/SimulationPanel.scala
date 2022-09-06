@@ -8,7 +8,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standing, Track, TrackBuilder}
+import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
@@ -165,20 +165,20 @@ object SimulationPanel:
 
     override def updateDisplayedStanding(): Unit =
       standingMap.foreach(e =>
-        e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).renderCarParams.color))
+        e._2._2.foreach(f => f.setText(controller.standings._standings(e._1).name))
+        e._2._3.foreach(f => f.setBackground(controller.standings._standings(e._1).renderCarParams.color))
         e._2._4.foreach(f =>
           f.setIcon(
             ImageLoader.load(
-              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
+              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(controller.standings._standings(e._1).name)).get._1}.png"
             )
           )
         )
-        e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
-        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1))))
-        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
+        e._2._5.foreach(f => f.setText(controller.standings._standings(e._1).tyre.toString))
+        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standings(e._1))))
+        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standings(e._1).lapTime)))
         e._2._8.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).fastestLap))
+          f.setText(controller.convertTimeToMinutes(controller.standings._standings(e._1).fastestLap))
         )
       )
 
@@ -233,17 +233,15 @@ object SimulationPanel:
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-
-        pos <- elem._2._1 // Posizione
-        name <- elem._2._2 // Nome
-        color <- elem._2._3 // Colore
-        img <- elem._2._4 // Immagine
-        tyre <- elem._2._5 // Gomma
-        raceTime <- elem._2._6 // Race time
-        lapTime <- elem._2._7 // Lap Time
-        fastestTime <- elem._2._8 // Fastest time
-        fastestLapIcon <- elem._2._9 // Fastest time icon
-
+        pos <- elem._2._1
+        name <- elem._2._2
+        color <- elem._2._3
+        img <- elem._2._4
+        tyre <- elem._2._5
+        raceTime <- elem._2._6
+        lapTime <- elem._2._7
+        fastestTime <- elem._2._8
+        fastestLapIcon <- elem._2._9
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
@@ -251,7 +249,6 @@ object SimulationPanel:
         _ <- color.setBackground(controller.startingPositions(elem._1).renderCarParams.color)
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-
         _ <- panel.add(pos)
         _ <- panel.add(name)
         _ <- panel.add(paddingLabel)

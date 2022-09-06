@@ -1,7 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Snapshot, Standing, Track, Tyre}
+import it.unibo.pps.model.{Car, Snapshot, Standings, Track, Tyre}
 import it.unibo.pps.view.ViewConstants.*
 
 object ViewModule:
@@ -10,7 +10,7 @@ object ViewModule:
     def updateDisplayedStanding(): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
-    def displaySimulationPanel(track: Track, standing: Standing): Unit
+    def displaySimulationPanel(track: Track, standing: Standings): Unit
     def displayEndRacePanel(): Unit
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
@@ -32,7 +32,7 @@ object ViewModule:
 
       override def updateDisplayedStanding(): Unit = gui.updateDisplayedStanding()
       
-      override def displaySimulationPanel(track: Track, standing: Standing): Unit =
+      override def displaySimulationPanel(track: Track, standing: Standings): Unit =
         gui.displaySimulationPanel(track, standing)
 
       override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit =

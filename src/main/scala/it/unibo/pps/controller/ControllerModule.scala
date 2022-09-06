@@ -1,7 +1,7 @@
 package it.unibo.pps.controller
 
 import it.unibo.pps.engine.SimulationEngineModule
-import it.unibo.pps.model.{Car, Driver, ModelModule, RenderCarParams, Snapshot, Standing, Tyre}
+import it.unibo.pps.model.{Car, Driver, ModelModule, RenderCarParams, Snapshot, Standings, Tyre}
 import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
@@ -22,7 +22,7 @@ object ControllerModule:
     def startingPositions: Map[Int, Car]
     def currentCar: Car
     def currentCarIndex: Int
-    def standings: Standing
+    def standings: Standings
     def totalLaps: Int
     def fastestLap: Int
     def fastestCar: String
@@ -88,7 +88,7 @@ object ControllerModule:
 
       override def currentCarIndex: Int = context.model.currentCarIndex
 
-      override def standings: Standing = context.model.standing
+      override def standings: Standings = context.model.standings
 
       override def totalLaps: Int = context.model.totalLaps
 
@@ -114,12 +114,12 @@ object ControllerModule:
         skills
 
       override def displaySimulationPanel(): Unit =
-        context.model.createStanding()
+        context.model.createStandings()
         context.model.initSnapshot()
         context.view.updateDisplayedStanding()
-        context.view.displaySimulationPanel(context.model.track, context.model.standing)
+        context.view.displaySimulationPanel(context.model.track, context.model.standings)
         context.view.updateCars(
-          context.model.standing._standing.values.toList,
+          context.model.standings._standings.values.toList,
           context.model.actualLap,
           context.model.totalLaps
         )
@@ -160,9 +160,9 @@ object ControllerModule:
         BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
 
       override def calcCarPosting(car: Car): String =
-        if standings._standing(0).equals(car) then convertTimeToMinutes(car.raceTime)
+        if standings._standings(0).equals(car) then convertTimeToMinutes(car.raceTime)
         else
-          val posting = car.raceTime - standings._standing(0).raceTime
+          val posting = car.raceTime - standings._standings(0).raceTime
           if posting > 0 then s"+${convertTimeToMinutes(posting)}"
           else "+0:00"
 

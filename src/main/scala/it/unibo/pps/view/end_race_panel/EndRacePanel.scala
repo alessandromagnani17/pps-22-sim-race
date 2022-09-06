@@ -43,7 +43,7 @@ object EndRacePanel:
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
-        _ <- controller.standings._standing.foreach(e => addToPanel(e, standingsPanel))
+        _ <- controller.standings._standings.foreach(e => addToPanel(e, standingsPanel))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)

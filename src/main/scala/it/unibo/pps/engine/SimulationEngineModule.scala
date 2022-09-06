@@ -10,7 +10,7 @@ import it.unibo.pps.model.{
   RenderStraightParams,
   Sector,
   Snapshot,
-  Standing,
+  Standings,
   Straight,
   Turn,
   Tyre
@@ -58,7 +58,7 @@ object SimulationEngineModule:
       private var carsArrived = 0
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(context.model.standing._standing.find(_._2.equals(car)).get._1)
+        finalPositions(context.model.standings._standings.find(_._2.equals(car)).get._1)
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -207,7 +207,7 @@ object SimulationEngineModule:
         _ <- io(context.view.updateDisplayedStanding())
       yield ()
 
-    private def calcNewStanding(snap: Snapshot): Standing =
+    private def calcNewStanding(snap: Snapshot): Standings =
       val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
       var l1: List[Car] = List.empty
 
@@ -243,7 +243,7 @@ object SimulationEngineModule:
                   l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
           })
       })
-      Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
+      Standings(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
     private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
       var l: List[Car] = List.empty
