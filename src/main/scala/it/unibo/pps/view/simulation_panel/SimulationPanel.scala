@@ -164,29 +164,32 @@ object SimulationPanel:
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
     override def updateDisplayedStanding(): Unit =
+      var index = 0
       standingMap.foreach(e =>
-        e._2._2.foreach(f => f.setText(controller.standings._standings(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.standings._standings(e._1).renderCarParams.color))
-        e._2._4.foreach(f =>
+        val car = controller.standings._standings(index)
+        e._2.foreach(f => f.setText(car.name))
+        e._3.foreach(f => f.setBackground(car.renderCarParams.color))
+        e._4.foreach(f =>
           f.setIcon(
             ImageLoader.load(
-              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(controller.standings._standings(e._1).name)).get._1}.png"
+              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(car.name)).get._1}.png"
             )
           )
         )
-        e._2._5.foreach(f => f.setText(controller.standings._standings(e._1).tyre.toString))
-        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standings(e._1))))
-        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standings(e._1).lapTime)))
-        e._2._8.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(controller.standings._standings(e._1).fastestLap))
+        e._5.foreach(f => f.setText(car.tyre.toString))
+        e._6.foreach(f => f.setText(controller.calcCarPosting(car)))
+        e._7.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
+        e._8.foreach(f =>
+          f.setText(controller.convertTimeToMinutes(car.fastestLap))
         )
+        index = index + 1
       )
 
     override def updateFastestLapIcon(carName: String): Unit =
       standingMap.foreach(e =>
-        e._2._2.foreach(f =>
-          if f.getText.equals(carName) then e._2._9.foreach(c => c.setVisible(true))
-          else e._2._9.foreach(c => c.setVisible(false))
+        e._2.foreach(f =>
+          if f.getText.equals(carName) then e._9.foreach(c => c.setVisible(true))
+          else e._9.foreach(c => c.setVisible(false))
         )
       )
 
@@ -213,8 +216,6 @@ object SimulationPanel:
 
     private def addToPanel(
         elem: (
-            Int,
-            (
                 Task[JLabel],
                 Task[JLabel],
                 Task[JLabel],
@@ -224,7 +225,6 @@ object SimulationPanel:
                 Task[JLabel],
                 Task[JLabel],
                 Task[JLabel]
-            )
         ),
         mainPanel: JPanel
     ): Task[Unit] =
@@ -233,20 +233,20 @@ object SimulationPanel:
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        pos <- elem._2._1
-        name <- elem._2._2
-        color <- elem._2._3
-        img <- elem._2._4
-        tyre <- elem._2._5
-        raceTime <- elem._2._6
-        lapTime <- elem._2._7
-        fastestTime <- elem._2._8
-        fastestLapIcon <- elem._2._9
+        pos <- elem._1
+        name <- elem._2
+        color <- elem._3
+        img <- elem._4
+        tyre <- elem._5
+        raceTime <- elem._6
+        lapTime <- elem._7
+        fastestTime <- elem._8
+        fastestLapIcon <- elem._9
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
         _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-        _ <- color.setBackground(controller.startingPositions(elem._1).renderCarParams.color)
+        _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
         _ <- panel.add(pos)
@@ -265,36 +265,10 @@ object SimulationPanel:
       yield ()
       p.runAsyncAndForget
 
-    private def createPositions(): Map[
-      Int,
-      (
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel]
-      )
-    ] =
-      val map: Map[
-        Int,
-        (
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel]
-        )
-      ] = Map.empty
+    private def createPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
+      var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])]= List.empty
       controller.startingPositions.foreach(e => {
-        map += (controller.standings._standings.indexOf(e) -> (createLabel(
+        l = l :+ ((createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)),
           () => Left((controller.standings._standings.indexOf(e) + 1).toString)
         ),
@@ -307,7 +281,7 @@ object SimulationPanel:
         createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDING_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
         createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
       })
-      map
+      l
 
     private def createLabel(dim: Option[Dimension], f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
