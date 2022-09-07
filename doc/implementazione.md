@@ -159,9 +159,8 @@ Successivamente, sempre cooperando con Montanari, ho implementato il numero di g
 - `Standings`
 - `SimulationEngineModule`
 
-Infine, sempre in collaborazione con Montanari, mi sono occupato del report finale della gara.
-
-
+Infine, sempre in collaborazione con Montanari, mi sono occupato del report finale della gara. Classi relative:
+- `EndRacePanel`
 
 #### Andrea Matteucci
 
