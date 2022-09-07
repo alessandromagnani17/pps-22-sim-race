@@ -56,9 +56,11 @@ Un settore ha una direzione `Direction` utilizzata per determinare come si devon
 
 #### Tyre
 Tyre è una `enum` che rappresenta il tipo di gomme che una macchina può montare durante la gara. In base al tipo, la gomma, subirà un degrado variabile durante la gara. Il degrado di una data gomma ad un dato giro si può ottenere attraverso il metodo `degradation` presente nel companion object di Tyre, questo metodo effettua i calcoli utilizzando le seguenti funzioni:
+
 <div align="center">
 <img src="./imgs/deg_chart.png" width="500" height="406"/>
 </div>
+
 Nello specifico:
 - Una gomma di tipo *Soft* subirà un maggior degrado, quindi, seguirà la funzione rossa;
 - Una gomma di tipo *Hard* subirà un minor degrado, quindi, seguirà la funzione verde;
@@ -83,11 +85,15 @@ Invece, il fattore di limitazione per il tipo di gomme è calcolato in modo più
 - Le gomme *SOFT* hanno una prestazione maggiore nei primi giri per poi essere molto limitate nel finale;
 - Le gomme *MEDIUM* hanno una prestazione media costante;
 - Le gomme *HARD* sono più limitate nei primi giri per poi alzare le prestazioni nel finale di gara.
+
 Per realizzare questi comportamenti abbiamo usato le funzioni rappresentate nel seguente grafico:
 
 <div align="center">
 <img src="./imgs/tyre_chart.png" width="500" height="406"/>
 </div>
+
+#### History
+L'andamento della simulazione è rappresentato come una sequenza di `Snapshot` (uno snapshot per ogni iterazione), questi sono salvati nella classe `ModelModule`. Ogni snapshot contiene il relativo `virtualTime` e la lista di macchine aggiornate `cars`.
 
 ### View
 ![View](./imgs/cake-view.svg)
@@ -109,6 +115,13 @@ Data la complessità delle varie schermate la gui è stata divisa, sfruttando la
 
 ### Engine
 ![Engine](./imgs/cake-engine.svg)
+
+`SimulationEngineModule` è il componente che si occupa di gestire i calcoli necessari per computare l'evoluzione delle varie iterazioni. Il metodo principale esposto è `simulationStep`, questo viene richiamato dal controller e grazie all'ausilio della libreria Monix viene eseguito in modo asincrono.
+
+Inoltre, il simulation engine, sfrutta due ulteriori classi:
+- `SpeedManager`: per gestire la velocità della simulazione (Lenta, Normale, Veloce);
+- `Movements`: per gestire i calcoli legati alle nuove velocità e alle nuove posizioni.
+![Engine](./imgs/engine.svg)
 
 ### Pattern utilizzati
 
