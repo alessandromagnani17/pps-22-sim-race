@@ -31,7 +31,7 @@ object ViewModule:
         gui.updateDisplayedCar()
 
       override def updateDisplayedStandings(): Unit = gui.updateDisplayedStandings()
-      
+
       override def displaySimulationPanel(track: Track, standings: Standings): Unit =
         gui.displaySimulationPanel(track, standings)
 

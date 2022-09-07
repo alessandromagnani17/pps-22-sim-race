@@ -4,7 +4,7 @@ import scala.collection.mutable.Map
 
 trait Standings:
 
-  /** @return the current standing */
+  /** @return the current standings */
   def _standings: List[Car]
 
 object Standings:

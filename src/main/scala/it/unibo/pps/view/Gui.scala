@@ -22,7 +22,12 @@ class Gui(controller: ControllerModule.Controller):
   private val startingPositionsPanel = StartingPositionsPanel(controller)
   private val frame = createFrame("sim-race", FRAME_WIDTH, FRAME_HEIGHT, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
-    createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
+    createFrame(
+      "starting-positions",
+      STARTING_POS_FRAME_WIDTH,
+      STARTING_POS_FRAME_HEIGHT,
+      WindowConstants.HIDE_ON_CLOSE
+    )
 
   private lazy val p =
     for
@@ -52,7 +57,7 @@ class Gui(controller: ControllerModule.Controller):
   def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
 
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
-  
+
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
@@ -86,3 +91,5 @@ class Gui(controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
+
+  def getInitialList: List[String] = controller.cars.map(_.name)
