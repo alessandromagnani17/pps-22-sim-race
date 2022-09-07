@@ -11,6 +11,7 @@ import monix.execution.{Ack, Cancelable}
 
 import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
+import it.unibo.pps.model.loader.{CarsLd, TrackLoader}
 
 object ModelModule:
   trait Model:
@@ -46,8 +47,8 @@ object ModelModule:
   trait Component:
     class ModelImpl extends Model:
 
-      private val _track = TrackBuilder().createBaseTrack()
-      private var _cars: List[Car] = CarsLoader.load(track)
+      private val _track = TrackLoader("/prolog/basetrack.pl").load
+      private var _cars: List[Car] = CarsLd("/prolog/cars.pl", track).load
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 
@@ -87,15 +88,7 @@ object ModelModule:
       override def setS(standings: Standing): Unit = _standing = standings
 
       override def initSnapshot(): Unit =
-        val offset = (t: Tyre) =>
-          t match
-            case Tyre.SOFT => 0
-            case Tyre.MEDIUM => 20
-            case Tyre.HARD => 40
-
-        val c = _cars
-        //.map(car => car.copy(maxSpeed = car.maxSpeed - offset(car.tyre)))
-        addSnapshot(Snapshot(c, 0))
+        addSnapshot(Snapshot(_cars, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
 

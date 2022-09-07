@@ -85,7 +85,7 @@ object Movements:
 
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, direction: Int): Int =
       val v = Converter.kmh2ms(velocity)
-      (x + ((v * time + 0.5 * acceleration * (time ** 2)) / 40) * direction).toInt
+      (x + ((v * time + 0.5 * acceleration * (time ** 2)) / 160) * direction).toInt
 
     private def updateVelocityStraightAcceleration(car: Car, time: Int): Int =
       val vel = Converter.kmh2ms(car.actualSpeed)

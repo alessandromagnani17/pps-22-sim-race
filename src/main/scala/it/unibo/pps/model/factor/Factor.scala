@@ -14,8 +14,8 @@ class FuelFactor extends Factor:
 class TyreFactor extends Factor:
   override type E = (Tyre, Int)
   override def damage(velocity: Int, tyre: E): Int = tyre._1 match
-    case Tyre.SOFT => (velocity / 5.0) * (Math.exp((2.0 / 13.0) * (tyre._2 / 10.0)) - 0.9)
-    case Tyre.MEDIUM => (velocity / 5.0) * 0.4
+    case Tyre.SOFT => (velocity / 5.0) * (Math.exp((1.0 / 5.0) * (tyre._2 / 10.0)) - 0.9)
+    case Tyre.MEDIUM => (velocity / 5.0) * 0.25
     case Tyre.HARD => (velocity / 5.0) * (Math.exp((-1.0 / 3.0) * (tyre._2 / 10.0)) - 0.25)
 
 class DegradationFactor extends Factor:

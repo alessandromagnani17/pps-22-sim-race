@@ -158,7 +158,7 @@ object SimulationEngineModule:
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             checkEndStraight(car, p)
           case Phase.Ended =>
-            sectorTimes(car.name) = 3
+            sectorTimes(car.name) = BASE_SECTORTIME_TURN
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
 
@@ -166,9 +166,7 @@ object SimulationEngineModule:
         car.actualSector.renderParams match
           case RenderStraightParams(_, _, _, _, endX) =>
             val d = (p._1 - endX) * car.actualSector.direction
-            if d >= 0 then
-              sectorTimes(car.name) = 3
-              (endX, p._2)
+            if d >= 0 then (endX, p._2)
             else p
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
@@ -184,7 +182,7 @@ object SimulationEngineModule:
             p
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            sectorTimes(car.name) = 25
+            sectorTimes(car.name) = BASE_SECTORTIME_STRAIGHT
             checkLap(car, time)
             straightMovement(car, time)
           case Phase.Deceleration => EMPTY_POSITION
