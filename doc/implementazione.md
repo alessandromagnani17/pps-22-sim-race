@@ -151,6 +151,28 @@ Infine, in autonomia, ho sviluppato:
 #### Andrea Matteucci
 
 #### Simone Montanari
+Inizialmente, in collaborazione con Magnani, mi sono occupato della crezione della schermata iniziale del simulatore, dove è possibile impostare i parametri delle diverse macchine, la griglia di partenza ed il numero di giri della gara.
+Classi relative:
+- `MainPanel`
+- `CarSelectionPanel`
+- `ParamsSelectionPanel`
+- `StartSimulationPanel`
+- `StartingPositionsPanel`
+
+Successivamente, in collaborazione con Domini, mi sono occupato dell'implementazione del movimento in curva delle macchine.
+Classi relative:
+- `SimulationEngineModule`
+- `Movements`
+
+Dopo aver implementato il movimento delle macchine, in collaborazione con Magnani, ho implementato la classifica in real-time della gara ed il numero di giri impostato inizialmente.
+Classi relative:
+- `SimulationPanel`
+- `Standings`
+- `SimulationEngineModule`
+
+Infine, sempre in collaborazione con Magnani, mi sono occupato della realizzazione del report finale della gara.
+Classi relative:
+- `EndRacePanel`
       
 
 
