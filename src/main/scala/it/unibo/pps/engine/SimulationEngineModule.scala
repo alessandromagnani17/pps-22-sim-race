@@ -140,8 +140,13 @@ object SimulationEngineModule:
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          movementsManager.updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
-        val onTurn = () => movementsManager.updateVelocityTurn(car)
+          movementsManager
+            .updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
+            .runSyncUnsafe()
+        val onTurn = () =>
+          movementsManager
+            .updateVelocityTurn(car)
+            .runSyncUnsafe()
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] =
