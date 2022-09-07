@@ -34,7 +34,7 @@ Per ogni task da svolgere durante un dato sprint è stata definita una scheda su
 Per quanto riguarda l'organizzazione della [repository GitHub](https://github.com/davidedomini/pps-22-sim-race) si è scelto di adottare `Git Flow`. Questo prevede l'utilizzo di diversi branch:
 - Un branch `main` in cui è presente il codice delle varie release;
 - Un branch `develop` da usare come branch principale;
-- Un branch `feature/<nome-feature>` in cui è presente il codice necessario per implementare una determianta feature.
+- Un branch `feature/<nome-feature>` in cui è presente il codice necessario per implementare una determinata feature.
 
 Un riassunto molto chiaro di questa metodologia di lavoro è dato nella seguente immagine:
 ![Git-Flow Workflow](./imgs/gitflow.svg)
