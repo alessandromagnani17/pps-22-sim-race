@@ -51,31 +51,35 @@ object Movements:
       yield (newP, car.renderCarParams.position._2)
 
     override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
-      case RenderTurnParams(center, p, _, _, _, endX) =>
+      case RenderTurnParams(center, pExternal, pInternal, _, _, endX) =>
         for
           x <- io(car.renderCarParams.position._1)
           teta_t <- io(0.5 * car.acceleration * (time ** 2))
           direction <- io(car.actualSector.direction)
           r <- io(car.renderCarParams.position euclideanDistance center)
-          turnRadius <- io(center euclideanDistance p)
+          turnRadiusExternal <- io(center euclideanDistance pExternal)
+          turnRadiusInternal <- io(center euclideanDistance pInternal)
           alpha <- io(direction match
             case Direction.Forward => 0
             case Direction.Backward => 180
           )
           newX <- io((center._1 + (r * Math.sin(Math.toRadians(teta_t + alpha)))).toInt)
           newY <- io((center._2 - (r * Math.cos(Math.toRadians(teta_t + alpha)))).toInt)
-          np <- io(checkTurnBounds((newX, newY), center, turnRadius, direction))
+          np <- io(checkTurnBounds((newX, newY), center, turnRadiusExternal, turnRadiusInternal, direction))
           position <- io(checkEnd(np, endX, direction))
         yield position
 
-    private def checkTurnBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
+    private def checkTurnBounds(p: (Int, Int), center: (Int, Int), rExternal: Int, rInternal: Int, direction: Int): (
+        Int,
+        Int
+    ) =
       var dx = (p._1 + 12, p._2) euclideanDistance center
       var dy = (p._1, p._2 + 12) euclideanDistance center
-      val rI = 113 //TODO - migliorare
-      if dx - r < 0 && direction == 1 then dx = r
-      if dy - r < 0 && direction == 1 then dy = r
-      if (dx >= r || dy >= r) && direction == 1 then (p._1 - (dx - r), p._2 - (dy - r))
-      else if (dx <= rI || dy <= rI) && direction == -1 then (p._1 + (dx - rI), p._2 + (dy - rI))
+      if dx - rExternal < 0 && direction == 1 then dx = rExternal
+      if dy - rExternal < 0 && direction == 1 then dy = rExternal
+      if (dx >= rExternal || dy >= rExternal) && direction == 1 then (p._1 - (dx - rExternal), p._2 - (dy - rExternal))
+      else if (dx <= rInternal || dy <= rInternal) && direction == -1 then
+        (p._1 + (dx - rInternal), p._2 + (dy - rInternal))
       else p
 
     private def checkEnd(p: (Int, Int), end: Int, direction: Int): (Int, Int) =
