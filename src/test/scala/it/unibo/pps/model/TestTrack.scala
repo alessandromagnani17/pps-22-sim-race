@@ -40,3 +40,17 @@ class TestTrack extends AnyFlatSpec with Matchers:
       )
       .size shouldBe 2
   }
+
+  "Next sector" should "return the next sector" in {
+    val track = TrackLoader("/prolog/basetrack.pl").load
+    val sector = Straight(1, Direction.Forward, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0))
+    val nextSector = track.nextSector(sector)
+    nextSector.id shouldBe sector.id + 1
+  }
+
+  "Next sector" should "also work cyclically" in {
+    val track = TrackLoader("/prolog/basetrack.pl").load
+    val sector = Straight(4, Direction.Forward, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0))
+    val nextSector = track.nextSector(sector)
+    nextSector.id shouldBe 1
+  }
