@@ -4,6 +4,7 @@ import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import it.unibo.pps.model.{Straight, Turn}
+import it.unibo.pps.model.loader.TrackLoader
 
 class TestTrack extends AnyFlatSpec with Matchers:
 
@@ -19,8 +20,8 @@ class TestTrack extends AnyFlatSpec with Matchers:
     assert(t.sectors.size > 0)
   }
 
-  "With track Builder you" should "create a base track" in {
-    val track = TrackBuilder().createBaseTrack()
+  "With track loader you" should "create a base track" in {
+    val track = TrackLoader("/prolog/basetrack.pl").load
     track.sectors.size shouldBe 4
     track.sectors
       .filter(s =>
