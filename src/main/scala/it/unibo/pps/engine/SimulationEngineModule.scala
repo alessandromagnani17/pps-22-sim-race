@@ -41,9 +41,9 @@ import scala.collection.mutable.{HashMap, Map}
 
 object SimulationEngineModule:
   trait SimulationEngine:
-    def simulationStep(): Task[Unit]
-    def decreaseSpeed(): Unit
-    def increaseSpeed(): Unit
+    def simulationStep: Task[Unit]
+    def decreaseSpeed: Unit
+    def increaseSpeed: Unit
 
   trait Provider:
     val simulationEngine: SimulationEngine
@@ -63,22 +63,22 @@ object SimulationEngineModule:
       private def getFinalPositions(car: Car): (Int, Int) =
         finalPositions(context.model.standings.standings.indexOf(car))
 
-      override def decreaseSpeed(): Unit =
+      override def decreaseSpeed: Unit =
         speedManager.decreaseSpeed()
 
-      override def increaseSpeed(): Unit =
+      override def increaseSpeed: Unit =
         speedManager.increaseSpeed()
 
-      override def simulationStep(): Task[Unit] =
+      override def simulationStep: Task[Unit] =
         for
-          _ <- moveCars()
-          _ <- updateStandings()
-          _ <- updateView()
+          _ <- moveCars
+          _ <- updateStandings
+          _ <- updateView
           _ <- waitFor(speedManager.speed)
-          _ <- checkEnd()
+          _ <- checkEnd
         yield ()
 
-      private def checkEnd(): Task[Unit] =
+      private def checkEnd: Task[Unit] =
         for
           _ <- io(
             if carsArrived == NUM_CARS then
@@ -91,7 +91,7 @@ object SimulationEngineModule:
         val time = BASE_TIME * simulationSpeed
         Task.sleep(time millis)
 
-      private def moveCars(): Task[Unit] =
+      private def moveCars: Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
           newSnap <- computeNewSnapshot(lastSnap)
@@ -202,7 +202,7 @@ object SimulationEngineModule:
           car.raceTime = time
           carsArrived = carsArrived + 1
 
-    private def updateStandings(): Task[Unit] =
+    private def updateStandings: Task[Unit] =
       for
         lastSnap <- io(context.model.getLastSnapshot())
         newStandings = calcNewStandings(lastSnap)
@@ -260,7 +260,7 @@ object SimulationEngineModule:
           .foreach(e => l = l.concat(List(e)))
       l
 
-    private def updateView(): Task[Unit] =
+    private def updateView: Task[Unit] =
       for
         cars <- io(context.model.getLastSnapshot().cars)
         _ <- io(context.view.updateCars(cars, context.model.actualLap, context.model.totalLaps))

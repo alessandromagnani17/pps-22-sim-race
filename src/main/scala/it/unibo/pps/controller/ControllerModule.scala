@@ -57,9 +57,7 @@ object ControllerModule:
       private var stopFuture: Option[Cancelable] = None
 
       override def notifyStart(): Unit = stopFuture = Some(
-        context.simulationEngine
-          .simulationStep()
-          .loopForever
+        context.simulationEngine.simulationStep.loopForever
           .runAsync {
             case Left(exp) => global.reportFailure(exp)
             case _ =>
@@ -71,10 +69,10 @@ object ControllerModule:
         stopFuture = None
 
       override def notifyDecreaseSpeed(): Unit =
-        context.simulationEngine.decreaseSpeed()
+        context.simulationEngine.decreaseSpeed
 
       override def notifyIncreaseSpeed(): Unit =
-        context.simulationEngine.increaseSpeed()
+        context.simulationEngine.increaseSpeed
 
       override def startingPositions: List[Car] = context.model.startingPositions
 
