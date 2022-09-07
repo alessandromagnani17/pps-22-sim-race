@@ -75,7 +75,15 @@ Sia la pista di gara `Track` che le macchine `Car` vengono istanziate nel `Model
 Durante la simulazione la velocità di una singola macchina è influenzata da alcuni fattori limitanti, questi sono rappresentati dal trait `Factor` il quale espone un unico metodo `damage` utile per calcolare il danno provocato da quel fattore alla velocità. Questo trait è stato poi esteso da tre classi che rappresentano i tre fattori limitanti utilizzati: `FuelFactor`, `TyreFactor` e `DegradationFactor`.
 ![Factors](./imgs/factor.svg)
 
-
+I fattori di limitazione per il carburante e il degrado sono calcolati come segue: 
+- Fuel: `actual fuel / total fuel`
+- Degradation: `1 - degradation`
+Invece, il fattore di limitazione per il tipo di gomme è calcolato in modo più complesso per tenere conto delle dinamiche:
+- Le gomme *SOFT* hanno una prestazione maggiore nei primi giri per poi essere molto limitate nel finale;
+- Le gomme *MEDIUM* hanno una prestazione media costante;
+- Le gomme *HARD* sono più limitate nei primi giri per poi alzare le prestazioni nel finale di gara.
+Per realizzare questi comportamenti abbiamo usato le funzioni rappresentate nel seguente grafico:
+!(tyre_chart)[./imgs/tyre_chart.png]
 
 ### View
 ![View](./imgs/cake-view.svg)
