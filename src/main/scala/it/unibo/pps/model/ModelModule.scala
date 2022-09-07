@@ -11,7 +11,7 @@ import monix.execution.{Ack, Cancelable}
 
 import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
-import it.unibo.pps.model.loader.{CarsLd, TrackLoader}
+import it.unibo.pps.model.loader.{CarsLoader, TrackLoader}
 
 object ModelModule:
   trait Model:
@@ -48,7 +48,7 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackLoader("/prolog/basetrack.pl").load
-      private var _cars: List[Car] = CarsLd("/prolog/cars.pl", track).load
+      private var _cars: List[Car] = CarsLoader("/prolog/cars.pl", track).load
 
       /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
 

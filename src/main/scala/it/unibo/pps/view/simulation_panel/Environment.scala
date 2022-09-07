@@ -29,10 +29,11 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     super.paintComponent(g)
     g.setColor(Color.BLACK)
     g.drawString(s"LAP: ${ if _actualLap > _totalLaps then _totalLaps else _actualLap} / $_totalLaps", 449, 60)
-    g.drawString("4° ", 303, 283)
-    g.drawString("3° ", 403, 283)
-    g.drawString("2° ", 503, 283)
-    g.drawString("1° ", 603, 283)
+    if _actualLap >= _totalLaps + 1 then
+      g.drawString("4° ", 303, 283)
+      g.drawString("3° ", 403, 283)
+      g.drawString("2° ", 503, 283)
+      g.drawString("1° ", 603, 283)
 
     g.drawLine(200, 113, 200, 170)
 

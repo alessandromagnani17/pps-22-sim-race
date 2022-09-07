@@ -16,8 +16,7 @@ straight(id(3), startPointE(181, 453), endPointE(725, 453), startPointI(181, 396
 %Query: turn(id(ID), center(X, Y), startPointE(X0_E, Y0_E), startPointI(X0_I, YO_I), endPointE(X1_E, Y1_E), endPointI(X1_I, Y1_I), direction(D))
 turn(id(2), center(725, 283), startPointE(725, 113), startPointI(725, 170), endPointE(725, 453), endPointI(725, 396), direction(1)).
 turn(id(4), center(181, 283), startPointE(181, 113), startPointI(181, 170), endPointE(181, 453), endPointI(181, 396), direction(-1)).
-
-
+    
 %startingPoint(id, x_position, y_position)
 %Query: startingPoint(id(ID), position(X, Y)).
 startingPoint(id(1), position(313, 115)).

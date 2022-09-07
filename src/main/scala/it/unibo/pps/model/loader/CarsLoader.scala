@@ -23,7 +23,7 @@ given Conversion[String, Color] = _ match
   case s: String if s.equals("Red Bull") => CarColors.getColor(s)
   case s: String if s.equals("McLaren") => CarColors.getColor(s)
 
-class CarsLd(theory: String, track: Track) extends Loader:
+class CarsLoader(theory: String, track: Track) extends Loader:
 
   private val engine = Scala2P.createEngine(theory)
 
