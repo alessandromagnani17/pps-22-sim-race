@@ -1,48 +1,28 @@
 package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  Graphics,
-  GridBagConstraints,
-  GridBagLayout,
-  GridLayout
-}
-import javax.swing.{
-  BorderFactory,
-  BoxLayout,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingConstants,
-  SwingUtilities,
-  WindowConstants
-}
+
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
+import javax.swing.{BorderFactory, BoxLayout, ImageIcon, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, Sector, Snapshot, Standing, Track, TrackBuilder, CarColors}
+import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track, TrackBuilder}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
+
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
-import it.unibo.pps.view.ViewConstants.*
+import it.unibo.pps.view.Constants.SimulationPanelConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
+
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
@@ -53,20 +33,18 @@ trait SimulationPanel extends JPanel:
   /** Renders the track, it must be used when showing simulation panel for first time */
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
-  def updateDisplayedStanding(): Unit
+  def updateDisplayedStandings(): Unit
   def updateCharts(snapshot: Snapshot): Unit
   def updateFastestLapIcon(carName: String): Unit
 
 object SimulationPanel:
 
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): SimulationPanel =
-    new SimulationPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): SimulationPanel =
+    new SimulationPanelImpl(controller)
 
-  private class SimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+  private class SimulationPanelImpl(controller: ControllerModule.Controller)
       extends SimulationPanel:
     self =>
-
-    private val carNames: Map[Int, String] = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")
 
     private lazy val canvas =
       for
@@ -80,7 +58,7 @@ object SimulationPanel:
     private lazy val chartsPanel =
       for
         p <- new JPanel()
-        _ <- p.setLayout(new BoxLayout(p, 1))
+        _ <- p.setLayout(new BoxLayout(p, AXIS_CHARTS_PANEL))
         chPanels <- Task(charts.map(_.wrapToPanel))
         _ <- chPanels.foreach(_.setPreferredSize(new Dimension(CHART_WIDTH, CHART_HEIGHT)))
         _ <- p.addAll(chPanels)
@@ -90,12 +68,12 @@ object SimulationPanel:
         _ <- controller.registerReactiveChartCallback()
       yield sp
 
-    private lazy val standingMap = createPositions()
+    private lazy val standingsMap = createPositions()
 
-    private lazy val standing =
+    private lazy val standings =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_PANEL_HEIGHT))
+        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDINGS_PANEL_HEIGHT))
       yield panel
 
     private lazy val reportButton = for
@@ -124,22 +102,15 @@ object SimulationPanel:
       incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
       decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
       reportButton <- reportButton
-      s <- standing
+      s <- standings
       buttonsPanel = new JPanel()
-      _ <- buttonsPanel.setPreferredSize(Dimension(width, BUTTONS_PANEL_HEIGHT))
+      _ <- buttonsPanel.setPreferredSize(Dimension(FRAME_WIDTH, BUTTONS_PANEL_HEIGHT))
       mainPanel = new JPanel()
       _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT * 0.9).toInt))
-      _ <- buttonsPanel.add(startButton)
-      _ <- buttonsPanel.add(stopButton)
-      _ <- buttonsPanel.add(incVelocityButton)
-      _ <- buttonsPanel.add(decVelocityButton)
-      _ <- buttonsPanel.add(reportButton)
-      _ <- mainPanel.add(cnv)
-      _ <- mainPanel.add(s)
-      _ <- standingMap.foreach(e => addToPanel(e, s))
-      _ <- self.add(mainPanel)
-      _ <- self.add(scrollPanel)
-      _ <- self.add(buttonsPanel)
+      _ <- buttonsPanel.addAll(List(startButton, stopButton, incVelocityButton, decVelocityButton, reportButton))
+      _ <- mainPanel.addAll(List(cnv, s))
+      _ <- standingsMap.foreach(e => addToPanel(e, s))
+      _ <- self.addAll(List(mainPanel, scrollPanel, buttonsPanel))
     yield ()
     p.runAsyncAndForget
 
@@ -185,30 +156,33 @@ object SimulationPanel:
     override def updateCharts(snapshot: Snapshot): Unit =
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
-    override def updateDisplayedStanding(): Unit =
-      standingMap.foreach(e =>
-        e._2._2.foreach(f => f.setText(controller.standings._standing(e._1).name))
-        e._2._3.foreach(f => f.setBackground(controller.standings._standing(e._1).renderCarParams.color))
-        e._2._4.foreach(f =>
+    override def updateDisplayedStandings(): Unit =
+      var index = 0
+      standingsMap.foreach(e =>
+        val car = controller.standings._standings(index)
+        e._2.foreach(f => f.setText(car.name))
+        e._3.foreach(f => f.setBackground(car.renderCarParams.color))
+        e._4.foreach(f =>
           f.setIcon(
             ImageLoader.load(
-              s"/cars/miniatures/${carNames.find(_._2.equals(controller.standings._standing(e._1).name)).get._1}.png"
+              s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(car.name)).get._1}.png"
             )
           )
         )
-        e._2._5.foreach(f => f.setText(controller.standings._standing(e._1).tyre.toString))
-        e._2._6.foreach(f => f.setText(controller.calcCarPosting(controller.standings._standing(e._1))))
-        e._2._7.foreach(f => f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).lapTime)))
-        e._2._8.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(controller.standings._standing(e._1).fastestLap))
+        e._5.foreach(f => f.setText(car.tyre.toString))
+        e._6.foreach(f => f.setText(controller.calcCarPosting(car)))
+        e._7.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
+        e._8.foreach(f =>
+          f.setText(controller.convertTimeToMinutes(car.fastestLap))
         )
+        index = index + 1
       )
 
     override def updateFastestLapIcon(carName: String): Unit =
-      standingMap.foreach(e =>
-        e._2._2.foreach(f =>
-          if f.getText.equals(carName) then e._2._9.foreach(c => c.setVisible(true))
-          else e._2._9.foreach(c => c.setVisible(false))
+      standingsMap.foreach(e =>
+        e._2.foreach(f =>
+          if f.getText.equals(carName) then e._9.foreach(c => c.setVisible(true))
+          else e._9.foreach(c => c.setVisible(false))
         )
       )
 
@@ -232,8 +206,6 @@ object SimulationPanel:
 
     private def addToPanel(
         elem: (
-            Int,
-            (
                 Task[JLabel],
                 Task[JLabel],
                 Task[JLabel],
@@ -243,99 +215,59 @@ object SimulationPanel:
                 Task[JLabel],
                 Task[JLabel],
                 Task[JLabel]
-            )
         ),
         mainPanel: JPanel
     ): Task[Unit] =
       val start = 0
       val p = for
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
-        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDING_SUBPANEL_HEIGHT))
+        _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-
-        pos <- elem._2._1 // Posizione
-        name <- elem._2._2 // Nome
-        color <- elem._2._3 // Colore
-        img <- elem._2._4 // Immagine
-        tyre <- elem._2._5 // Gomma
-        raceTime <- elem._2._6 // Race time
-        lapTime <- elem._2._7 // Lap Time
-        fastestTime <- elem._2._8 // Fastest time
-        fastestLapIcon <- elem._2._9 // Fastest time icon
-
+        pos <- elem._1
+        name <- elem._2
+        color <- elem._3
+        img <- elem._4
+        tyre <- elem._5
+        raceTime <- elem._6
+        lapTime <- elem._7
+        fastestTime <- elem._8
+        fastestLapIcon <- elem._9
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
-        _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-        _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDING_SUBPANEL_HEIGHT))
-        _ <- color.setBackground(controller.startingPositions(elem._1).renderCarParams.color)
+        _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
+        _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-
-        _ <- panel.add(pos)
-        _ <- panel.add(name)
-        _ <- panel.add(paddingLabel)
-        _ <- panel.add(color)
-        _ <- panel.add(paddingLabel1)
-        _ <- panel.add(img)
-        _ <- panel.add(paddingLabel)
-        _ <- panel.add(tyre)
-        _ <- panel.add(raceTime)
-        _ <- panel.add(lapTime)
-        _ <- panel.add(fastestTime)
-        _ <- panel.add(fastestLapIcon)
+        _ <- panel.addAll(List(pos, name, color, paddingLabel, img, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon))
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
 
-    // Posizione - Nome - Colore - Immagine - Gomma
-    private def createPositions(): Map[
-      Int,
-      (
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel],
-          Task[JLabel]
-      )
-    ] =
-      val map: Map[
-        Int,
-        (
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel],
-            Task[JLabel]
-        )
-      ] = Map.empty
+    private def createPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
+      var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])]= List.empty
       controller.startingPositions.foreach(e => {
-        map += (e._1 -> (createLabel(
-          (e._1 + 1).toString,
-          Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT),
-          false
+        l = l :+ ((createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left((controller.standings._standings.indexOf(e) + 1).toString)
         ),
-        createLabel(e._2.name, Dimension((CANVAS_WIDTH * 0.15).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("", Dimension((CANVAS_WIDTH * 0.03).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(s"/cars/miniatures/${e._1}.png", null, true),
-        createLabel(e._2.tyre.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.raceTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.lapTime.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel(e._2.fastestLap.toString, Dimension((CANVAS_WIDTH * 0.1).toInt, STANDING_SUBPANEL_HEIGHT), false),
-        createLabel("/fastest-lap-logo.png", null, true)))
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.name)),
+        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
+        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings._standings.indexOf(e)}.png"))),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
+        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
       })
-      map
+      l
 
-    private def createLabel(text: String, dimension: Dimension, isImage: Boolean): Task[JLabel] =
+    private def createLabel(dim: Option[Dimension], f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
-        label <- if isImage then JLabel(ImageLoader.load(text)) else JLabel(text)
-        _ <- label.setPreferredSize(dimension)
-        _ <- if !isImage then label.setHorizontalAlignment(SwingConstants.CENTER)
+        label <- f() match
+          case Left(s: String) => JLabel(s)
+          case Right(i: ImageIcon) => JLabel(i)
+        _ <- if dim.isDefined then
+          label.setPreferredSize(dim.get)
+          label.setHorizontalAlignment(SwingConstants.CENTER)
       yield label

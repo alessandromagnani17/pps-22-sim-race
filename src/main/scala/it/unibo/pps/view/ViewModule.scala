@@ -1,16 +1,16 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Snapshot, Standing, Track, Tyre}
+import it.unibo.pps.model.{Car, Snapshot, Standings, Track, Tyre}
 import it.unibo.pps.view.ViewConstants.*
 
 object ViewModule:
   trait View:
     def updateDisplayedCar(): Unit
-    def updateDisplayedStanding(): Unit
+    def updateDisplayedStandings(): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
-    def displaySimulationPanel(track: Track, standing: Standing): Unit
+    def displaySimulationPanel(track: Track, standings: Standings): Unit
     def displayEndRacePanel(): Unit
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
@@ -25,15 +25,15 @@ object ViewModule:
   trait Component:
     context: Requirements =>
     class ViewImpl extends View:
-      val gui = new Gui(FRAME_WIDTH, FRAME_HEIGHT, context.controller)
+      val gui = new Gui(context.controller)
 
       override def updateDisplayedCar(): Unit =
         gui.updateDisplayedCar()
 
-      override def updateDisplayedStanding(): Unit = gui.updateDisplayedStanding()
+      override def updateDisplayedStandings(): Unit = gui.updateDisplayedStandings()
       
-      override def displaySimulationPanel(track: Track, standing: Standing): Unit =
-        gui.displaySimulationPanel(track, standing)
+      override def displaySimulationPanel(track: Track, standings: Standings): Unit =
+        gui.displaySimulationPanel(track, standings)
 
       override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit =
         gui.simulationPanel.render(cars, actualLap, totalLaps)
