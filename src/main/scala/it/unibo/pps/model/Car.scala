@@ -19,3 +19,9 @@ case class Car(
     val degradation: Double,
     var renderCarParams: RenderCarParams
 )
+
+object Car:
+  def decreaseFuel(s: Double): Double =
+    s * 0.0015
+
+

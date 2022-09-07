@@ -131,12 +131,12 @@ object SimulationEngineModule:
       private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double =
         val onStraight = () =>
           val oldPosition = car.renderCarParams.position
-          car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
+          car.fuel - Car.decreaseFuel(Math.abs(oldPosition._1 - newPosition._1))
         val onTurn = () =>
           val r = computeRadius(car.actualSector.renderParams, car.renderCarParams.position)
           val teta = angleBetweenPoints(car.renderCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
-          car.fuel - l * 0.0015
+          car.fuel - Car.decreaseFuel(l)
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateVelocity(car: Car, time: Int): Int =
