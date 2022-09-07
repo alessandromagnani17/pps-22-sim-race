@@ -248,7 +248,6 @@ object SimulationEngineModule:
           })
       })
       Standings(l1)
-      //Standings(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
     private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
       var l: List[Car] = List.empty
