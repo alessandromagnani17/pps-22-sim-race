@@ -61,8 +61,7 @@ object SimulationEngineModule:
       private var carsArrived = 0
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        
-        finalPositions(context.model.standings._standings.indexOf(car))
+        finalPositions(context.model.standings.standings.indexOf(car))
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()

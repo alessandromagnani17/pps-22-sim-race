@@ -89,7 +89,7 @@ object ControllerModule:
       override def fastestLap: Int = context.model.fastestLap
 
       override def fastestCar: String = context.model.fastestCar
-      
+
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
@@ -113,7 +113,7 @@ object ControllerModule:
         context.view.updateDisplayedStandings()
         context.view.displaySimulationPanel(context.model.track, context.model.standings)
         context.view.updateCars(
-          context.model.standings._standings,
+          context.model.standings.standings,
           context.model.actualLap,
           context.model.totalLaps
         )
@@ -132,7 +132,8 @@ object ControllerModule:
 
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
         val car: Car = context.model.startingPositions(prevIndex)
-        context.model.startingPositions = context.model.startingPositions.updated(prevIndex, context.model.startingPositions(nextIndex))
+        context.model.startingPositions =
+          context.model.startingPositions.updated(prevIndex, context.model.startingPositions(nextIndex))
         context.model.startingPositions = context.model.startingPositions.updated(nextIndex, car)
 
         val position = context.model.startingPositions(prevIndex).renderCarParams.position
@@ -154,9 +155,9 @@ object ControllerModule:
         BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
 
       override def calcCarPosting(car: Car): String =
-        if standings._standings(0).equals(car) then convertTimeToMinutes(car.raceTime)
+        if standings.standings(0).equals(car) then convertTimeToMinutes(car.raceTime)
         else
-          val posting = car.raceTime - standings._standings(0).raceTime
+          val posting = car.raceTime - standings.standings(0).raceTime
           if posting > 0 then s"+${convertTimeToMinutes(posting)}"
           else "+0:00"
 

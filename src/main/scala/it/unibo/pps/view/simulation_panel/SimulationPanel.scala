@@ -2,27 +2,49 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
-import javax.swing.{BorderFactory, BoxLayout, ImageIcon, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
+import java.awt.{
+  BorderLayout,
+  Color,
+  Component,
+  Dimension,
+  FlowLayout,
+  Graphics,
+  GridBagConstraints,
+  GridBagLayout,
+  GridLayout
+}
+import javax.swing.{
+  BorderFactory,
+  BoxLayout,
+  ImageIcon,
+  JButton,
+  JComponent,
+  JLabel,
+  JList,
+  JPanel,
+  JScrollPane,
+  JTable,
+  JTextArea,
+  SwingConstants,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track, TrackBuilder}
+import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
-
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
 import it.unibo.pps.view.Constants.SimulationPanelConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
-
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
@@ -42,8 +64,7 @@ object SimulationPanel:
   def apply(controller: ControllerModule.Controller): SimulationPanel =
     new SimulationPanelImpl(controller)
 
-  private class SimulationPanelImpl(controller: ControllerModule.Controller)
-      extends SimulationPanel:
+  private class SimulationPanelImpl(controller: ControllerModule.Controller) extends SimulationPanel:
     self =>
 
     private lazy val canvas =
@@ -159,7 +180,7 @@ object SimulationPanel:
     override def updateDisplayedStandings(): Unit =
       var index = 0
       standingsMap.foreach(e =>
-        val car = controller.standings._standings(index)
+        val car = controller.standings.standings(index)
         e._2.foreach(f => f.setText(car.name))
         e._3.foreach(f => f.setBackground(car.renderCarParams.color))
         e._4.foreach(f =>
@@ -172,9 +193,7 @@ object SimulationPanel:
         e._5.foreach(f => f.setText(car.tyre.toString))
         e._6.foreach(f => f.setText(controller.calcCarPosting(car)))
         e._7.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
-        e._8.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(car.fastestLap))
-        )
+        e._8.foreach(f => f.setText(controller.convertTimeToMinutes(car.fastestLap)))
         index = index + 1
       )
 
@@ -206,15 +225,15 @@ object SimulationPanel:
 
     private def addToPanel(
         elem: (
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel]
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel]
         ),
         mainPanel: JPanel
     ): Task[Unit] =
@@ -239,26 +258,71 @@ object SimulationPanel:
         _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-        _ <- panel.addAll(List(pos, name, color, paddingLabel, img, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon))
+        _ <- panel.addAll(
+          List(pos, name, color, paddingLabel, img, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon)
+        )
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
 
-    private def createPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
-      var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])]= List.empty
+    private def createPositions(): List[
+      (
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel],
+          Task[JLabel]
+      )
+    ] =
+      var l: List[
+        (
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel],
+            Task[JLabel]
+        )
+      ] = List.empty
       controller.startingPositions.foreach(e => {
-        l = l :+ ((createLabel(
-          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
-          () => Left((controller.standings._standings.indexOf(e) + 1).toString)
-        ),
-        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.name)),
-        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
-        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings._standings.indexOf(e)}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
-        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
+        l = l :+ (
+          (
+            createLabel(
+              Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+              () => Left((controller.standings.standings.indexOf(e) + 1).toString)
+            ),
+            createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.name)),
+            createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
+            createLabel(
+              Option.empty,
+              () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings.standings.indexOf(e)}.png"))
+            ),
+            createLabel(
+              Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+              () => Left(e.tyre.toString)
+            ),
+            createLabel(
+              Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+              () => Left(e.raceTime.toString)
+            ),
+            createLabel(
+              Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+              () => Left(e.lapTime.toString)
+            ),
+            createLabel(
+              Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+              () => Left(e.fastestLap.toString)
+            ),
+            createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))
+          )
+        )
       })
       l
 
