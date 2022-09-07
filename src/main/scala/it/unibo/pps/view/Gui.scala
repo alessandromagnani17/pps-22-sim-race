@@ -9,20 +9,25 @@ import monix.eval.Task
 import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
-import it.unibo.pps.model.{Car, Driver, Standing, Track, Tyre}
+import it.unibo.pps.model.{Car, Driver, Standings, Track, Tyre}
 import it.unibo.pps.view.Constants.GuiConstants.*
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 
-class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
+class Gui(controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-  private val mainPanel = MainPanel(width, height, controller)
-  private val _simulationPanel = SimulationPanel(width, height, controller)
-  private val startingPositionsPanel = StartingPositionsPanel(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT, controller)
-  private val frame = createFrame("sim-race", width, height, WindowConstants.EXIT_ON_CLOSE)
+  private val mainPanel = MainPanel(controller)
+  private val _simulationPanel = SimulationPanel(controller)
+  private val startingPositionsPanel = StartingPositionsPanel(controller)
+  private val frame = createFrame("sim-race", FRAME_WIDTH, FRAME_HEIGHT, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
-    createFrame("starting-positions", STARTING_POS_FRAME_WIDTH, STARTING_POS_FRAME_HEIGHT, WindowConstants.HIDE_ON_CLOSE)
+    createFrame(
+      "starting-positions",
+      STARTING_POS_FRAME_WIDTH,
+      STARTING_POS_FRAME_HEIGHT,
+      WindowConstants.HIDE_ON_CLOSE
+    )
 
   private lazy val p =
     for
@@ -49,17 +54,16 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
 
-  def updateDisplayedStanding(): Unit = _simulationPanel.updateDisplayedStanding()
+  def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
 
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
-  
+
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
-  def displaySimulationPanel(track: Track, standing: Standing): Unit = SwingUtilities.invokeLater { () =>
-    val p = for
+  def displaySimulationPanel(track: Track, standings: Standings): Unit = SwingUtilities.invokeLater { () =>
+    lazy val p = for
       fr <- frame
-      //_ <- _simulationPanel.updateStanding(standing)
       _ <- _simulationPanel.renderTrack(track)
       _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(_simulationPanel)
@@ -69,7 +73,7 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   }
 
   def displayStartingPositionsPanel(): Unit = SwingUtilities.invokeLater { () =>
-    val p = for
+    lazy val p = for
       fr <- startingPositionsFrame
       _ <- fr.getContentPane().add(startingPositionsPanel)
       _ <- fr.revalidate()
@@ -78,8 +82,8 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
   }
 
   def displayEndRacePanel(): Unit = SwingUtilities.invokeLater { () =>
-    val _endRacePanel = EndRacePanel(width, height, controller)
-    val p = for
+    val _endRacePanel = EndRacePanel(controller)
+    lazy val p = for
       fr <- frame
       _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(_endRacePanel)
@@ -87,3 +91,5 @@ class Gui(width: Int, height: Int, controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
+
+  def getInitialList: List[String] = controller.cars.map(_.name)

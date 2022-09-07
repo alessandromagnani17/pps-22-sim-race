@@ -5,15 +5,18 @@ import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.{
   Car,
+  Direction,
   ModelModule,
   Phase,
+  RenderCarParams,
   RenderStraightParams,
   Sector,
   Snapshot,
-  Standing,
+  Standings,
   Straight,
   Turn,
-  Tyre
+  Tyre,
+  RenderParams
 }
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
@@ -26,8 +29,8 @@ import it.unibo.pps.engine.SimulationConstants.*
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
-import it.unibo.pps.model.RenderCarParams
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
+import it.unibo.pps.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
@@ -58,7 +61,8 @@ object SimulationEngineModule:
       private var carsArrived = 0
 
       private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(context.model.standing._standing.find(_._2.equals(car)).get._1)
+        //finalPositions(context.model.standings._standings.find(_._2.equals(car)).get._1)
+        finalPositions(context.model.standings._standings.indexOf(car))
 
       override def decreaseSpeed(): Unit =
         speedManager.decreaseSpeed()
@@ -69,9 +73,9 @@ object SimulationEngineModule:
       override def simulationStep(): Task[Unit] =
         for
           _ <- moveCars()
-          _ <- updateStanding()
+          _ <- updateStandings()
           _ <- updateView()
-          _ <- waitFor(speedManager._simulationSpeed)
+          _ <- waitFor(speedManager.speed)
           _ <- checkEnd()
         yield ()
 
@@ -137,7 +141,7 @@ object SimulationEngineModule:
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          movementsManager.updateVelocityStaight(car, time, car.actualSector.phase(car.renderCarParams.position))
+          movementsManager.updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
         val onTurn = () => movementsManager.updateVelocityTurn(car)
         updateParameter(car.actualSector, onStraight, onTurn)
 
@@ -153,18 +157,18 @@ object SimulationEngineModule:
           case Phase.Deceleration =>
             val p = movementsManager.updatePositionStraightDeceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
-            val i = if car.actualSector.id == 1 then 1 else -1
-            car.actualSector.renderParams match
-              case RenderStraightParams(_, _, _, _, endX) => //TODO - fare un metodo di check
-                val d = (p._1 - endX) * i
-                if d >= 0 then
-                  sectorTimes(car.name) = 3
-                  (endX, p._2)
-                else p
+            checkEndStraight(car, p)
           case Phase.Ended =>
-            sectorTimes(car.name) = 3
+            sectorTimes(car.name) = BASE_SECTORTIME_TURN
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
+
+      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] =
+        car.actualSector.renderParams match
+          case RenderStraightParams(_, _, _, _, endX) =>
+            val d = (p._1 - endX) * car.actualSector.direction
+            if d >= 0 then (endX, p._2)
+            else p
 
       private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
@@ -179,7 +183,7 @@ object SimulationEngineModule:
             p
           case Phase.Ended =>
             car.actualSector = context.model.track.nextSector(car.actualSector)
-            sectorTimes(car.name) = 25
+            sectorTimes(car.name) = BASE_SECTORTIME_STRAIGHT
             checkLap(car, time)
             straightMovement(car, time)
           case Phase.Deceleration => EMPTY_POSITION
@@ -199,15 +203,15 @@ object SimulationEngineModule:
           car.raceTime = time
           carsArrived = carsArrived + 1
 
-    private def updateStanding(): Task[Unit] =
+    private def updateStandings(): Task[Unit] =
       for
         lastSnap <- io(context.model.getLastSnapshot())
-        newStanding = calcNewStanding(lastSnap)
-        _ <- io(context.model.setS(newStanding))
-        _ <- io(context.view.updateDisplayedStanding())
+        newStandings = calcNewStandings(lastSnap)
+        _ <- io(context.model.setS(newStandings))
+        _ <- io(context.view.updateDisplayedStandings())
       yield ()
 
-    private def calcNewStanding(snap: Snapshot): Standing =
+    private def calcNewStandings(snap: Snapshot): Standings =
       val carsByLap = snap.cars.groupBy(_.actualLap).sortWith(_._1 >= _._1)
       var l1: List[Car] = List.empty
 
@@ -243,7 +247,8 @@ object SimulationEngineModule:
                   l1 = l1.concat(sortCars(e._2.filter(_.renderCarParams.position._2 >= 390), _ < _, true))
           })
       })
-      Standing(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
+      Standings(l1)
+      //Standings(Map.from(l1.zipWithIndex.map { case (k, v) => (v, k) }))
 
     private def sortCars(cars: List[Car], f: (Int, Int) => Boolean, isHorizontal: Boolean): List[Car] =
       var l: List[Car] = List.empty

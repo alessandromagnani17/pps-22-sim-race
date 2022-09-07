@@ -7,6 +7,7 @@ import it.unibo.pps.utility.Matcher
 import it.unibo.pps.view.Constants.ParamsSelectionPanelConstants.*
 import monix.eval.{Task, TaskLift}
 import monix.execution.Scheduler.Implicits.global
+import it.unibo.pps.utility.PimpScala.RichJPanel.*
 
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.{
@@ -25,16 +26,16 @@ trait ParamsSelectionPanel extends JPanel:
   def updateParametersPanel(): Unit
 
 object ParamsSelectionPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): ParamsSelectionPanel =
-    ParamsSelectionPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): ParamsSelectionPanel =
+    ParamsSelectionPanelImpl(controller)
 
-  private class ParamsSelectionPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
+  private class ParamsSelectionPanelImpl(controller: ControllerModule.Controller)
       extends ParamsSelectionPanel:
     self =>
     private val matcher = Matcher()
     private val tyresLabel = createLabel(
       "Select tyres: ",
-      Dimension(width, TYRES_LABEL_HEIGHT),
+      Dimension(SELECTION_PANEL_WIDTH, TYRES_LABEL_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
@@ -45,7 +46,7 @@ object ParamsSelectionPanel:
     private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
     private val maxSpeedLabel = createLabel(
       "Select Maximum Speed (km/h):",
-      Dimension(width, MAX_SPEED_HEIGHT),
+      Dimension(SELECTION_PANEL_WIDTH, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
@@ -59,11 +60,11 @@ object ParamsSelectionPanel:
     private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < CAR_MAX_SPEED, _ + _)
     private val starSkillsLabel = createLabel(
       "Select Driver Skills:",
-      Dimension(width, MAX_SPEED_HEIGHT),
+      Dimension(SELECTION_PANEL_WIDTH, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starSkillsButton = createSkillsStarButtons(true)
+    private val starSkillsButton = createSkillsStarButtons()
     private val initialRightPanel = createPanelAndAddAllComponents()
 
     initialRightPanel foreach (e => self.add(e))
@@ -90,7 +91,7 @@ object ParamsSelectionPanel:
         _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.addActionListener(e => {
           if comparator(controller.currentCar.maxSpeed) then
-            controller.setMaxSpeed(function(controller.currentCar.maxSpeed, 10))
+            controller.setMaxSpeed(function(controller.currentCar.maxSpeed, MAX_SPEED_STEP))
             speedSelectedLabel.foreach(e => e.setText(controller.currentCar.maxSpeed.toString))
         })
       yield button
@@ -121,12 +122,10 @@ object ParamsSelectionPanel:
         })
       yield button
 
-    private def createSkillsStarButtons(
-        isAttack: Boolean
-    ): List[Task[JButton]] =
+    private def createSkillsStarButtons(): List[Task[JButton]] =
       val buttons = for
-        index <- 1 until 6
-        button = createStarButton(index.toString)
+        index <- 0 until MAX_SKILL_STARS
+        button = createStarButton((index + 1).toString)
       yield button
       buttons.toList
 
@@ -169,7 +168,7 @@ object ParamsSelectionPanel:
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(width, height))
+        _ <- panel.setPreferredSize(Dimension(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT))
         _ <- panel.setLayout(FlowLayout())
         _ <- panel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK))
         tyresLabel <- tyresLabel
@@ -181,14 +180,7 @@ object ParamsSelectionPanel:
         rightArrowButton <- rightArrowButton
         leftArrowButton <- leftArrowButton
         starSkillsLabel <- starSkillsLabel
-        _ <- panel.add(tyresLabel)
-        _ <- panel.add(hardTyresButton)
-        _ <- panel.add(mediumTyresButton)
-        _ <- panel.add(softTyresButton)
-        _ <- panel.add(maxSpeedLabel)
-        _ <- panel.add(leftArrowButton)
-        _ <- panel.add(speedSelectedLabel)
-        _ <- panel.add(rightArrowButton)
+        _ <- panel.addAll(List(tyresLabel, hardTyresButton, mediumTyresButton, softTyresButton, maxSpeedLabel, leftArrowButton, speedSelectedLabel, rightArrowButton))
         skillsPanel <- JPanel(BorderLayout())
         _ <- skillsPanel.add(starSkillsLabel, BorderLayout.NORTH)
         skillsStarPanel <- JPanel()

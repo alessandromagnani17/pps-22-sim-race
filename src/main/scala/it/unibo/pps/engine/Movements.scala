@@ -2,15 +2,20 @@ package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams}
+import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams, Tyre}
 import it.unibo.pps.utility.monadic.io
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.given
+import it.unibo.pps.model.factor.CarFactorsManager
+
+object Converter:
+  def kmh2ms(vel: Double): Double = vel / 3.6
+  def ms2kmh(vel: Double): Double = vel * 3.6
 
 trait Movements:
-  def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int
+  def updateVelocityStraight(car: Car, time: Int, phase: Phase): Int
   def updateVelocityTurn(car: Car): Int
   def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)]
   def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
@@ -21,12 +26,8 @@ object Movements:
 
   private class MovementsImpl() extends Movements:
 
-    private val engine = Scala2P.createEngine("/prolog/movements.pl")
-
-    override def updateVelocityStaight(car: Car, time: Int, phase: Phase): Int = phase match
-      case Phase.Acceleration =>
-        val v = updateVelocityStraightAccelleration(car, time)
-        if v > car.maxSpeed then car.maxSpeed else v
+    override def updateVelocityStraight(car: Car, time: Int, phase: Phase): Int = phase match
+      case Phase.Acceleration => updateVelocityStraightAcceleration(car, time)
       case Phase.Deceleration => updateVelocityStraightDeceleration(car, time)
       case Phase.Ended => car.actualSpeed
 
@@ -70,7 +71,7 @@ object Movements:
     private def checkTurnBounds(p: (Int, Int), center: (Int, Int), r: Int, direction: Int): (Int, Int) =
       var dx = (p._1 + 12, p._2) euclideanDistance center
       var dy = (p._1, p._2 + 12) euclideanDistance center
-      val rI = 113
+      val rI = 113 //TODO - migliorare
       if dx - r < 0 && direction == 1 then dx = r
       if dy - r < 0 && direction == 1 then dy = r
       if (dx >= r || dy >= r) && direction == 1 then (p._1 - (dx - r), p._2 - (dy - r))
@@ -83,21 +84,15 @@ object Movements:
       else p
 
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, direction: Int): Int =
-      query(s"newPositionStraight($x, ${(velocity * 0.069).toInt}, $time, $acceleration, $direction, Np)", "Np")
+      val v = Converter.kmh2ms(velocity)
+      (x + ((v * time + 0.5 * acceleration * (time ** 2)) / 160) * direction).toInt
 
-    private def updateVelocityStraightAccelleration(car: Car, time: Int): Int =
-      query(
-        s"newVelocityAcceleration(${car.actualSpeed}, ${car.acceleration}, $time, ${car.degradation}, ${car.fuel}, Ns)",
-        "Ns"
-      )
+    private def updateVelocityStraightAcceleration(car: Car, time: Int): Int =
+      val vel = Converter.kmh2ms(car.actualSpeed)
+      var v = (vel + car.acceleration * time).toInt
+      v = Converter.ms2kmh(v).toInt
+      if v > car.maxSpeed then v = car.maxSpeed
+      val d = CarFactorsManager.totalDamage(v, car.fuel, (car.tyre, car.actualLap), car.degradation)
+      v - d
 
-    private def updateVelocityStraightDeceleration(car: Car, time: Int): Int =
-      query(s"newVelocityDeceleration(${car.actualSpeed}, Ns)", "Ns")
-
-    private def query(q: String, output: String): Int =
-      engine(q)
-        .map(Scala2P.extractTermToString(_, output))
-        .toSeq
-        .head
-        .toDouble
-        .toInt
+    private def updateVelocityStraightDeceleration(car: Car, time: Int): Int = (car.actualSpeed * 0.95).toInt
