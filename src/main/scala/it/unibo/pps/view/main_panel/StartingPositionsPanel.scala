@@ -83,14 +83,13 @@ object StartingPositionsPanel:
         prevImage <- positions(prevIndex)._1
         _ <- nextLabel.setText(prevLabelSupport)
         _ <- prevLabel.setText(nextLabelSupport)
-        _ <- nextImage.setIcon(
-          ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(prevLabelSupport)).get._1}.png")
-        )
-        _ <- prevImage.setIcon(
-          ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(nextLabelSupport)).get._1}.png")
-        )
+        _ <- updateImage(nextImage, prevLabelSupport)
+        _ <- updateImage(prevImage, nextLabelSupport)
       yield ()
       p.runSyncUnsafe()
+
+    private def updateImage(label: JLabel, img: String): Task[Unit] =
+      label.setIcon(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(img)).get._1}.png"))
 
     private def createPanel(): Task[JPanel] =
       for
