@@ -83,7 +83,7 @@ Invece, il fattore di limitazione per il tipo di gomme è calcolato in modo più
 - Le gomme *MEDIUM* hanno una prestazione media costante;
 - Le gomme *HARD* sono più limitate nei primi giri per poi alzare le prestazioni nel finale di gara.
 Per realizzare questi comportamenti abbiamo usato le funzioni rappresentate nel seguente grafico:
-!(tyre_chart)[./imgs/tyre_chart.png]
+![tyre_chart](./imgs/tyre_chart.png)
 
 ### View
 ![View](./imgs/cake-view.svg)
