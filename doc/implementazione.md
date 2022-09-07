@@ -147,6 +147,21 @@ Infine, in autonomia, ho sviluppato:
 - Start e stop della simulazione tramite programmazione asincrona.
 
 #### Alessandro Magnani
+In un primo momento, ho sviluppato insieme a Montanari la schermata iniziale del simulatore, nella quale è possibile stabilire i parametri delle diverse macchine selezionabili, la griglia di partenza, il numero di giri della gara e i parametri relativi al singolo pilota. Le classi coinvolte sono le seguenti:
+- `MainPanel`
+- `CarSelectionPanel`
+- `ParamsSelectionPanel`
+- `StartSimulationPanel`
+- `StartingPositionsPanel`
+
+Successivamente, sempre cooperando con Montanari, ho implementato il numero di giri completati e la classifica in real-time con tutte le relative informazioni per ogni vettura all'interno del pannello della simulazione. Le implementazioni apportate coinvolgono le seguenti classi:
+- `SimulationPanel`
+- `Standings`
+- `SimulationEngineModule`
+
+Infine, sempre in collaborazione con Montanari, mi sono occupato del report finale della gara.
+
+
 
 #### Andrea Matteucci
 
