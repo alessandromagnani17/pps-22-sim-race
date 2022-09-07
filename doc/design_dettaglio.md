@@ -78,6 +78,7 @@ Durante la simulazione la velocità di una singola macchina è influenzata da al
 I fattori di limitazione per il carburante e il degrado sono calcolati come segue: 
 - Fuel: `actual fuel / total fuel`
 - Degradation: `1 - degradation`
+
 Invece, il fattore di limitazione per il tipo di gomme è calcolato in modo più complesso per tenere conto delle dinamiche:
 - Le gomme *SOFT* hanno una prestazione maggiore nei primi giri per poi essere molto limitate nel finale;
 - Le gomme *MEDIUM* hanno una prestazione media costante;
