@@ -21,17 +21,17 @@ Di seguito sono riportati i requisiti visti nell'ottica di cosa può fare l'uten
 Di seguito sono riportati i requisiti individuati durante lo studio del dominio e le regole scelte per la sua rappresentazione.
 
 
-- Il numero di vetture è fissato a 4 (`nCars`);
-- Il numero di circuiti è fissato a 1 (`nCircuits`);
-- Il numero di giri è impostabile nella schermata iniziale (`nLaps`), potranno variare da un minimo di 1 ad un massimo di 30;
+- Il numero di vetture è fissato a 4;
+- Il numero di circuiti è fissato a 1;
+- Il numero di giri è impostabile nella schermata iniziale, potranno variare da un minimo di 1 ad un massimo di 30;
 - Ogni vettura sarà caratterizzata da: 
-    - Gomme (`carTyres`), suddivise in:
-        - Tipologia gomme (`carTyres.type`);
-        - Degrado delle gomme durante la gara (`carTyres.degradation`);
-    - Velocità della vettura (`carVelocity`), suddivisa in:
-        - Velocità massima (`carVelocity.max`);
-        - Velocità corrente (`carVelocity.current`);
-    - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`)
+    - Gomme, suddivise in:
+        - Tipologia gomme;
+        - Degrado delle gomme durante la gara;
+    - Velocità della vettura, suddivisa in:
+        - Velocità massima;
+        - Velocità corrente;
+    - Abilità di guida del pilota all'interno della vettura;
        
 - L'usura delle gomme di ogni vettura aumenterà di giro in giro considerando la tipologia di gomma usata;
 - La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima, il carburante e l'usura delle gomme.
