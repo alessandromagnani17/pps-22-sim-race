@@ -23,7 +23,7 @@ Di seguito sono riportati i requisiti individuati durante lo studio del dominio 
 
 - Il numero di vetture è fissato a 4 (`nCars`);
 - Il numero di circuiti è fissato a 1 (`nCircuits`);
-- Il numero di giri è impostabile nella schermata iniziale (`nLaps`);
+- Il numero di giri è impostabile nella schermata iniziale (`nLaps`), potranno variare da un minimo di 1 ad un massimo di 30;
 - Ogni vettura sarà caratterizzata da: 
     - Gomme (`carTyres`), suddivise in:
         - Tipologia gomme (`carTyres.type`);
