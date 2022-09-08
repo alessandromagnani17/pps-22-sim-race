@@ -13,6 +13,7 @@ import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
 import scala.collection.mutable.Map
 import it.unibo.pps.view.Constants.EndRacePanelConstants.*
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
 trait EndRacePanel extends JPanel
 
@@ -22,8 +23,6 @@ object EndRacePanel:
 
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
-
-    import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()

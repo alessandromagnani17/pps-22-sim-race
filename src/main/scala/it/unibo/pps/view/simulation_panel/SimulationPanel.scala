@@ -251,22 +251,22 @@ object SimulationPanel:
       p.runAsyncAndForget
 
     private def createPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
-      var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])]= List.empty
-      controller.startingPositions.foreach(e => {
-        l = l :+ ((createLabel(
+      for
+        car <- controller.startingPositions
+      yield (
+        createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
-          () => Left((controller.standings._standings.indexOf(e) + 1).toString)
+          () => Left((controller.startingPositions.indexOf(car) + 1).toString)
         ),
-        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.name)),
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.name)),
         createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
-        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.standings._standings.indexOf(e)}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(e.fastestLap.toString)),
-        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))))
-      })
-      l
+        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.startingPositions.indexOf(car)}.png"))),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.fastestLap.toString)),
+        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))
+      )
 
     private def createLabel(dim: Option[Dimension], f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
