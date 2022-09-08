@@ -21,7 +21,7 @@ import it.unibo.pps.model.{
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
-
+import scala.{Tuple2 => Point2D}
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -34,7 +34,6 @@ import it.unibo.pps.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-
 import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
@@ -69,7 +68,7 @@ object SimulationEngineModule:
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
 
-      private def getFinalPositions(car: Car): (Int, Int) =
+      private def getFinalPositions(car: Car): Point2D[Int, Int] =
         finalPositions(context.model.standings.standings.indexOf(car))
 
       override def decreaseSpeed: Unit =
@@ -136,7 +135,7 @@ object SimulationEngineModule:
         case s: Straight => onStraight()
         case t: Turn => onTurn()
 
-      private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double =
+      private def updateFuel(car: Car, newPosition: Point2D[Int, Int]): Double =
         val onStraight = () =>
           val oldPosition = car.renderCarParams.position
           car.fuel - Car.decreaseFuel(Math.abs(oldPosition._1 - newPosition._1))
@@ -158,10 +157,10 @@ object SimulationEngineModule:
             .runSyncUnsafe()
         updateParameter(car.actualSector, onStraight, onTurn)
 
-      private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] =
+      private def updatePosition(car: Car, time: Int): Point2D[Int, Int] =
         updateParameter(car.actualSector, () => straightMovement(car, time), () => turnMovement(car, time))
 
-      private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
+      private def straightMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.updatePositionStraightAcceleration(car, sectorTimes(car.name))
@@ -176,14 +175,14 @@ object SimulationEngineModule:
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
 
-      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] =
+      private def checkEndStraight(car: Car, p: Point2D[Int, Int]): Point2D[Int, Int] =
         car.actualSector.renderParams match
           case RenderStraightParams(_, _, _, _, endX) =>
             val d = (p._1 - endX) * car.actualSector.direction
             if d >= 0 then (endX, p._2)
             else p
 
-      private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
+      private def turnMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.updatePositionTurn(
