@@ -194,7 +194,7 @@ object ControllerModule:
         context.model.createStandings()
         context.model.initSnapshot()
         context.view.updateDisplayedStandings()
-        context.view.displaySimulationPanel(context.model.track, context.model.standings)
+        context.view.displaySimulationPanel(context.model.track)
         context.view.updateCars(
           context.model.standings._standings,
           context.model.actualLap,
