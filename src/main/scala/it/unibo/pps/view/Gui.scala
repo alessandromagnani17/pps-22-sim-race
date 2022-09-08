@@ -66,7 +66,7 @@ class Gui(controller: ControllerModule.Controller):
    */
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
 
-  /** Method that sets enabled the final report button */
+  /** Method that sets enabled the final report button that if pressed, display the end race panel */
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
