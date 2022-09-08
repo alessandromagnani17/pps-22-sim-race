@@ -23,6 +23,8 @@ import java.awt.{
 import javax.swing.*
 
 trait ParamsSelectionPanel extends JPanel:
+
+  /**  Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit
 
 object ParamsSelectionPanel:
