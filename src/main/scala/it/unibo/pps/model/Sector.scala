@@ -3,7 +3,7 @@ package it.unibo.pps.model
 import scala.{Tuple2 => Point2d}
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.model.RenderTurnParams
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
 enum Direction:
   case Forward

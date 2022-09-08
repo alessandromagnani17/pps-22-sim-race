@@ -6,7 +6,7 @@ import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import scala.Tuple2 as Point2d
 import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
 class Environment(val w: Int, val h: Int) extends JPanel:
 

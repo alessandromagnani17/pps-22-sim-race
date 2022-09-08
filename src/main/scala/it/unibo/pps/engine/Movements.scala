@@ -7,7 +7,7 @@ import it.unibo.pps.utility.monadic.io
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.model.factor.CarFactorsManager
 import scala.{Tuple2 => Point2D}
 

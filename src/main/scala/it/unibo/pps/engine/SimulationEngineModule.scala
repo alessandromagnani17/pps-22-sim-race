@@ -30,7 +30,7 @@ import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
@@ -67,9 +67,6 @@ object SimulationEngineModule:
       private val sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
-
-      private def getFinalPositions(car: Car): Point2D[Int, Int] =
-        finalPositions(context.model.standings.standings.indexOf(car))
 
       override def decreaseSpeed: Unit =
         speedManager.decreaseSpeed
@@ -199,6 +196,9 @@ object SimulationEngineModule:
             checkLap(car, time)
             straightMovement(car, time)
           case Phase.Deceleration => EMPTY_POSITION
+
+      private def getFinalPositions(car: Car): Point2D[Int, Int] =
+        finalPositions(context.model.standings.standings.indexOf(car))
 
       private def checkLap(car: Car, time: Int): Unit =
         if car.actualSector.id == 1 then

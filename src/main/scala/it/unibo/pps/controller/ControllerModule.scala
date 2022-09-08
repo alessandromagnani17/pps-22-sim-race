@@ -7,7 +7,6 @@ import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import monix.eval.Task
-
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map

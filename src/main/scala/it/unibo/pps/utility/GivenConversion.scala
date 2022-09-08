@@ -1,6 +1,6 @@
 package it.unibo.pps.utility
 
-import it.unibo.pps.model.{Car, Snapshot}
+import it.unibo.pps.model.{Car, Direction, Snapshot}
 import alice.tuprolog.{Term, Theory}
 import monix.eval.Task
 
@@ -43,3 +43,12 @@ object GivenConversion:
     given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
     given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
     given Conversion[String, Int] = Integer.parseInt(_)
+
+  object DirectionGivenConversion:
+    given Conversion[Direction, Int] = _ match
+      case Direction.Forward => 1
+      case Direction.Backward => -1
+
+    given Conversion[String, Direction] = _.toInt match
+      case d if d == 1 => Direction.Forward
+      case d if d == -1 => Direction.Backward

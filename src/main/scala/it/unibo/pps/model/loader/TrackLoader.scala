@@ -10,7 +10,7 @@ import it.unibo.pps.model.{
   Turn
 }
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
 class TrackLoader(theory: String) extends Loader:
 
