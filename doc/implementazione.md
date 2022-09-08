@@ -11,16 +11,16 @@ Questo costrutto è basato sulle monadi e risulta molto utile per aumentare la l
 ```scala
 override def simulationStep(): Task[Unit] =
   for
-    _ <- moveCars()
-    _ <- updateStanding()
-    _ <- updateView()
+    _ <- moveCars
+    _ <- updateStanding
+    _ <- updateView
     _ <- waitFor(speedManager.simulationSpeed)
-    _ <- checkEnd()
+    _ <- checkEnd
   yield ()
 ```
 
 #### Pattern matching
-Questo meccanismo permette di eseguire un match fra un valore e un dato pattern, ha una sintassi particolarmente idiomatica ed è stato usato principlamente in due accezioni:
+Questo meccanismo permette di eseguire un match fra un valore e un dato pattern, ha una sintassi particolarmente idiomatica ed è stato usato principalmente in due accezioni:
 1. Nel modo classico, come fosse una sorta di switch di Java più potente. Ad esempio:
 ```scala
 val alpha = direction match
@@ -57,7 +57,7 @@ Questo meccanismo è utilizzato per la gestione delle eccezioni, un valore di ti
 
 ```scala
 context.simulationEngine
-    .simulationStep()
+    .simulationStep
     .loopForever
     .runAsync {
       case Left(exp) => global.reportFailure(exp)
@@ -77,7 +77,7 @@ La programmazione asincrona è stata sfruttata per avere un'interfaccia responsi
 ```scala
 override def notifyStart(): Unit = stopFuture = Some(
     context.simulationEngine
-      .simulationStep()
+      .simulationStep
       .loopForever
       .runAsync {
         case Left(exp) => global.reportFailure(exp)
@@ -118,13 +118,10 @@ L'ultimo passo necessario è la chiamata effettiva al metodo per registrare la c
 ```
 
 ### Programmazione logica
-Il paradigma di programmazione logico è stato utilizzato, all'interno di questo progetto, per due scopi diversi:
-1. Avere una sorta di database lightweight per fornire all'applicativo la pista e le vetture. Dunque se si volesse implementare una nuova pista basterebbe: implementare nella classe `TrackBuilder` il metodo di caricamento di tale pista e fornire un nuovo file prolog contenente le regole che descrivono i suoi settori, come ad esempio:
+Il paradigma di programmazione logico è stato utilizzato, all'interno di questo progetto, per avere una sorta di database lightweight per fornire all'applicativo la pista e le vetture. Dunque se si volesse implementare una nuova pista basterebbe fornire un nuovo file prolog contenente le regole che descrivono i suoi settori, ad esempio:
   ```prolog
   straight(id(1), startPointE(181, 113), endPointE(725, 113), startPointI(181, 170), endPointI(725, 170)).
   ```
-  
-2. Effettuare i calcoli per i movimenti delle macchine nei rettilinei.
 
 
 ### Sezioni personali
