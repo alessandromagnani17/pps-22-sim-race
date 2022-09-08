@@ -10,7 +10,7 @@ object ViewModule:
     def updateDisplayedStandings(): Unit
     def displayStartingPositionsPanel(): Unit
     def updateParametersPanel(): Unit
-    def displaySimulationPanel(track: Track, standings: Standings): Unit
+    def displaySimulationPanel(track: Track): Unit
     def displayEndRacePanel(): Unit
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
@@ -32,8 +32,8 @@ object ViewModule:
 
       override def updateDisplayedStandings(): Unit = gui.updateDisplayedStandings()
 
-      override def displaySimulationPanel(track: Track, standings: Standings): Unit =
-        gui.displaySimulationPanel(track, standings)
+      override def displaySimulationPanel(track: Track): Unit =
+        gui.displaySimulationPanel(track)
 
       override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit =
         gui.simulationPanel.render(cars, actualLap, totalLaps)
