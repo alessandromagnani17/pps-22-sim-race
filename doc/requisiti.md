@@ -1,7 +1,7 @@
 ## Requisiti
 
 ### Requisiti Business
-L'obiettivo del progetto è quello di sviluppare un simulatore di gare di Formula 1. Il simulatore comprenderà un'interfaccia grafica che permetterà all'utente di interagire con il sistema. L'applicativo permetterà di modificare alcuni parametri inerenti alla gara, nello specifico:
+L'obiettivo del progetto è quello di sviluppare un simulatore di gare di Formula1. Il simulatore comprenderà un'interfaccia grafica che permetterà all'utente di interagire con il sistema. L'applicativo permetterà di modificare alcuni parametri inerenti la gara, nello specifico:
 - Tipo di gomme usate;
 - Velocità massima della vettura;
 - Indice di abilità di un dato pilota.
@@ -14,7 +14,8 @@ Di seguito sono riportati i requisiti visti nell'ottica di cosa può fare l'uten
 - L'utente potrà visualizzare lo stato della gara mediante un'interfaccia 2D con vista dall'alto;
 - L'utente potrà visualizzare la classifica real-time della gara;
 - L'utente potrà visualizzare vari grafici che riassumono l'andamento della gara;
-- L'utente potrà modificare la velocità della simulazione.
+- L'utente potrà modificare la velocità della simulazione;
+- L'utente potrà visualizzare la classifica con alcuni dati riassuntivi al termine della gara.
 
 ### Requisiti Funzionali
 Di seguito sono riportati i requisiti individuati durante lo studio del dominio e le regole scelte per la sua rappresentazione.
@@ -33,7 +34,7 @@ Di seguito sono riportati i requisiti individuati durante lo studio del dominio 
     - Abilità di guida del pilota all'interno della vettura (`carDriverSkill`)
        
 - L'usura delle gomme di ogni vettura aumenterà di giro in giro considerando la tipologia di gomma usata;
-- La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima, il carburante e l'usura delle gomme;
+- La velocità corrente di ogni vettura sarà calcolata considerando la velocità massima, il carburante e l'usura delle gomme.
 
 
 
