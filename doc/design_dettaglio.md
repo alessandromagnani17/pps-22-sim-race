@@ -113,6 +113,11 @@ Data la complessità delle varie schermate la gui è stata divisa, sfruttando la
 ### Controller
 ![Controller](./imgs/cake-controller.svg)
 
+Il modulo `ControllerModule` funge da mediatore fra i moduli `ViewModule` e `ModelModule`. Oltre a fornire un accesso per la view al model implementa anche alcune logiche di funzionamento, come ad esempio:
+- Avvio e stop della simulazione;
+- Inversione dell'ordine delle macchine in partenza;
+- Calcolo dei tempi di distacco fra le varie macchine.
+
 ### Engine
 ![Engine](./imgs/cake-engine.svg)
 
