@@ -48,6 +48,6 @@ I vari strumenti di supporto al lavoro utilizzati sono:
 - *Trello*, per la divisione dei task;
 - *ScalaTest*, per la scrittura dei test;
 - *ScalaFMT*, per la formattazione del codice;
-- *GitHub Actions*, per la continuos integration;
+- *GitHub Actions*, per la continuous integration;
   - É stato definito un file YAML per descrivere la pipeline: ad ogni `push` o `pull` sul branch `main` o `develop` l'applicativo viene compilato e testato su diversi sistemi operativi (Windows, Ubuntu e macOS) con JVM 11.
 - *Swing*, per la realizzazione dell'interfaccia grafica.
