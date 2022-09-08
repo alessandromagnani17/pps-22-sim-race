@@ -112,16 +112,16 @@ object SimulationPanel:
         "Start",
         e =>
           e.getSource.asInstanceOf[JButton].setEnabled(false)
-          controller.notifyStart()
+          controller.notifyStart
       )
       stopButton <- createButton(
         "Stop",
         e =>
           startButton.setEnabled(true)
-          controller.notifyStop()
+          controller.notifyStop
       )
-      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
-      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
+      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed)
+      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed)
       reportButton <- reportButton
       s <- standings
       buttonsPanel = new JPanel()

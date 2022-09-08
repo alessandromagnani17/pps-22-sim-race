@@ -15,10 +15,18 @@ import scala.math.BigDecimal
 
 object ControllerModule:
   trait Controller:
-    def notifyStart(): Unit
-    def notifyStop(): Unit
-    def notifyDecreaseSpeed(): Unit
-    def notifyIncreaseSpeed(): Unit
+
+    /** Starts the simulation */
+    def notifyStart: Unit
+
+    /** Stops the simulation */
+    def notifyStop: Unit
+
+    /** Decreases simulation speed */
+    def notifyDecreaseSpeed: Unit
+
+    /** Increases simulation speed */
+    def notifyIncreaseSpeed: Unit
     def startingPositions: List[Car]
     def currentCar: Car
     def currentCarIndex: Int
@@ -56,7 +64,7 @@ object ControllerModule:
 
       private var stopFuture: Option[Cancelable] = None
 
-      override def notifyStart(): Unit = stopFuture = Some(
+      override def notifyStart: Unit = stopFuture = Some(
         context.simulationEngine.simulationStep.loopForever
           .runAsync {
             case Left(exp) => global.reportFailure(exp)
@@ -64,14 +72,14 @@ object ControllerModule:
           }
       )
 
-      override def notifyStop(): Unit =
+      override def notifyStop: Unit =
         stopFuture --> (_.cancel())
         stopFuture = None
 
-      override def notifyDecreaseSpeed(): Unit =
+      override def notifyDecreaseSpeed: Unit =
         context.simulationEngine.decreaseSpeed
 
-      override def notifyIncreaseSpeed(): Unit =
+      override def notifyIncreaseSpeed: Unit =
         context.simulationEngine.increaseSpeed
 
       override def startingPositions: List[Car] = context.model.startingPositions
