@@ -18,6 +18,6 @@ object Tyre:
     * @param tyreType
     *   Type of the tyre
     * @param lap
-    *   The current lap
+    *   Current lap
     */
   def degradation(tyreType: Tyre, lap: Double): Double = Math.exp((-1 / tyreType) * (lap / 10))
