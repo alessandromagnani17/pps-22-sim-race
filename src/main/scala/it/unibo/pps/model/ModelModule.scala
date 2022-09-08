@@ -15,7 +15,11 @@ import it.unibo.pps.model.loader.{CarsLoader, TrackLoader}
 
 object ModelModule:
   trait Model:
+
+    /** The current track */
     def track: Track
+
+    /** The initial cars */
     def cars: List[Car]
     def startingPositions: List[Car]
     def currentCarIndex: Int
@@ -25,7 +29,9 @@ object ModelModule:
     def fastestLap: Int
     def fastestCar: String
     def getLastSnapshot(): Snapshot
-    def initSnapshot(): Unit
+
+    /** Initializes simulation history */
+    def initSnapshot: Unit
     def currentCarIndex_=(index: Int): Unit
     def startingPositions_=(startingPos: List[Car]): Unit
     def actualLap_=(lap: Int): Unit
@@ -34,7 +40,21 @@ object ModelModule:
     def fastestCar_=(carName: String): Unit
     def setS(standings: Standings): Unit
     def createStandings(): Unit
+
+    /** Adds one snapshot to the history
+      * @param snapshot
+      *   Simulation snapshot
+      */
     def addSnapshot(snapshot: Snapshot): Unit
+
+    /** Registers the given callbacks to the history
+      * @param onNext
+      *   Callback to be executed when history is updated
+      * @param onError
+      *   Callback to be executed when an error occurs
+      * @params
+      *   onComplete Callback to be executed when the stream is closed
+      */
     def registerCallbackHistory(
         onNext: List[Snapshot] => Future[Ack],
         onError: Throwable => Unit,
@@ -88,7 +108,7 @@ object ModelModule:
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
       override def setS(standings: Standings): Unit = _standings = standings
 
-      override def initSnapshot(): Unit =
+      override def initSnapshot: Unit =
         addSnapshot(Snapshot(_cars, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap
