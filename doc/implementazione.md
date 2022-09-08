@@ -87,13 +87,13 @@ override def notifyStart(): Unit = stopFuture = Some(
 ```
 
 ### Programmazione reattiva
-La programmazione reattiva è stata sfruttata per implementare l'aggiornamento automatico dei grafici, difatti, ogni volta che uno `snapshot` viene aggiunto alla `history` della simulazione viene, in automatico, richiamato il metodo di aggiornamento dei vari grafici. Anche questa parte è stata realizzata sfruttando le API di Monix. Nella `ModelModule`, che contiene la storia della simulazione, è necessario aggiungere tre elementi:
+La programmazione reattiva è stata sfruttata per implementare l'aggiornamento automatico dei grafici, difatti, ogni volta che uno `snapshot` viene aggiunto alla `history` della simulazione viene, in automatico, richiamato il metodo di aggiornamento dei vari grafici. Anche questa parte è stata realizzata sfruttando le API di Monix. Nel `ModelModule`, che contiene la storia della simulazione, è necessario aggiungere tre elementi:
 1. Un wrapper della `history` che rappresenta l'entità da osservare;
 ```scala
 private var history: List[Snapshot] = List.empty
 private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
 ```
-2. Un metodo per registrare le callback su tale subject;
+2. Un metodo per sottoscrivere le callback su questo subject;
 ```scala
 override def registerCallbackHistory(onNext: List[Snapshot] => Future[Ack], onError: Throwable => Unit, onComplete: () => Unit): Cancelable =
   historySubject.subscribe(onNext, onError, onComplete)
@@ -128,14 +128,15 @@ Il paradigma di programmazione logico è stato utilizzato, all'interno di questo
 
 #### Davide Domini
 Nello sviluppo del progetto, inizialmente, mi sono occupato insieme a Matteucci della realizzazione della schermata per visualizzare l'andamento della simulazione. Questo comprende lo sviluppo delle classi:
-- `SimulationPanel`
-- `Environment`
-- `TrackBuilder`
-- `CarsLoader`
+- `SimulationPanel`;
+- `Environment`;
+- `TrackBuilder`;
+- `CarsLoader`.
 
 Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEngine` legata al movimento delle macchine durante la simulazione. Questo comprende le classi:
-- `SimulationEngineModule`
-- `Movements`
+- `SimulationEngineModule`;
+- `Movements`, per questa classe ho collaborato anche con Montanari per la gestione delle curve.
+
 
 Infine, in autonomia, ho sviluppato:
 - Gestione dei grafici, classe `LineChart` e aggiornamento automatico tramite programmazione reattiva;
