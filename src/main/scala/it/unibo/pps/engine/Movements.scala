@@ -15,10 +15,45 @@ object Converter:
   def ms2kmh(vel: Double): Double = vel * 3.6
 
 trait Movements:
+
+  /** Computes new straight velocity
+    * @param car
+    *   The car to be updated to
+    * @param time
+    *   Virtual time
+    * @param phase
+    *   Represents the different phases of the sector
+    */
   def updateVelocityStraight(car: Car, time: Int, phase: Phase): Task[Int]
+
+  /** Computes new turn velocity
+    * @param car
+    *   The car to be updated to
+    */
   def updateVelocityTurn(car: Car): Task[Int]
+
+  /** Computes the new position in the straight when the phase is acceleration
+    * @param car
+    *   The car to be updated to
+    * @param time
+    *   Virtual time
+    */
   def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)]
+
+  /** Computes the new position in the straight when the phase is deceleration
+    * @param car
+    *   The car to be updated to
+    * @param time
+    *   Virtual time
+    */
   def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
+
+  /** Computes the new turn position
+    * @param car
+    *   The car to be updated to
+    * @param time
+    *   Virtual time
+    */
   def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int]
 
 object Movements:
