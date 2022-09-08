@@ -21,7 +21,7 @@ case class Car(
 )
 
 object Car:
+
+  /** Computes the fuel consumption for a given distance */
   def decreaseFuel(s: Double): Double =
     s * 0.0015
-
-
