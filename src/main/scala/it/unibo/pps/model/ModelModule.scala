@@ -70,8 +70,6 @@ object ModelModule:
       private val _track = TrackLoader("/prolog/basetrack.pl").load
       private var _cars: List[Car] = CarsLoader("/prolog/cars.pl", track).load
 
-      /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
-
       //private var _standings: Standings = Standings(Map.from(cars.zipWithIndex.map { case (k, v) => (v, k) }))
       private var _standings: Standings = Standings(_cars)
       private var history: List[Snapshot] = List.empty

@@ -48,6 +48,8 @@ object ControllerModule:
     def updateParametersPanel(): Unit
     def updateDisplayedCar(): Unit
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+
+    /** Registers necessary callbacks for reactive charts */
     def registerReactiveChartCallback(): Unit
     def convertTimeToMinutes(time: Int): String
     def calcCarPosting(car: Car): String
