@@ -87,7 +87,7 @@ override def notifyStart(): Unit = stopFuture = Some(
 ```
 
 ### Programmazione reattiva
-La programmazione reattiva è stata sfruttata per implementare l'aggiornamento automatico i grafici, difatti, ogni volta che uno `snapshot` viene aggiunto alla `history` della simulazione viene, in automatico, richiamato il metodo di aggiornamento dei vari grafici. Anche questa parte è stata realizzata sfruttando le API di Monix. Nella `ModelModule`, che contiene la storia della simulazione, è necessario aggiungere tre elementi:
+La programmazione reattiva è stata sfruttata per implementare l'aggiornamento automatico dei grafici, difatti, ogni volta che uno `snapshot` viene aggiunto alla `history` della simulazione viene, in automatico, richiamato il metodo di aggiornamento dei vari grafici. Anche questa parte è stata realizzata sfruttando le API di Monix. Nella `ModelModule`, che contiene la storia della simulazione, è necessario aggiungere tre elementi:
 1. Un wrapper della `history` che rappresenta l'entità da osservare;
 ```scala
 private var history: List[Snapshot] = List.empty
