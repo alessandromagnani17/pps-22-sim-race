@@ -32,9 +32,15 @@ trait SimulationPanel extends JPanel:
 
   /** Renders the track, it must be used when showing simulation panel for first time */
   def renderTrack(track: Track): Unit
+
+  /** Method that sets enabled the final report button */
   def setFinalReportEnabled(): Unit
+
+  /**  Method that updates the displayed standings */
   def updateDisplayedStandings(): Unit
   def updateCharts(snapshot: Snapshot): Unit
+
+  /**  Method that updates the fastest lap icon */
   def updateFastestLapIcon(carName: String): Unit
 
 object SimulationPanel:
