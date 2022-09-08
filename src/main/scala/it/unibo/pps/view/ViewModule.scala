@@ -6,12 +6,26 @@ import it.unibo.pps.view.ViewConstants.*
 
 object ViewModule:
   trait View:
+
+    /**  Method that updates the car displayed */
     def updateDisplayedCar(): Unit
+
+    /**  Method that updates the displayed standings */
     def updateDisplayedStandings(): Unit
+
+    /**  Method that displays the StartingPositionsPanel */
     def displayStartingPositionsPanel(): Unit
-    def updateParametersPanel(): Unit
+
+    /**  Method that displays the SimulationPanel */
     def displaySimulationPanel(track: Track, standings: Standings): Unit
+    
+    /**  Method that displays the EndRacePanel */
     def displayEndRacePanel(): Unit
+
+    /**  Method that updates the displayed parameters when the car displayed is changed */
+    def updateParametersPanel(): Unit
+    
+    
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
     def setFinalReportEnabled(): Unit
