@@ -14,6 +14,8 @@ import java.util
 import javax.swing.*
 
 trait CarSelectionPanel extends JPanel:
+
+  /**  Method that updates the car displayed */
   def updateDisplayedCar(): Unit
 
 object CarSelectionPanel:
