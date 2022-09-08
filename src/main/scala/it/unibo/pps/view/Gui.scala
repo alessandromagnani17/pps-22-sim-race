@@ -37,7 +37,8 @@ class Gui(controller: ControllerModule.Controller):
     yield ()
   p.runSyncUnsafe()
 
-  def simulationPanel = _simulationPanel
+  /** Returns the simulation panel */
+  def simulationPanel: SimulationPanel = _simulationPanel
 
   private def createFrame(title: String, width: Int, height: Int, closeOperation: Int): Task[JFrame] =
     for
@@ -49,19 +50,31 @@ class Gui(controller: ControllerModule.Controller):
       _ <- fr.setVisible(true)
     yield fr
 
+  /** Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit = mainPanel.updateParametersPanel()
 
+  /**  Method that updates the car displayed */
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
 
+  /**  Method that updates the displayed standings */
   def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
 
+  /**  Method that updates the fastest lap icon
+   * @param carName
+   *   The name of the car that has made the fastest lap
+   */
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
 
+  /** Method that sets enabled the final report button */
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
-  def displaySimulationPanel(track: Track, standings: Standings): Unit = SwingUtilities.invokeLater { () =>
+  /** Method that displays the simulation panel
+   *   @param track
+   *   The track to be rendered before the display of the simulation panel
+   */
+  def displaySimulationPanel(track: Track): Unit = SwingUtilities.invokeLater { () =>
     lazy val p = for
       fr <- frame
       _ <- _simulationPanel.renderTrack(track)
@@ -72,6 +85,7 @@ class Gui(controller: ControllerModule.Controller):
     p.runSyncUnsafe()
   }
 
+  /** Method that displays the starting positions panel */
   def displayStartingPositionsPanel(): Unit = SwingUtilities.invokeLater { () =>
     lazy val p = for
       fr <- startingPositionsFrame
@@ -81,6 +95,7 @@ class Gui(controller: ControllerModule.Controller):
     p.runSyncUnsafe()
   }
 
+  /** Method that displays the end race panel */
   def displayEndRacePanel(): Unit = SwingUtilities.invokeLater { () =>
     val _endRacePanel = EndRacePanel(controller)
     lazy val p = for
@@ -91,5 +106,6 @@ class Gui(controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
-
+  
+  /** Returns the initial list of cars */
   def getInitialList: List[String] = controller.cars.map(_.name)
