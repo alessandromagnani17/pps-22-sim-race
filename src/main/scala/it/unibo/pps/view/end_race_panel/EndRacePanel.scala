@@ -62,7 +62,7 @@ object EndRacePanel:
         tyre <- JLabel(car.tyre.toString)
         degradation <- JLabel(s"${(car.degradation * 100).toInt}%")
         fuel <- JLabel(s"${car.fuel.toInt} / ${MAX_FUEL}L")
-        time <- JLabel(controller.calcCarPosting(car))
+        time <- JLabel(controller.calcCarGap(car))
         fastestLap <- JLabel(controller.convertTimeToMinutes(car.fastestLap))
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         paddingLabel <- JLabel()
