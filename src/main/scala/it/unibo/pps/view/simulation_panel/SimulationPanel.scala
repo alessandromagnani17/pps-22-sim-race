@@ -56,6 +56,11 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
   def setFinalReportEnabled(): Unit
   def updateDisplayedStandings(): Unit
+
+  /** Updates all the charts
+    * @param snapshot
+    *   Last snapshot of the simulation
+    */
   def updateCharts(snapshot: Snapshot): Unit
   def updateFastestLapIcon(carName: String): Unit
 
