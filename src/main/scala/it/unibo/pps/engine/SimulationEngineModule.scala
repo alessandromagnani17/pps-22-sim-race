@@ -73,10 +73,10 @@ object SimulationEngineModule:
         finalPositions(context.model.standings.standings.indexOf(car))
 
       override def decreaseSpeed: Unit =
-        speedManager.decreaseSpeed()
+        speedManager.decreaseSpeed
 
       override def increaseSpeed: Unit =
-        speedManager.increaseSpeed()
+        speedManager.increaseSpeed
 
       override def simulationStep: Task[Unit] =
         for
