@@ -9,6 +9,7 @@ import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.given
 import it.unibo.pps.model.factor.CarFactorsManager
+import scala.{Tuple2 => Point2D}
 
 object Converter:
   def kmh2ms(vel: Double): Double = vel / 3.6
@@ -38,7 +39,7 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)]
+  def updatePositionStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
 
   /** Computes the new position in the straight when the phase is deceleration
     * @param car
@@ -46,7 +47,7 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]]
+  def updatePositionStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
 
   /** Computes the new turn position
     * @param car
@@ -54,7 +55,7 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int]
+  def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]]
 
 object Movements:
   def apply(): Movements = new MovementsImpl()
@@ -69,7 +70,7 @@ object Movements:
     override def updateVelocityTurn(car: Car): Task[Int] =
       io((car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt)
 
-    override def updatePositionStraightAcceleration(car: Car, time: Int): Task[(Int, Int)] =
+    override def updatePositionStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
@@ -78,36 +79,40 @@ object Movements:
         newP <- newPositionStraight(x, velocity, time, acceleration, direction)
       yield (newP, car.renderCarParams.position._2)
 
-    override def updatePositionStraightDeceleration(car: Car, time: Int): Task[Tuple2[Int, Int]] =
+    override def updatePositionStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
         newP <- newPositionStraight(x, car.actualSpeed, time, 1, direction)
       yield (newP, car.renderCarParams.position._2)
 
-    override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
-      case RenderTurnParams(center, pExternal, pInternal, _, _, endX) =>
-        for
-          x <- io(car.renderCarParams.position._1)
-          teta_t <- io(0.5 * car.acceleration * (time ** 2))
-          direction <- io(car.actualSector.direction)
-          r <- io(car.renderCarParams.position euclideanDistance center)
-          turnRadiusExternal <- io(center euclideanDistance pExternal)
-          turnRadiusInternal <- io(center euclideanDistance pInternal)
-          alpha <- io(direction match
-            case Direction.Forward => 0
-            case Direction.Backward => 180
-          )
-          newX <- io((center._1 + (r * Math.sin(Math.toRadians(teta_t + alpha)))).toInt)
-          newY <- io((center._2 - (r * Math.cos(Math.toRadians(teta_t + alpha)))).toInt)
-          np <- io(checkTurnBounds((newX, newY), center, turnRadiusExternal, turnRadiusInternal, direction))
-          position <- io(checkEnd(np, endX, direction))
-        yield position
+    override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]] =
+      d match
+        case RenderTurnParams(center, pExternal, pInternal, _, _, endX) =>
+          for
+            x <- io(car.renderCarParams.position._1)
+            teta_t <- io(0.5 * car.acceleration * (time ** 2))
+            direction <- io(car.actualSector.direction)
+            r <- io(car.renderCarParams.position euclideanDistance center)
+            turnRadiusExternal <- io(center euclideanDistance pExternal)
+            turnRadiusInternal <- io(center euclideanDistance pInternal)
+            alpha <- io(direction match
+              case Direction.Forward => 0
+              case Direction.Backward => 180
+            )
+            newX <- io((center._1 + (r * Math.sin(Math.toRadians(teta_t + alpha)))).toInt)
+            newY <- io((center._2 - (r * Math.cos(Math.toRadians(teta_t + alpha)))).toInt)
+            np <- io(checkTurnBounds((newX, newY), center, turnRadiusExternal, turnRadiusInternal, direction))
+            position <- io(checkEnd(np, endX, direction))
+          yield position
 
-    private def checkTurnBounds(p: (Int, Int), center: (Int, Int), rExternal: Int, rInternal: Int, direction: Int): (
-        Int,
-        Int
-    ) =
+    private def checkTurnBounds(
+        p: Point2D[Int, Int],
+        center: Point2D[Int, Int],
+        rExternal: Int,
+        rInternal: Int,
+        direction: Int
+    ): Point2D[Int, Int] =
       var dx = (p._1 + 12, p._2) euclideanDistance center
       var dy = (p._1, p._2 + 12) euclideanDistance center
       if dx - rExternal < 0 && direction == 1 then dx = rExternal
@@ -117,7 +122,7 @@ object Movements:
         (p._1 + (dx - rInternal), p._2 + (dy - rInternal))
       else p
 
-    private def checkEnd(p: (Int, Int), end: Int, direction: Int): (Int, Int) =
+    private def checkEnd(p: Point2D[Int, Int], end: Int, direction: Int): Point2D[Int, Int] =
       if direction == 1 then if p._1 < end then (end - 1, p._2) else p
       else if p._1 > end then (end + 1, p._2)
       else p
