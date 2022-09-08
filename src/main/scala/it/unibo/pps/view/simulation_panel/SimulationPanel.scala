@@ -33,7 +33,7 @@ trait SimulationPanel extends JPanel:
   /** Renders the track, it must be used when showing simulation panel for first time */
   def renderTrack(track: Track): Unit
 
-  /** Method that sets enabled the final report button */
+  /** Method that sets enabled the final report button that if pressed, display the end race panel */
   def setFinalReportEnabled(): Unit
 
   /**  Method that updates the displayed standings */
