@@ -41,8 +41,17 @@ import scala.collection.mutable.{HashMap, Map}
 
 object SimulationEngineModule:
   trait SimulationEngine:
+
+    /** Represents one simulation step
+      * @return
+      *   [[Task]]
+      */
     def simulationStep: Task[Unit]
+
+    /** Decreases simulation speed */
     def decreaseSpeed: Unit
+
+    /** Increases simulation speed */
     def increaseSpeed: Unit
 
   trait Provider:
@@ -82,7 +91,7 @@ object SimulationEngineModule:
         for
           _ <- io(
             if carsArrived == NUM_CARS then
-              controller.notifyStop()
+              controller.notifyStop
               context.view.setFinalReportEnabled()
           )
         yield ()
