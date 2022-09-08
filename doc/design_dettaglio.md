@@ -39,7 +39,7 @@ Sfruttando questo pattern avanzato si è dunque deciso di implementare quattro m
 - Controller -> Model, Engine, View
 - Engine -> View, Model, Controller
 
-Di seguito è riportata una sezione per la descrizione dettagliata di ogni modulo.
+Di seguito è riportata una sezione per la descrizione di ogni modulo.
 
 
 ### Model
