@@ -176,7 +176,7 @@ object SimulationPanel:
           )
         )
         e._5.foreach(f => f.setText(car.tyre.toString))
-        e._6.foreach(f => f.setText(controller.calcCarGap(car)))
+        e._6.foreach(f => f.setText(controller.calcGapToLeader(car)))
         e._7.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
         e._8.foreach(f =>
           f.setText(controller.convertTimeToMinutes(car.fastestLap))
