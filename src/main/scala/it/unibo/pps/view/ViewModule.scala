@@ -12,7 +12,7 @@ object ViewModule:
 
     /**  Method that updates the displayed standings */
     def updateDisplayedStandings(): Unit
-
+    
     /** Method that displays the starting positions panel */
     def displayStartingPositionsPanel(): Unit
 
@@ -27,7 +27,7 @@ object ViewModule:
 
     /** Method that displays the end race panel */
     def displayEndRacePanel(): Unit
-
+    
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
     def updateCharts(l: List[Snapshot]): Unit
 
