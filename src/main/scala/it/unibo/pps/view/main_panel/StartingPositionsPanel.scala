@@ -122,7 +122,7 @@ object StartingPositionsPanel:
         downButton <- elem._5
         blank <- JLabel(ImageLoader.load("/arrows/blank_background.png"))
         _ <- panel.addAll(List(pos, name, img))
-        _ <- if pos.getText.equals("4. ") then panel.add(blank)
+        _ <- if pos.getText.equals(s"${NUM_CARS}. ") then panel.add(blank)
         _ <- panel.addAll(List(upButton, downButton))
         _ <- if pos.getText.equals("1. ") then panel.add(blank)
         _ <- posPanel.add(panel)
