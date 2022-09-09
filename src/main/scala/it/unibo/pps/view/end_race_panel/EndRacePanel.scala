@@ -8,6 +8,7 @@ import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
@@ -22,9 +23,6 @@ object EndRacePanel:
 
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
-
-    import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()
 
