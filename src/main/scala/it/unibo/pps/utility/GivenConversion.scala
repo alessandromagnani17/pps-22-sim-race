@@ -19,7 +19,8 @@ object GivenConversion:
     given Conversion[Double, Task[Double]] = Task(_)
 
   object GuiConversion extends CommonConversion:
-    given Conversion[JFrame, Task[JFrame]] = Task(_)
+    given Component2Task[E <: Component]: Conversion[E, Task[E]] = Task(_)
+    /*given Conversion[JFrame, Task[JFrame]] = Task(_)
     given Conversion[JPanel, Task[JPanel]] = Task(_)
     given Conversion[JLabel, Task[JLabel]] = Task(_)
     given Conversion[JButton, Task[JButton]] = Task(_)
@@ -28,7 +29,7 @@ object GivenConversion:
     given Conversion[BufferedImage, Task[BufferedImage]] = Task(_)
     given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
     given Conversion[Environment, Task[Environment]] = Task(_)
-    given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
+    given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)*/
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
     given Iterable2Task[E]: Conversion[Iterable[E], Task[Iterable[E]]] = Task(_)
