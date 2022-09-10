@@ -144,6 +144,21 @@ Infine, in autonomia, ho sviluppato:
 - Meccanismo per calcolare il degrado delle gomme;
 - Start e stop della simulazione tramite programmazione asincrona.
 
+#### Andrea Matteucci
+Inizialmente ho collaborato insieme a Domini per realizzare la schermata per visualizzare l'andamento della simulazione. Le classi relative a questo sviluppo sono le seguenti:
+- `SimulationPanel`;
+- `Environment`;
+- `TrackBuilder`;
+- `CarsLoader`.
+
+Sempre cooperando con Domini, ho poi sviluppato le classi relative alla sezione `SimulationEngine`, che mira a gestire il movimento delle macchine durante la simulazione. Questa parte è composta dalle seguenti classi:
+- `SimulationEngineModule`;
+- `Movements`;
+
+In autonomia, ho poi lavorato sui seguenti aspetti:
+- Costruzione della struttura della pista, disegnato nella classe `Enviroment`;
+- Meccanismo per la gestione del consumo di carburante, utilizzato nella classe `SimulationEngineModule`.
+
 #### Alessandro Magnani
 In un primo momento, ho sviluppato insieme a Montanari la schermata iniziale del simulatore, nella quale è possibile stabilire i parametri delle diverse macchine selezionabili, la griglia di partenza, il numero di giri della gara e i parametri relativi al singolo pilota. Le classi coinvolte sono le seguenti:
 - `MainPanel`
@@ -160,7 +175,8 @@ Successivamente, sempre cooperando con Montanari, ho implementato il numero di g
 Infine, sempre in collaborazione con Montanari, mi sono occupato del report finale della gara. Classi relative:
 - `EndRacePanel`
 
-#### Andrea Matteucci
+
+
 
 #### Simone Montanari
 Inizialmente, in collaborazione con Magnani, mi sono occupato della crezione della schermata iniziale del simulatore, dove è possibile impostare i parametri delle diverse macchine, la griglia di partenza ed il numero di giri della gara.
