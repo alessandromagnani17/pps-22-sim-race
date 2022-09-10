@@ -36,7 +36,7 @@ object MainPanel:
     private val carSelectionPanel = CarSelectionPanel(controller)
     private val paramsSelectionPanel = ParamsSelectionPanel(controller)
     private val startSimulationPanel = StartSimulationPanel(controller)
-    private val mainPanel = createMainPanelAndAddAllComponents()
+    private val mainPanel = createMainPanelAndAddAllComponents
 
     mainPanel foreach (p => self.add(p))
 
@@ -46,7 +46,7 @@ object MainPanel:
     def updateParametersPanel: Unit =
       paramsSelectionPanel.updateParametersPanel
 
-    private def createMainPanelAndAddAllComponents(): Task[JPanel] =
+    private def createMainPanelAndAddAllComponents: Task[JPanel] =
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
