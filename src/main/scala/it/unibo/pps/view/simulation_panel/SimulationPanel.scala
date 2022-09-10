@@ -211,8 +211,8 @@ object SimulationPanel:
       yield jb
 
     private def addToPanel(
-        elem: StandingsComponent,
-        mainPanel: JPanel
+                            elem: StandingsComponents,
+                            mainPanel: JPanel
     ): Task[Unit] =
       val start = 0
       val p = for
@@ -239,30 +239,12 @@ object SimulationPanel:
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
-
-    private def createPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel], Task[JLabel])] =
-      for
-        car <- controller.startingPositions
-      yield (
-        createLabel(
-          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
-          () => Left((controller.startingPositions.indexOf(car) + 1).toString)
-        ),
-        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.name)),
-        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
-        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.startingPositions.indexOf(car)}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.fastestLap.toString)),
-        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))
-      )
-
-    private def createStandingsComponent(): List[StandingsComponent] =
+    
+    private def createStandingsComponent(): List[StandingsComponents] =
       for
         car <- controller.startingPositions
       yield
-        StandingsComponent(
+        StandingsComponents(
         createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
           () => Left((controller.startingPositions.indexOf(car) + 1).toString)

@@ -4,7 +4,7 @@ import monix.eval.Task
 
 import javax.swing.JLabel
 
-case class StandingsComponent(
+case class StandingsComponents(
     val position: Task[JLabel],
     val name: Task[JLabel],
     val color: Task[JLabel],
