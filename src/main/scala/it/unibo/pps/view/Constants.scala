@@ -1,7 +1,5 @@
 package it.unibo.pps.view
 
-import it.unibo.pps.view.ViewConstants.{FRAME_HEIGHT, FRAME_WIDTH, STANDINGS_PANEL_HEIGHT}
-
 import java.awt.Color
 
 object Constants:
@@ -51,7 +49,7 @@ object Constants:
     val BUTTONS_HEIGHT: Int = (START_PANEL_HEIGHT * 0.2).toInt
     val PADDING_LABEL_HEIGHT: Int = (START_PANEL_HEIGHT * 0.03).toInt
     val PADDING_LABEL_HEIGHT1: Int = (START_PANEL_HEIGHT * 0.01).toInt
-    
+
   object StartingPositionsPanelConstants extends CommonConstants:
     val STARTING_POS_PANEL_WIDTH: Int = (FRAME_WIDTH * 0.4).toInt
     val STARTING_POS_PANEL_HEIGHT: Int = (FRAME_HEIGHT * 0.4).toInt
@@ -80,7 +78,7 @@ object Constants:
     val STANDINGS_SUBLABEL_WIDTH: Int = (CANVAS_WIDTH * 0.1).toInt
     val STANDINGS_NAME_WIDTH: Int = (CANVAS_WIDTH * 0.15).toInt
     val STANDINGS_COLOR_WIDTH: Int = (CANVAS_WIDTH * 0.03).toInt
-  
+
   object EndRacePanelConstants extends CommonConstants:
     val STANDINGS_PANEL_WIDTH = 900
     val STANDINGS_PANEL_HEIGHT = 400
@@ -94,3 +92,8 @@ object Constants:
     val STANDINGS_TYRE_WIDTH: Int = (STANDINGS_PANEL_WIDTH * 0.07).toInt
     val STANDINGS_TIME_WIDTH: Int = (STANDINGS_PANEL_WIDTH * 0.06).toInt
     val STANDINGS_FUEL_WIDTH: Int = (STANDINGS_PANEL_WIDTH * 0.1).toInt
+
+  object EnvironmentConstants extends CommonConstants:
+    val TURN_START_ANGLE = 270
+    val TURN_END_ANGLE = 180
+    val CAR_DIAMETER = 12

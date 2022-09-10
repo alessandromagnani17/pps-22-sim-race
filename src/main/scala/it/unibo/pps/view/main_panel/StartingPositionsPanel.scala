@@ -17,8 +17,7 @@ object StartingPositionsPanel:
   def apply(controller: ControllerModule.Controller): StartingPositionsPanel =
     StartingPositionsPanelImpl(controller)
 
-  private class StartingPositionsPanelImpl(controller: ControllerModule.Controller)
-      extends StartingPositionsPanel:
+  private class StartingPositionsPanelImpl(controller: ControllerModule.Controller) extends StartingPositionsPanel:
     self =>
 
     private val topLabel = createLabel(
@@ -27,26 +26,37 @@ object StartingPositionsPanel:
       () => Left("Sets the order of the starting grid: ")
     )
     private val positionPanel = createPanel()
-    private val positions = createStartingPositions()
+    private val startingPositionsComponents = createStartingPositionsComponents()
     private val startingPositionsPanel = createPanelAndAddAllComponents()
 
     startingPositionsPanel foreach (e => self.add(e))
 
-    private def createStartingPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
-      var l: List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] = List.empty
-      for i <- 0 until NUM_CARS do
-        l = l :+ ((createLabel(
+    private def createStartingPositionsComponents(): List[StartingPositionsComponents] =
+      for car <- controller.cars
+      yield StartingPositionsComponents(
+        createLabel(
+          Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT),
+          SwingConstants.LEFT,
+          () => Left(s"${controller.cars.indexOf(car) + 1}. ")
+        ),
+        createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${car.name}")),
+        createLabel(
           Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
           SwingConstants.CENTER,
-          () => Right(ImageLoader.load(s"/cars/miniatures/$i.png"))
+          () => Right(ImageLoader.load(s"/cars/miniatures/${controller.cars.indexOf(car)}.png"))
         ),
-        createLabel(Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${i + 1}. ")),
-        createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${CAR_NAMES(i)}")),
-        if i == 0 then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-        else createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
-        if i == (NUM_CARS - 1) then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-        else createButton(i, "/arrows/arrow-bottom.png", e => if e == (NUM_CARS - 1) then e else e + 1)))
-      l
+        if car.equals(controller.cars.head) then
+          createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+        else createButton(controller.cars.indexOf(car), "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
+        if car.equals(controller.cars.last) then
+          createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+        else
+          createButton(
+            controller.cars.indexOf(car),
+            "/arrows/arrow-bottom.png",
+            e => if e == (NUM_CARS - 1) then e else e + 1
+          )
+      )
 
     private def createLabel(dim: Dimension, horizontal: Int, f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
@@ -75,12 +85,12 @@ object StartingPositionsPanel:
       var prevLabelSupport = ""
 
       val p = for
-        nextLabel <- positions(nextIndex)._3
+        nextLabel <- startingPositionsComponents(nextIndex).name
         nextLabelSupport = nextLabel.getText
-        prevLabel <- positions(prevIndex)._3
+        prevLabel <- startingPositionsComponents(prevIndex).name
         prevLabelSupport = prevLabel.getText
-        nextImage <- positions(nextIndex)._1
-        prevImage <- positions(prevIndex)._1
+        nextImage <- startingPositionsComponents(nextIndex).miniature
+        prevImage <- startingPositionsComponents(prevIndex).miniature
         _ <- nextLabel.setText(prevLabelSupport)
         _ <- prevLabel.setText(nextLabelSupport)
         _ <- updateImage(nextImage, prevLabelSupport)
@@ -103,26 +113,26 @@ object StartingPositionsPanel:
         _ <- panel.setPreferredSize(Dimension(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT))
         topLabel <- topLabel
         positionPanel <- positionPanel
-        _ <- positions.foreach(e => addToPanel(e, positionPanel))
+        _ <- startingPositionsComponents.foreach(e => addToPanel(e, positionPanel))
         _ <- panel.addAll(List(topLabel, positionPanel))
         _ <- panel.setVisible(true)
       yield panel
 
     private def addToPanel(
-        elem: (Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton]),
+        elem: StartingPositionsComponents,
         posPanel: JPanel
     ): Task[Unit] =
       val p = for
         panel <- JPanel()
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        img <- elem._1
-        pos <- elem._2
-        name <- elem._3
-        upButton <- elem._4
-        downButton <- elem._5
+        pos <- elem.position
+        name <- elem.name
+        img <- elem.miniature
+        upButton <- elem.upButton
+        downButton <- elem.downButton
         blank <- JLabel(ImageLoader.load("/arrows/blank_background.png"))
         _ <- panel.addAll(List(pos, name, img))
-        _ <- if pos.getText.equals("4. ") then panel.add(blank)
+        _ <- if pos.getText.equals(s"$NUM_CARS. ") then panel.add(blank)
         _ <- panel.addAll(List(upButton, downButton))
         _ <- if pos.getText.equals("1. ") then panel.add(blank)
         _ <- posPanel.add(panel)

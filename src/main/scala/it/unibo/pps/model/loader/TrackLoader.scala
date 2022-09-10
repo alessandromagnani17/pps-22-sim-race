@@ -10,13 +10,18 @@ import it.unibo.pps.model.{
   Turn
 }
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
 class TrackLoader(theory: String) extends Loader:
 
   private val engine = Scala2P.createEngine(theory)
 
   override type E = Track
+
+  /** Loads the track from the relative prolog file
+    * @return
+    *   [[Track]]
+    */
   override def load: Track =
     val track = Track()
     loadStraights().foreach(track.addSector(_))
@@ -37,10 +42,10 @@ class TrackLoader(theory: String) extends Loader:
     yield straight
 
   private def loadTurns(): List[Turn] =
-    val l = List("ID", "X", "Y", "X0_E", "Y0_E", "X0_I", "Y0_I", "X1_E", "Y1_E", "X1_I", "Y1_I", "D")
+    val l = List("ID", "X", "Y", "X0_E", "Y0_E", "X0_I", "Y0_I", "X1_E", "Y1_E", "X1_I", "Y1_I", "D", "TL", "BL")
     for
       s <- engine(
-        "turn(id(ID), center(X, Y), startPointE(X0_E, Y0_E), startPointI(X0_I, Y0_I), endPointE(X1_E, Y1_E), endPointI(X1_I, Y1_I), direction(D))"
+        "turn(id(ID), center(X, Y), startPointE(X0_E, Y0_E), startPointI(X0_I, Y0_I), endPointE(X1_E, Y1_E), endPointI(X1_I, Y1_I), direction(D), topLimit(TL), bottomLimit(BL))"
       )
       x = Scala2P.extractTermsToListOfStrings(s, l)
       turn = mkTurn(x)
@@ -68,14 +73,16 @@ class TrackLoader(theory: String) extends Loader:
       Straight(id, direction, d)
 
   private def mkTurn(l: List[String]): Turn = l match
-    case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction) =>
+    case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction, tl, bl) =>
       val d = RenderTurnParams(
         (x_center, y_center),
         (x_SP_E, y_SP_E),
         (x_SP_I, y_SP_I),
         (x_EP_E, y_EP_E),
         (x_EP_I, y_EP_I),
-        x_center
+        x_center,
+        tl,
+        bl
       )
       Turn(id, direction, d)
 

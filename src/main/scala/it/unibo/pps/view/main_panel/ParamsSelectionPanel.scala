@@ -3,7 +3,6 @@ package it.unibo.pps.view.main_panel
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.utility.Matcher
 import it.unibo.pps.view.Constants.ParamsSelectionPanelConstants.*
 import monix.eval.{Task, TaskLift}
 import monix.execution.Scheduler.Implicits.global
@@ -23,16 +22,16 @@ import java.awt.{
 import javax.swing.*
 
 trait ParamsSelectionPanel extends JPanel:
+
+  /** Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit
 
 object ParamsSelectionPanel:
   def apply(controller: ControllerModule.Controller): ParamsSelectionPanel =
     ParamsSelectionPanelImpl(controller)
 
-  private class ParamsSelectionPanelImpl(controller: ControllerModule.Controller)
-      extends ParamsSelectionPanel:
+  private class ParamsSelectionPanelImpl(controller: ControllerModule.Controller) extends ParamsSelectionPanel:
     self =>
-    private val matcher = Matcher()
     private val tyresLabel = createLabel(
       "Select tyres: ",
       Dimension(SELECTION_PANEL_WIDTH, TYRES_LABEL_HEIGHT),
@@ -115,7 +114,7 @@ object ParamsSelectionPanel:
                   controller.setPath(
                     s"/cars/${controller.currentCarIndex}-${controller.currentCar.tyre.toString.toLowerCase}.png"
                   )
-                  controller.updateDisplayedCar()
+                  controller.updateDisplayedCar
                 case _ => f.setBackground(BUTTON_NOT_SELECTED_COLOR)
             })
           )
@@ -130,8 +129,8 @@ object ParamsSelectionPanel:
       buttons.toList
 
     private def createStarButton(
-                                  name: String
-                                ): Task[JButton] =
+        name: String
+    ): Task[JButton] =
       for
         button <-
           if name.equals("1") then JButton(ImageLoader.load("/stars/selected-star.png"))
@@ -141,8 +140,8 @@ object ParamsSelectionPanel:
         _ <- button.setName(name)
         _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.addActionListener { e =>
-            updateStar(starSkillsButton, button.getName.toInt)
-            controller.setSkills(button.getName.toInt)
+          updateStar(starSkillsButton, button.getName.toInt)
+          controller.setSkills(button.getName.toInt)
         }
       yield button
 
@@ -180,7 +179,10 @@ object ParamsSelectionPanel:
         rightArrowButton <- rightArrowButton
         leftArrowButton <- leftArrowButton
         starSkillsLabel <- starSkillsLabel
-        _ <- panel.addAll(List(tyresLabel, hardTyresButton, mediumTyresButton, softTyresButton, maxSpeedLabel, leftArrowButton, speedSelectedLabel, rightArrowButton))
+        _ <- panel.addAll(
+          List(tyresLabel, hardTyresButton, mediumTyresButton, softTyresButton, maxSpeedLabel, leftArrowButton,
+            speedSelectedLabel, rightArrowButton)
+        )
         skillsPanel <- JPanel(BorderLayout())
         _ <- skillsPanel.add(starSkillsLabel, BorderLayout.NORTH)
         skillsStarPanel <- JPanel()

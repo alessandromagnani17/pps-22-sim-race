@@ -44,7 +44,9 @@ case class RenderTurnParams(
     startPointI: Point2d[Int, Int],
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
-    endX: Int
+    endX: Int,
+    topLimit: Int,
+    bottomLimit: Int
 ) extends RenderParams
 
 /** Parames needed to render a car

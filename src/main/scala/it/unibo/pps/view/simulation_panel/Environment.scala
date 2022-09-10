@@ -5,8 +5,8 @@ import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import scala.Tuple2 as Point2d
-import it.unibo.pps.view.ViewConstants.*
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
+import it.unibo.pps.view.Constants.EnvironmentConstants.*
 
 class Environment(val w: Int, val h: Int) extends JPanel:
 
@@ -29,10 +29,11 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     super.paintComponent(g)
     g.setColor(Color.BLACK)
     g.drawString(s"LAP: ${ if _actualLap > _totalLaps then _totalLaps else _actualLap} / $_totalLaps", 449, 60)
-    g.drawString("4° ", 303, 283)
-    g.drawString("3° ", 403, 283)
-    g.drawString("2° ", 503, 283)
-    g.drawString("1° ", 603, 283)
+    if _actualLap >= _totalLaps + 1 then
+      g.drawString("4° ", 303, 283)
+      g.drawString("3° ", 403, 283)
+      g.drawString("2° ", 503, 283)
+      g.drawString("1° ", 603, 283)
 
     g.drawLine(200, 113, 200, 170)
 
@@ -54,7 +55,7 @@ class Environment(val w: Int, val h: Int) extends JPanel:
   }
 
   private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match {
-    case RenderTurnParams(center, startPointE, startPointI, endPointE, endPointI, _) =>
+    case RenderTurnParams(center, startPointE, startPointI, endPointE, endPointI, _, _, _) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
       drawSingleTurn(externalRadius, center, 2 * externalRadius, t.direction, g)

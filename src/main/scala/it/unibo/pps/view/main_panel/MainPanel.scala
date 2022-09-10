@@ -18,7 +18,11 @@ import javax.swing.*
 import it.unibo.pps.view.Constants.MainPanelConstants.*
 
 trait MainPanel extends JPanel:
+
+  /**  Method that updates the car displayed */
   def updateDisplayedCar(): Unit
+
+  /**  Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit
 
 
