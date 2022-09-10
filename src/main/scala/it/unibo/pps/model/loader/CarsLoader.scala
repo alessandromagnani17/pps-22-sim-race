@@ -8,23 +8,8 @@ import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.Constants.carsInitial
 import it.unibo.pps.model.car.Driver
 import java.awt.Color
-
-given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList
-given Conversion[String, Term] = Term.createTerm(_)
-given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
-given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
-given Conversion[String, Int] = Integer.parseInt(_)
-
-given Conversion[String, Tyre] = _ match
-  case s: String if s.equals("Soft") => Tyre.SOFT
-  case s: String if s.equals("Medium") => Tyre.MEDIUM
-  case s: String if s.equals("Hard") => Tyre.HARD
-
-given Conversion[String, Color] = _ match
-  case s: String if s.equals("Ferrari") => CarColors.getColor(s)
-  case s: String if s.equals("Mercedes") => CarColors.getColor(s)
-  case s: String if s.equals("Red Bull") => CarColors.getColor(s)
-  case s: String if s.equals("McLaren") => CarColors.getColor(s)
+import it.unibo.pps.utility.GivenConversion.LoaderGivenConversion.given
+import it.unibo.pps.utility.GivenConversion.CarLoaderGivenConversion.given
 
 class CarsLoader(theory: String, track: Track) extends Loader:
 

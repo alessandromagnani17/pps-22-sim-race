@@ -3,6 +3,7 @@ package it.unibo.pps.model.loader
 import it.unibo.pps.model.track.{StartingPoint, Straight, Track, Turn}
 import it.unibo.pps.model.{RenderStartingPointParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.prolog.Scala2P
+import it.unibo.pps.utility.GivenConversion.LoaderGivenConversion.given
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import scala.{Tuple2 => Point2D}
 
