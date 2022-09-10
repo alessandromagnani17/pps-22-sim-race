@@ -27,8 +27,10 @@ object ControllerModule:
     /** Increases simulation speed */
     def notifyIncreaseSpeed: Unit
 
+    /** Restarts the whole simulator */
     def startNewSimulation: Unit
 
+    /** Returns the current starting grid */
     def startingPositions: List[Car]
 
     /** Returns the current car displayed in CarSelectionPanel */
