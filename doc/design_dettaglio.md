@@ -121,7 +121,7 @@ Il modulo `ControllerModule` funge da mediatore fra i moduli `ViewModule` e `Mod
 ### Engine
 ![Engine](./imgs/cake-engine.svg)
 
-`SimulationEngineModule` è il componente che si occupa di gestire i calcoli necessari per computare l'evoluzione delle varie iterazioni. Il metodo principale esposto è `simulationStep`, questo viene richiamato dal controller e grazie all'ausilio della libreria Monix viene eseguito in modo asincrono.
+`SimulationEngineModule` è il componente che si occupa di gestire i calcoli necessari per computare l'evoluzione delle varie iterazioni. Il metodo principale esposto è `simulationStep`, questo viene richiamato dal controller e, grazie all'ausilio della libreria Monix, viene eseguito in modo asincrono.
 
 Inoltre, il simulation engine, sfrutta due ulteriori classi:
 - `SpeedManager`: per gestire la velocità della simulazione (Lenta, Normale, Veloce);
