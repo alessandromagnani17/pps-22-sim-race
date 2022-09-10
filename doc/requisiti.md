@@ -17,8 +17,9 @@ Di seguito sono riportati i requisiti visti nell'ottica di cosa può fare l'uten
 - L'utente potrà visualizzare la classifica real-time della gara;
 - L'utente potrà visualizzare vari grafici che riassumono l'andamento della gara;
 - L'utente potrà modificare la velocità della simulazione;
-- - L'utente potrà mettere in pausa e far ripartire la simulazione;
-- L'utente potrà visualizzare la classifica con alcuni dati riassuntivi al termine della gara.
+- L'utente potrà mettere in pausa e far ripartire la simulazione;
+- L'utente potrà visualizzare la classifica con alcuni dati riassuntivi al termine della gara;
+- L'utente potrà tornare al pannello principale per effettuare nuove simulazioni.
 
 ### Requisiti Funzionali
 Di seguito sono riportati i requisiti individuati durante lo studio del dominio e le regole scelte per la sua rappresentazione.
