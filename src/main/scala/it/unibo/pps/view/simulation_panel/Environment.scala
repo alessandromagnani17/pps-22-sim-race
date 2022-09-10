@@ -33,10 +33,10 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
     g.drawString(s"LAP: ${ if _actualLap > _totalLaps then _totalLaps else _actualLap} / $_totalLaps", 449, 60)
     if _actualLap >= _totalLaps + 1 then
-      g.drawString("4° ", 303, 283)
-      g.drawString("3° ", 403, 283)
-      g.drawString("2° ", 503, 283)
-      g.drawString("1° ", 603, 283)
+      _track.finalPositions.zipWithIndex.foreach(
+        (position, index) =>
+          g.drawString(s"${index + 1}°", position._1 - 30, position._2 + 11)
+      )
 
     g.drawLine(200, 113, 200, 170)
 
