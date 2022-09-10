@@ -148,7 +148,7 @@ Infine, in autonomia, ho sviluppato:
 Inizialmente ho collaborato insieme a Domini per realizzare la schermata per visualizzare l'andamento della simulazione. Le classi relative a questo sviluppo sono le seguenti:
 - `SimulationPanel`;
 - `Environment`;
-- `TrackBuilder`;
+- `TrackLoader`;
 - `CarsLoader`.
 
 Sempre cooperando con Domini, ho poi sviluppato le classi relative alla sezione `SimulationEngine`, che mira a gestire il movimento delle macchine durante la simulazione. Questa parte è composta dalle seguenti classi:
