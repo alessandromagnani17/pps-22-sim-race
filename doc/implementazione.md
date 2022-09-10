@@ -75,7 +75,7 @@ trait Interface extends Provider with Component:
 
 La programmazione asincrona è stata sfruttata per avere un'interfaccia responsive delegando le computazioni pesanti (e.g. la simulazione vera e propria) ad entità terze. Per raggiungere questo obiettivo sono stati sfruttati i Task di Monix. Un esempio di facile comprensione è il metodo `notifyStart` della classe `ControllerModule`:
 ```scala
-override def notifyStart(): Unit = stopFuture = Some(
+override def notifyStart: Unit = stopFuture = Some(
     context.simulationEngine
       .simulationStep
       .loopForever
