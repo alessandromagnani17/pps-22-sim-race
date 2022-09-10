@@ -1,20 +1,20 @@
 package it.unibo.pps.view.end_race_panel
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Car
+import it.unibo.pps.model.car.Car
 import it.unibo.pps.utility.PimpScala
 import it.unibo.pps.view.main_panel.ImageLoader
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-import it.unibo.pps.utility.GivenConversion.GuiConversion
-import it.unibo.pps.view.Constants.StartSimulationPanelConstants.{BUTTONS_WIDTH, BUTTONS_HEIGHT}
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.Constants.StartSimulationPanelConstants.{BUTTONS_HEIGHT, BUTTONS_WIDTH}
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
 import scala.collection.mutable.Map
 import it.unibo.pps.view.Constants.EndRacePanelConstants.*
-import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.utility.GivenConversion.GuiConversion
 import it.unibo.pps.view.Constants.SimulationPanelConstants.AXIS_CHARTS_PANEL
 
 trait EndRacePanel extends JPanel

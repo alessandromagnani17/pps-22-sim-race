@@ -1,7 +1,9 @@
 package it.unibo.pps.utility
 
-import it.unibo.pps.model.{Car, Direction, Snapshot}
+import it.unibo.pps.model.Snapshot
 import alice.tuprolog.{Term, Theory}
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.Direction
 import monix.eval.Task
 
 import java.awt.image.BufferedImage

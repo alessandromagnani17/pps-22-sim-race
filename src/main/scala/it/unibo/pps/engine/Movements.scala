@@ -2,15 +2,18 @@ package it.unibo.pps.engine
 
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.model.{Car, Direction, Phase, RenderParams, RenderStraightParams, RenderTurnParams, Tyre}
+import it.unibo.pps.model.{RenderParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.utility.monadic.io
 import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given_Conversion_Direction_Int
 import it.unibo.pps.model.factor.CarFactors
-import scala.{Tuple2 => Point2D}
+import scala.Tuple2 as Point2D
 import it.unibo.pps.engine.SimulationConstants.*
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.Phase
+import it.unibo.pps.model.track.Direction
 
 object Converter:
 

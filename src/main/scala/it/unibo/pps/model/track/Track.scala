@@ -1,4 +1,4 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.track
 
 trait Track:
   def sectors: List[Sector]

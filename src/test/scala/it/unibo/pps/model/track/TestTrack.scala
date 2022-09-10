@@ -1,10 +1,11 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.track
 
-import org.scalatest.funspec.AnyFunSpec
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import it.unibo.pps.model.{Straight, Turn}
 import it.unibo.pps.model.loader.TrackLoader
+import it.unibo.pps.model.track.{Straight, Turn}
+import it.unibo.pps.model.RenderStraightParams
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
 class TestTrack extends AnyFlatSpec with Matchers:
 

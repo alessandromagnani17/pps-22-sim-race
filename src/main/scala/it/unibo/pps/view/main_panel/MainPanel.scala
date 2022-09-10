@@ -1,14 +1,12 @@
 package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.main_panel.{CarSelectionPanel, MainPanel, ParamsSelectionPanel, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-
-
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
 import java.awt.*
@@ -19,12 +17,11 @@ import it.unibo.pps.view.Constants.MainPanelConstants.*
 
 trait MainPanel extends JPanel:
 
-  /**  Method that updates the car displayed */
+  /** Method that updates the car displayed */
   def updateDisplayedCar(): Unit
 
-  /**  Method that updates the displayed parameters when the car displayed is changed */
+  /** Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit
-
 
 object MainPanel:
   def apply(controller: ControllerModule.Controller): MainPanel =

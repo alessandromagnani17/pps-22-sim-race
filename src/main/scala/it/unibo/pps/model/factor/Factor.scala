@@ -1,6 +1,7 @@
 package it.unibo.pps.model.factor
 
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
+
 given Conversion[Double, Int] = _.toInt
 
 /** Represents a generic factor that may affect car velocity */

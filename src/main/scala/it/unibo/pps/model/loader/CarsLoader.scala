@@ -1,9 +1,12 @@
 package it.unibo.pps.model.loader
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.model.{Car, CarColors, Driver, RenderCarParams, Track, Tyre}
+import it.unibo.pps.model.car.{Car, CarColors, Tyre}
+import it.unibo.pps.model.RenderCarParams
+import it.unibo.pps.model.track.Track
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.Constants.carsInitial
+import it.unibo.pps.model.car.Driver
 import java.awt.Color
 
 given Itearable2List[E]: Conversion[Iterable[E], List[E]] = _.toList

@@ -1,13 +1,12 @@
 package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.Constants.CarSelectionPanelConstants.*
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.*
 import java.util

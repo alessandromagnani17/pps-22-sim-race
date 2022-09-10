@@ -1,12 +1,14 @@
 package it.unibo.pps.controller
 
 import it.unibo.pps.engine.SimulationEngineModule
-import it.unibo.pps.model.{Car, Driver, ModelModule, RenderCarParams, Snapshot, Standings, Tyre}
+import it.unibo.pps.model.car.{Car, Tyre}
+import it.unibo.pps.model.{ModelModule, RenderCarParams, Snapshot, Standings}
 import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import monix.eval.Task
+
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map

@@ -1,7 +1,9 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Snapshot, Standings, Track, Tyre}
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.Track
+import it.unibo.pps.model.{Snapshot, Standings}
 
 object ViewModule:
   trait View:

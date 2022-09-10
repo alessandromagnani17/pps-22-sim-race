@@ -1,7 +1,7 @@
 package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.Constants.ParamsSelectionPanelConstants.*
 import monix.eval.{Task, TaskLift}

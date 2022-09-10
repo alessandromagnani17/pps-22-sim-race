@@ -1,9 +1,10 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.track
 
-import scala.{Tuple2 => Point2d}
-import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.model.RenderTurnParams
+import it.unibo.pps.model.*
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
+import it.unibo.pps.utility.PimpScala.RichInt.*
+
+import scala.Tuple2 as Point2d
 
 enum Direction:
   case Forward

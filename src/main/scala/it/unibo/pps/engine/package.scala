@@ -1,7 +1,7 @@
 package it.unibo.pps
 
 import alice.tuprolog.{Term, Theory}
-import it.unibo.pps.model.{RenderParams, RenderTurnParams, Tyre}
+import it.unibo.pps.model.{RenderParams, RenderTurnParams}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.model.RenderTurnParams

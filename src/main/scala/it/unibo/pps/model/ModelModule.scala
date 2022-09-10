@@ -1,6 +1,6 @@
 package it.unibo.pps.model
 
-import it.unibo.pps.model.Car
+import it.unibo.pps.model.car.Car
 import monix.reactive.MulticastStrategy
 import monix.reactive.subjects.ConcurrentSubject
 import monix.execution.Scheduler.Implicits.global
@@ -12,6 +12,7 @@ import monix.execution.{Ack, Cancelable}
 import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
 import it.unibo.pps.model.loader.{CarsLoader, TrackLoader}
+import it.unibo.pps.model.track.Track
 
 object ModelModule:
   trait Model:

@@ -4,36 +4,32 @@ import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.{
-  Car,
-  Direction,
   ModelModule,
-  Phase,
   RenderCarParams,
   RenderParams,
   RenderStraightParams,
   RenderTurnParams,
-  Sector,
   Snapshot,
-  Standings,
-  Straight,
-  Turn,
-  Tyre
+  Standings
 }
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
-import scala.{Tuple2 => Point2D}
+import scala.Tuple2 as Point2D
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import it.unibo.pps.engine.SimulationConstants.*
+import it.unibo.pps.model.car.{Car, Tyre}
+import it.unibo.pps.model.track.{Direction, Sector, Straight, Turn, Phase}
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
-import it.unibo.pps.utility.GivenConversion.ModelConversion
+import it.unibo.pps.utility.GivenConversion.ModelConversion.given
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
+
 import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}

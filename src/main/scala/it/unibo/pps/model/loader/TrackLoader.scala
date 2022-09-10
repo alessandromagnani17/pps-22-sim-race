@@ -1,14 +1,7 @@
 package it.unibo.pps.model.loader
 
-import it.unibo.pps.model.{
-  RenderStartingPointParams,
-  RenderStraightParams,
-  RenderTurnParams,
-  StartingPoint,
-  Straight,
-  Track,
-  Turn
-}
+import it.unibo.pps.model.track.{StartingPoint, Straight, Track, Turn}
+import it.unibo.pps.model.{RenderStartingPointParams, RenderStraightParams, RenderTurnParams}
 import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
@@ -73,7 +66,8 @@ class TrackLoader(theory: String) extends Loader:
       Straight(id, direction, d)
 
   private def mkTurn(l: List[String]): Turn = l match
-    case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction, tl, bl) =>
+    case List(id, x_center, y_center, x_SP_E, y_SP_E, x_SP_I, y_SP_I, x_EP_E, y_EP_E, x_EP_I, y_EP_I, direction, tl,
+          bl) =>
       val d = RenderTurnParams(
         (x_center, y_center),
         (x_SP_E, y_SP_E),

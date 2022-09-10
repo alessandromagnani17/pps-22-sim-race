@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.car.Car
 import it.unibo.pps.view.main_panel.MainPanel
 import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.simulation_panel.SimulationPanel
@@ -9,7 +10,8 @@ import monix.eval.Task
 import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
-import it.unibo.pps.model.{Car, Driver, Standings, Track, Tyre}
+import it.unibo.pps.model.Standings
+import it.unibo.pps.model.track.Track
 import it.unibo.pps.view.Constants.GuiConstants.*
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 

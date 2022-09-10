@@ -1,6 +1,9 @@
 package it.unibo.pps.view.simulation_panel
 
-import it.unibo.pps.model.{Car, RenderStraightParams, RenderTurnParams, Sector, Straight, Track, Turn}
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.{Sector, Straight, Track, Turn}
+import it.unibo.pps.model.{RenderStraightParams, RenderTurnParams}
+
 import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2.*

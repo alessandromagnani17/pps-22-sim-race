@@ -1,8 +1,8 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.track
 
+import it.unibo.pps.model.loader.TrackLoader
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import it.unibo.pps.model.loader.TrackLoader
 
 class TestSector extends AnyFlatSpec with Matchers:
 
