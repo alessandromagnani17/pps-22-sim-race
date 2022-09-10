@@ -12,7 +12,7 @@ Questo costrutto è basato sulle monadi e risulta molto utile per aumentare la l
 override def simulationStep(): Task[Unit] =
   for
     _ <- moveCars
-    _ <- updateStanding
+    _ <- updateStandings
     _ <- updateView
     _ <- waitFor(speedManager.simulationSpeed)
     _ <- checkEnd
