@@ -51,25 +51,25 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     _track.sectors.foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
-  private def drawStraight(s: Straight, g: Graphics): Unit = s.renderParams match {
+  private def drawStraight(s: Straight, g: Graphics): Unit = s.renderParams match
     case RenderStraightParams(p0External, p1External, p0Internal, p1Internal, _) =>
       g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
-  }
 
-  private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match {
+
+  private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match
     case RenderTurnParams(center, startPointE, startPointI, endPointE, endPointI, _, _, _) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
       drawSingleTurn(externalRadius, center, 2 * externalRadius, t.direction, g)
       drawSingleTurn(internalRadius, center, 2 * internalRadius, t.direction, g)
-  }
+
 
   private def drawSingleTurn(radius: Int, center: Point2d[Int, Int], diameter: Int, direction: Int, g: Graphics): Unit =
-    center match {
+    center match
       case Point2d(x, y) =>
         g.drawArc(x - radius, y - radius, diameter, diameter, TURN_START_ANGLE, TURN_END_ANGLE * direction)
-    }
+
 
   private def drawCar(position: Point2d[Int, Int], color: Color, g: Graphics): Unit =
     g.setColor(color)
