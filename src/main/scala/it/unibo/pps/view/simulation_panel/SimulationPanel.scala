@@ -58,7 +58,7 @@ trait SimulationPanel extends JPanel:
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
   def setFinalReportEnabled(): Unit
 
-  /**  Method that updates the displayed standings */
+  /** Method that updates the displayed standings */
   def updateDisplayedStandings(): Unit
 
   /** Updates all the charts
@@ -67,7 +67,7 @@ trait SimulationPanel extends JPanel:
     */
   def updateCharts(snapshot: Snapshot): Unit
 
-  /**  Method that updates the fastest lap icon */
+  /** Method that updates the fastest lap icon */
   def updateFastestLapIcon(carName: String): Unit
 
 object SimulationPanel:
@@ -189,9 +189,8 @@ object SimulationPanel:
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
     override def updateDisplayedStandings(): Unit = // TODO PROVARE A CAMBIARE
-      var index = 0
-      standingsComponents.foreach(e =>
-        val car = controller.standings.standings(index)
+      standingsComponents.zipWithIndex.foreach((e, i) =>
+        val car = controller.standings.standings(i)
         e.name.foreach(f => f.setText(car.name))
         e.color.foreach(f => f.setBackground(car.renderCarParams.color))
         e.miniature.foreach(f =>
@@ -205,7 +204,6 @@ object SimulationPanel:
         e.raceTime.foreach(f => f.setText(controller.calcGapToLeader(car)))
         e.lapTime.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
         e.fastestLap.foreach(f => f.setText(controller.convertTimeToMinutes(car.fastestLap)))
-        index = index + 1
       )
 
     override def updateFastestLapIcon(carName: String): Unit =
@@ -256,27 +254,43 @@ object SimulationPanel:
         _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-        _ <- panel.addAll(List(pos, name, color, paddingLabel, miniature, paddingLabel1, tyre, raceTime, lapTime, fastestLap, fastestLapIcon))
+        _ <- panel.addAll(
+          List(pos, name, color, paddingLabel, miniature, paddingLabel1, tyre, raceTime, lapTime, fastestLap,
+            fastestLapIcon)
+        )
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
-    
+
     private def createStandingsComponent(): List[StandingsComponents] =
-      for
-        car <- controller.startingPositions
-      yield
-        StandingsComponents(
+      for car <- controller.startingPositions
+      yield StandingsComponents(
         createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
           () => Left((controller.startingPositions.indexOf(car) + 1).toString)
         ),
         createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.name)),
         createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
-        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.startingPositions.indexOf(car)}.png"))),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.tyre.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.raceTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.lapTime.toString)),
-        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.fastestLap.toString)),
+        createLabel(
+          Option.empty,
+          () => Right(ImageLoader.load(s"/cars/miniatures/${controller.startingPositions.indexOf(car)}.png"))
+        ),
+        createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left(car.tyre.toString)
+        ),
+        createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left(car.raceTime.toString)
+        ),
+        createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left(car.lapTime.toString)
+        ),
+        createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left(car.fastestLap.toString)
+        ),
         createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))
       )
 
