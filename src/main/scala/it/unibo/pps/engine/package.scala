@@ -7,14 +7,15 @@ import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.model.RenderTurnParams
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import scala.{Tuple2 => Point2D}
 
 package object engine:
 
-  val computeRadius = (d: RenderParams, position: Tuple2[Int, Int]) =>
+  val computeRadius = (d: RenderParams, position: Point2D[Int, Int]) =>
     d match
       case RenderTurnParams(center, _, _, _, _, _, _, _) => center euclideanDistance position
 
-  val angleBetweenPoints = (a: Tuple2[Int, Int], b: Tuple2[Int, Int], radius: Int) =>
+  val angleBetweenPoints = (a: Point2D[Int, Int], b: Point2D[Int, Int], radius: Int) =>
     val distance = a euclideanDistance b
     Math.acos(((2 * radius ** 2) - distance) / (2 * radius ** 2))
 
