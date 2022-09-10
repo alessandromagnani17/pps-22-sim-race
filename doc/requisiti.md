@@ -8,6 +8,8 @@ L'obiettivo del progetto è quello di sviluppare un simulatore di gare di Formul
 
 Inoltre, una volta impostati tutti i parametri, verrà mostrata una nuova schermata che permette di visualizzare lo stato della simulazione e alcuni grafici di interesse. 
 
+Una volta terminata la simulazione sarà possibile consultare un pannello riassuntivo e tornare al pannello principale per effettuare nuove prove.
+
 ### Requisiti Utente
 Di seguito sono riportati i requisiti visti nell'ottica di cosa può fare l'utente con l'applicativo.
 - L'utente potrà visualizzare ed impostare i parametri legati alla simulazione;
