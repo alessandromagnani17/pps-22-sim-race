@@ -155,4 +155,4 @@ object Movements:
       yield v
 
     private def updateVelocityStraightDeceleration(car: Car, time: Int): Task[Int] =
-      io((car.actualSpeed * TURN_VELOCITY_REDUCTION_FACTOR).toInt)
+      io((car.actualSpeed * STRAIGHT_VELOCITY_REDUCTION_FACTOR).toInt)
