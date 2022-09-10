@@ -4,8 +4,8 @@ import java.awt.Color
 
 object CarColors:
   /** Method that returns the color of a specific car name
-   *   @param car
-   *   The name of the car to return the color of
+   *  @param car
+   *    The name of the car to return the color of
    */
   def getColor(car: String): Color = car match
     case "Ferrari" => Color(220, 10, 10)

@@ -227,7 +227,7 @@ object SimulationEngineModule:
         for
           lastSnap <- io(context.model.getLastSnapshot)
           newStandings = calcNewStandings(lastSnap)
-          _ <- io(context.model.setS(newStandings))
+          _ <- io(context.model.standings = newStandings)
           _ <- io(context.view.updateDisplayedStandings)
         yield ()
 

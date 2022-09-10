@@ -29,6 +29,10 @@ object ControllerModule:
 
     def startNewSimulation: Unit
 
+    /** Returns the cars of the simulation */
+    def cars: List[Car]
+
+    /** Returns the starting positions of the race */
     def startingPositions: List[Car]
 
     /** Returns the current car displayed in CarSelectionPanel */
@@ -37,21 +41,21 @@ object ControllerModule:
     /** Returns the index of the current car displayed in CarSelectionPanel */
     def currentCarIndex: Int
 
-    /** Returns the standings */
+    /** Returns the current standings of the race */
     def standings: Standings
 
-    /** Returns the number of laps */
+    /** Returns the total number of laps */
     def totalLaps: Int
 
     /** Returns the fastest lap of the race */
     def fastestLap: Int
 
-    /** Returns the car that has made the fastest lap */
+    /** Returns the name of the car that has made the fastest lap */
     def fastestCar: String
 
     /** Method that updates the current car index
       * @param index
-      *   The new current car index
+      *   The new car index
       */
     def currentCarIndex_=(index: Int): Unit
 
@@ -135,9 +139,10 @@ object ControllerModule:
       */
     def calcGapToLeader(car: Car): String
 
-    /** Returns the cars of the simulation */
-    def cars: List[Car]
-
+    /** Method that updates the index of the current displayed car 
+     * @param calcIndex 
+     *    The strategy applied to the current index
+     * */
     def updateCurrentCarIndex(calcIndex: Int => String): Unit
 
   trait Provider:
@@ -168,6 +173,8 @@ object ControllerModule:
 
       override def notifyIncreaseSpeed: Unit =
         context.simulationEngine.increaseSpeed
+      
+      override def cars: List[Car] = context.model.cars
 
       override def startingPositions: List[Car] = context.model.startingPositions
 
@@ -197,8 +204,7 @@ object ControllerModule:
 
       override def setMaxSpeed(speed: Int): Unit = context.model.cars(context.model.currentCarIndex).maxSpeed = speed
 
-      override def setSkills(skills: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.skills =
-        skills
+      override def setSkills(skills: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.skills = skills
 
       override def displaySimulationPanel: Unit =
         context.model.createStandings
@@ -258,8 +264,6 @@ object ControllerModule:
           val gap = car.raceTime - standings.standings.head.raceTime
           if gap > 0 then s"+${convertTimeToMinutes(gap)}"
           else "+00:00"
-
-      override def cars: List[Car] = context.model.cars
 
       override def updateCurrentCarIndex(calcIndex: Int => String): Unit =
         val nextIndex = calcIndex(currentCarIndex)
