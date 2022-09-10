@@ -47,7 +47,7 @@ In programmazione funzionale la classe `Option` è utiizzata per rappresentare l
 ```scala 
 private var stopFuture: Option[Cancelable] = None
 
-override def notifyStart(): Unit = stopFuture = Some(
+override def notifyStart: Unit = stopFuture = Some(
   ....
 )
 ```
