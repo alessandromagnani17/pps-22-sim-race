@@ -19,7 +19,7 @@ class TestTrack extends AnyFlatSpec with Matchers:
     assert(t.sectors.size > 0)
   }
 
-  "With track Builder you" should "create a base track" in {
+  /*"With track Builder you" should "create a base track" in {
     val track = TrackBuilder().createBaseTrack()
     track.sectors.size shouldBe 4
     track.sectors
@@ -38,4 +38,4 @@ class TestTrack extends AnyFlatSpec with Matchers:
         }
       )
       .size shouldBe 2
-  }
+  }*/

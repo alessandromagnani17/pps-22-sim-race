@@ -27,13 +27,12 @@ object StartingPositionsPanel:
       () => Left("Sets the order of the starting grid: ")
     )
     private val positionPanel = createPanel()
-    //private val positions = createStartingPositions()
-    private val startingPositionsComponents = createStartingPositions2()
+    private val startingPositionsComponents = createStartingPositionsComponents()
     private val startingPositionsPanel = createPanelAndAddAllComponents()
 
     startingPositionsPanel foreach (e => self.add(e))
 
-    private def createStartingPositions2(): List[StartingPositionsComponents] =
+    private def createStartingPositionsComponents(): List[StartingPositionsComponents] =
       for
         car <- controller.cars
       yield
@@ -54,23 +53,6 @@ object StartingPositionsPanel:
           else
             createButton(controller.cars.indexOf(car), "/arrows/arrow-bottom.png", e => if e == (NUM_CARS - 1) then e else e + 1)
         )
-
-    private def createStartingPositions(): List[(Task[JLabel], Task[JLabel], Task[JLabel], Task[JButton], Task[JButton])] =
-      val l = for
-        i <- 0 until NUM_CARS
-      yield (
-        createLabel(
-          Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
-          SwingConstants.CENTER,
-          () => Right(ImageLoader.load(s"/cars/miniatures/$i.png"))
-        ),
-        createLabel(Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${i + 1}. ")),
-        createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${CAR_NAMES(i)}")),
-        if i == 0 then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-        else createButton(i, "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
-        if i == (NUM_CARS - 1) then createButton(i, "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-        else createButton(i, "/arrows/arrow-bottom.png", e => if e == (NUM_CARS - 1) then e else e + 1))
-      l.toList
 
     private def createLabel(dim: Dimension, horizontal: Int, f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
