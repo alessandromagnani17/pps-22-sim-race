@@ -26,7 +26,7 @@ object ControllerModule:
 
     /** Increases simulation speed */
     def notifyIncreaseSpeed: Unit
-
+    
     def startNewSimulation: Unit
 
     def startingPositions: List[Car]
