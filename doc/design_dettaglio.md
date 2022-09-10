@@ -55,7 +55,7 @@ Un settore ha una direzione `Direction` utilizzata per determinare come si devon
 ![Track](./imgs/track_dettaglio.svg)
 
 #### Tyre
-Tyre è una `enum` che rappresenta il tipo di gomme che una macchina può montare durante la gara. In base al tipo, la gomma, subirà un degrado variabile durante la gara. Il degrado di una data gomma ad un dato giro si può ottenere attraverso il metodo `degradation` presente nel companion object di Tyre, questo metodo effettua i calcoli utilizzando le seguenti funzioni:
+Tyre è una `enum` che rappresenta il tipo di gomme che una macchina può montare. In base al tipo, la gomma, subirà un degrado variabile durante la gara. Il degrado di una data gomma ad un dato giro si può ottenere attraverso il metodo `degradation` presente nel companion object di Tyre, questo metodo effettua i calcoli utilizzando le seguenti funzioni:
 
 <div align="center">
 <img src="./imgs/deg_chart.png" width="500" height="406"/>
