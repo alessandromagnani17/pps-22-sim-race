@@ -23,6 +23,7 @@ object ModelModule:
     /** The initial cars */
     def cars: List[Car]
 
+    /** Resets model paramters when a new simulation is started */
     def resetModel: Unit
 
     def startingPositions: List[Car]
@@ -32,6 +33,8 @@ object ModelModule:
     def standings: Standings
     def fastestLap: Int
     def fastestCar: String
+
+    /** Returns last snapshot of the simulation */
     def getLastSnapshot: Snapshot
 
     /** Initializes simulation history */
