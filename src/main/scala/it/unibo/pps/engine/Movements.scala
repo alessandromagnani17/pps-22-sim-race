@@ -10,6 +10,7 @@ import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.model.factor.CarFactors
 import scala.{Tuple2 => Point2D}
+import it.unibo.pps.engine.SimulationConstants.*
 
 object Converter:
 
@@ -153,4 +154,5 @@ object Movements:
         v <- io(v - d)
       yield v
 
-    private def updateVelocityStraightDeceleration(car: Car, time: Int): Task[Int] = io((car.actualSpeed * 0.95).toInt)
+    private def updateVelocityStraightDeceleration(car: Car, time: Int): Task[Int] =
+      io((car.actualSpeed * TURN_VELOCITY_REDUCTION_FACTOR).toInt)
