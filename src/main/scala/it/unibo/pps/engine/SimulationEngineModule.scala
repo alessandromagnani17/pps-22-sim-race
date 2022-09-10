@@ -221,24 +221,29 @@ object SimulationEngineModule:
           case Direction.Backward => sortCars(cars._2, (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
 
       private def calcTurnStandings(cars: (Sector, List[Car])): List[Car] =
-        val topTurnCars: List[Car] = calcTopTurnStandings(cars._2.filter(c => c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit))
-        val centerTurnCars: List[Car] = calcCenterTurnStandings(cars._2.filter(c => c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit && c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit), cars._1.direction)
-        val bottomTurnCars: List[Car] = calcBottomTurnStandings(cars._2.filter(c => c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit))
+        val topTurnCars: List[Car] = calcTopTurnStandings(cars._2)
+        val centerTurnCars: List[Car] = calcCenterTurnStandings(cars._2, cars._1.direction)
+        val bottomTurnCars: List[Car] = calcBottomTurnStandings(cars._2)
 
         cars._1.direction match
           case Direction.Forward => bottomTurnCars ++ centerTurnCars ++ topTurnCars
           case Direction.Backward => topTurnCars ++ centerTurnCars ++ bottomTurnCars
 
       private def calcTopTurnStandings(cars: List[Car]): List[Car] =
-        sortCars(cars, (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
+        sortCars(cars.filter(c => c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit),
+          (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
 
       private def calcBottomTurnStandings(cars: List[Car]): List[Car] =
-        sortCars(cars, (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
+        sortCars(cars.filter(c => c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit),
+          (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
 
       private def calcCenterTurnStandings(cars: List[Car], direction: Direction): List[Car] =
+        val filteredCars: List[Car] = cars.filter(c =>
+          c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit &&
+          c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit)
         direction match
-          case Direction.Forward => sortCars(cars, (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
-          case Direction.Backward => sortCars(cars, (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
+          case Direction.Forward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
+          case Direction.Backward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
 
       private def updateView(): Task[Unit] =
         for
@@ -248,57 +253,3 @@ object SimulationEngineModule:
 
   trait Interface extends Provider with Component:
     self: Requirements =>
-
-
-
-
-// PRIMO MODO
-/*
-val topTurnCars: List[Car] = calcTopTurnStandings(cars._2.filter(_.renderCarParams.position._2 < 175))
-        val centerTurnCars: List[Car] = calcCenterTurnStandings(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), cars._1.direction)
-        val bottomTurnCars: List[Car] = calcBottomTurnStandings(cars._2.filter(_.renderCarParams.position._2 >= 390))
-
-        cars._1.direction match
-          case Direction.Forward => bottomTurnCars ++ centerTurnCars ++ topTurnCars
-          case Direction.Backward => topTurnCars ++ centerTurnCars ++ bottomTurnCars
-*/
-
-// SECONDO MODO
-
-/*
-val topTurnCars: List[Car] = sortCars(cars._2.filter(_.renderCarParams.position._2 < 175), (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
-val centerTurnCars: List[Car] =
-  if cars._1.direction.equals(Direction.Forward) then
-    sortCars(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
-  else
-    sortCars(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
-val bottomTurnCars: List[Car] = sortCars(cars._2.filter(_.renderCarParams.position._2 >= 390), (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
-
-if cars._1.direction.equals(Direction.Forward) then
-  bottomTurnCars ++ centerTurnCars ++ topTurnCars
-else
-  topTurnCars ++ centerTurnCars ++ bottomTurnCars*/
-
-
-// TERZO MODO
-/*
-  cars._1.direction match
-  case Direction.Forward => sortCars(cars._2.filter(_.renderCarParams.position._2 >= 390), (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1) ++
-    sortCars(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2) ++
-    sortCars(cars._2.filter(_.renderCarParams.position._2 < 175), (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
-  case Direction.Backward => sortCars(cars._2.filter(_.renderCarParams.position._2 < 175), (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1) ++
-    sortCars(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2) ++
-    sortCars(cars._2.filter(_.renderCarParams.position._2 >= 390), (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
-*/
-
-// QUARTO MODO
-/*if cars._1.direction.equals(Direction.Forward) then
-    calcBottomTurnStandings(cars._2.filter(_.renderCarParams.position._2 >= 390)) ++
-      calcCenterTurnStandings(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), cars._1.direction) ++
-      calcTopTurnStandings(cars._2.filter(_.renderCarParams.position._2 < 175))
-  else
-    calcTopTurnStandings(cars._2.filter(_.renderCarParams.position._2 < 175)) ++
-      calcCenterTurnStandings(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), cars._1.direction) ++
-      calcBottomTurnStandings(cars._2.filter(_.renderCarParams.position._2 >= 390))*/
-
-
