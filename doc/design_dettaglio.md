@@ -193,8 +193,7 @@ object ImageLoader:
 
 Il pattern Adapter viene utilizzato ogni qual volta si presenti un problema di incompatibilità fra due elementi distinti che devono coesistere all'interno del software. In Scala è facilmente implementabile attraverso il meccanismo delle `given conversion`. Nel progetto è stato molto utilizzato in diversi punti: costruzione di una view monadica e cooperazione Scala-Prolog.
 ```scala 
- given Conversion[JFrame, Task[JFrame]] = Task(_)
- given Conversion[JPanel, Task[JPanel]] = Task(_)
+ given Component2Task[E <: Component]: Conversion[E, Task[E]] = Task(_)
  given Conversion[String, Term] = Term.createTerm(_)
  given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
  ...
