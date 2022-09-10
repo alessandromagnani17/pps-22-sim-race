@@ -199,3 +199,7 @@ Il pattern Adapter viene utilizzato ogni qual volta si presenti un problema di i
  given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
  ...
 ```
+
+### Struttura del codice
+Il codice è stato strutturato in package come descritto nel seguente diagramma.
+![Packages](./imgs/packages.svg)
