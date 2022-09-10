@@ -41,10 +41,10 @@ object MainPanel:
     mainPanel foreach (p => self.add(p))
 
     def updateDisplayedCar: Unit =
-      carSelectionPanel.updateDisplayedCar()
+      carSelectionPanel.updateDisplayedCar
 
     def updateParametersPanel: Unit =
-      paramsSelectionPanel.updateParametersPanel()
+      paramsSelectionPanel.updateParametersPanel
 
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =
       for
