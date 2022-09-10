@@ -34,10 +34,10 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
-import it.unibo.pps.view.ViewConstants.*
 import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
+import it.unibo.pps.view.Constants.MainPanelConstants.NUM_CARS
 
 object SimulationEngineModule:
   trait SimulationEngine:

@@ -5,8 +5,8 @@ import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import scala.Tuple2 as Point2d
-import it.unibo.pps.view.ViewConstants.*
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
+import it.unibo.pps.view.Constants.EnvironmentConstants.*
 
 class Environment(val w: Int, val h: Int) extends JPanel:
 

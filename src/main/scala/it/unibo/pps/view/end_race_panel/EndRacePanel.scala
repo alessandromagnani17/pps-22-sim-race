@@ -8,13 +8,14 @@ import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-
+import it.unibo.pps.utility.GivenConversion.GuiConversion
+import it.unibo.pps.view.Constants.StartSimulationPanelConstants.{BUTTONS_WIDTH, BUTTONS_HEIGHT}
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
 import scala.collection.mutable.Map
 import it.unibo.pps.view.Constants.EndRacePanelConstants.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.view.Constants.SimulationPanelConstants.AXIS_CHARTS_PANEL
 
 trait EndRacePanel extends JPanel
 
@@ -24,7 +25,7 @@ object EndRacePanel:
 
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
-    
+
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()
 
@@ -39,6 +40,7 @@ object EndRacePanel:
     private def createPanelAndAddAllComponents(): Task[JPanel] =
       for
         panel <- JPanel()
+        _ <- panel.setLayout(new BoxLayout(panel, AXIS_CHARTS_PANEL))
         _ <- panel.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))
         titleLabel <- JLabel("Final Standings:")
         _ <- titleLabel.setPreferredSize(Dimension(FRAME_WIDTH, STANDINGS_TITLE_LABEL_HEIGHT))
@@ -48,12 +50,13 @@ object EndRacePanel:
         _ <- controller.standings.standings.foreach(car => addToPanel(car, standingsPanel))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
-        _ <- panel.setVisible(true)
         restartP <- JPanel()
-        restartButton <- JButton("Start a new simulation!")
+        restartButton <- JButton("Start a new simulation")
         _ <- restartButton.addActionListener(e => controller.startNewSimulation)
+        _ <- restartButton.setPreferredSize(Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT))
         _ <- restartP.add(restartButton)
         _ <- panel.add(restartP)
+        _ <- panel.setVisible(true)
       yield panel
 
     private def addToPanel(car: Car, panel: JPanel): Unit =
