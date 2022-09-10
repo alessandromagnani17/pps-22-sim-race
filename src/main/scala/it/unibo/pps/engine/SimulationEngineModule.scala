@@ -241,14 +241,14 @@ object SimulationEngineModule:
             .sortWith(_._1.id >= _._1.id)
             .foreach(cars => {
               cars._1 match
-                case Straight(id, _, _) => newPositions = newPositions.concat(calcStraightStandings(cars))
-                case Turn(id, _, _) => newPositions = newPositions.concat(calcTurnStandings(cars))
+                case Straight(id, _, _) => newPositions = newPositions ++ calcStraightStandings(cars)
+                case Turn(id, _, _) => newPositions = newPositions ++ calcTurnStandings(cars)
             })
         })
         Standings(newPositions)
 
-      private def sortCars(cars: List[Car], f: (Car, Car) => Boolean): List[Car] =
-        cars.sortWith((c1, c2) => f(c1, c2))
+      private def sortCars(cars: List[Car], sort: (Car, Car) => Boolean): List[Car] =
+        cars.sortWith(sort(_, _))
 
       private def calcStraightStandings(cars: (Sector, List[Car])): List[Car] =
         cars._1.direction match
