@@ -2,7 +2,7 @@
 
 Il processo di sviluppo adottato prende ispirazione, per la maggior parte, da SCRUM (un framework iterativo e incrementale per lo sviluppo di software) con qualche contaminazione anche da Extreme Programming (XP). Nel caso specifico si è preso ispirazione da SCRUM per:
 - Organizzazione di riunioni periodiche: (1) Sprint Planning (2) Daily Scrum (3) Sprint review;
-- Artefatti: (1) Product Backlog (2) resoconto delle riunioni;
+- Artefatti: Product Backlog;
 - Task: si è tenuto traccia dei task svolti dai vari componenti del gruppo.
 
 Per quanto riguarda XP, invece, è stato adottato un approccio di Pair Programming, ovvero in molte fasi di sviluppo si è programmato a coppie; in una coppia sono presenti due ruoli:
@@ -31,7 +31,7 @@ Il Product Backlog è un artefatto che contiene tutte le funzionalità necessari
 
 Per ogni task da svolgere durante un dato sprint è stata definita una scheda su [Trello](https://trello.com/it) in modo da poter tenere traccia dello stato di avanzamento delle varie feature.
 
-Per quanto riguarda l'organizzazione della [repository GitHub](https://github.com/davidedomini/pps-22-sim-race) si è scelto di adottare `Git Flow`. Questo prevede l'utilizzo di diversi branch:
+Per quanto riguarda l'organizzazione del [repository GitHub](https://github.com/davidedomini/pps-22-sim-race) si è scelto di adottare `Git Flow`. Questo prevede l'utilizzo di diversi branch:
 - Un branch `main` in cui è presente il codice delle varie release;
 - Un branch `develop` da usare come branch principale;
 - Un branch `feature/<nome-feature>` in cui è presente il codice necessario per implementare una determinata feature.
