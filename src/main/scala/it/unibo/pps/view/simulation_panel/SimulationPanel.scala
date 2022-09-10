@@ -2,49 +2,28 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{
-  BorderLayout,
-  Color,
-  Component,
-  Dimension,
-  FlowLayout,
-  Graphics,
-  GridBagConstraints,
-  GridBagLayout,
-  GridLayout
-}
-import javax.swing.{
-  BorderFactory,
-  BoxLayout,
-  ImageIcon,
-  JButton,
-  JComponent,
-  JLabel,
-  JList,
-  JPanel,
-  JScrollPane,
-  JTable,
-  JTextArea,
-  SwingConstants,
-  SwingUtilities,
-  WindowConstants
-}
+import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
+import javax.swing.{BorderFactory, BoxLayout, ImageIcon, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
+
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
 import it.unibo.pps.view.Constants.SimulationPanelConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
+
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
+import it.unibo.pps.utility.Utility
+
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
@@ -201,9 +180,9 @@ object SimulationPanel:
           )
         )
         e.tyres.foreach(f => f.setText(car.tyre.toString))
-        e.raceTime.foreach(f => f.setText(controller.calcGapToLeader(car)))
-        e.lapTime.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
-        e.fastestLap.foreach(f => f.setText(controller.convertTimeToMinutes(car.fastestLap)))
+        e.raceTime.foreach(f => f.setText(Utility.calcGapToLeader(car, controller.standings)))
+        e.lapTime.foreach(f => f.setText(Utility.convertTimeToMinutes(car.lapTime)))
+        e.fastestLap.foreach(f => f.setText(Utility.convertTimeToMinutes(car.fastestLap)))
       )
 
     override def updateFastestLapIcon(carName: String): Unit =

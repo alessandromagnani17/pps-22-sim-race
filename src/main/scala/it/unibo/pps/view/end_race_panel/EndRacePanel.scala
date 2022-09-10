@@ -2,14 +2,15 @@ package it.unibo.pps.view.end_race_panel
 
 import it.unibo.pps.controller.ControllerModule
 import it.unibo.pps.model.Car
-import it.unibo.pps.utility.PimpScala
+import it.unibo.pps.utility.{PimpScala, Utility}
 import it.unibo.pps.view.main_panel.ImageLoader
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion
-import it.unibo.pps.view.Constants.StartSimulationPanelConstants.{BUTTONS_WIDTH, BUTTONS_HEIGHT}
+import it.unibo.pps.view.Constants.StartSimulationPanelConstants.{BUTTONS_HEIGHT, BUTTONS_WIDTH}
+
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
 import scala.collection.mutable.Map
@@ -70,8 +71,8 @@ object EndRacePanel:
         tyre <- JLabel(car.tyre.toString)
         degradation <- JLabel(s"${(car.degradation * 100).toInt}%")
         fuel <- JLabel(s"${car.fuel.toInt} / ${MAX_FUEL}L")
-        time <- JLabel(controller.calcGapToLeader(car))
-        fastestLap <- JLabel(controller.convertTimeToMinutes(car.fastestLap))
+        time <- JLabel(Utility.calcGapToLeader(car, controller.standings))
+        fastestLap <- JLabel(Utility.convertTimeToMinutes(car.fastestLap))
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()

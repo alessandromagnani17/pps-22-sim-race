@@ -6,7 +6,9 @@ import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
+import it.unibo.pps.utility.Utility
 import monix.eval.Task
+
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
@@ -127,20 +129,8 @@ object ControllerModule:
     /** Registers necessary callbacks for reactive charts */
     def registerReactiveChartCallback: Unit
 
-    /** Returns a time converted in minutes/seconds format from virtual time
-      * @param time
-      *   The virtual time to be converted
-      */
-    def convertTimeToMinutes(time: Int): String
-
-    /** Returns the gap from the leader car or the converted race time
-      * @param car
-      *   The car on which to calculate the gap
-      */
-    def calcGapToLeader(car: Car): String
-
-    /** Method that updates the index of the current displayed car 
-     * @param calcIndex 
+    /** Method that updates the index of the current displayed car
+     * @param calcIndex
      *    The strategy applied to the current index
      * */
     def updateCurrentCarIndex(calcIndex: Int => String): Unit
@@ -173,7 +163,7 @@ object ControllerModule:
 
       override def notifyIncreaseSpeed: Unit =
         context.simulationEngine.increaseSpeed
-      
+
       override def cars: List[Car] = context.model.cars
 
       override def startingPositions: List[Car] = context.model.startingPositions
@@ -252,18 +242,6 @@ object ControllerModule:
         val onError = (t: Throwable) => ()
         val onComplete = () => ()
         context.model.registerCallbackHistory(onNext, onError, onComplete)
-
-      override def convertTimeToMinutes(time: Int): String =
-        val minutes: Int = time / 60
-        val seconds: Double = time % 60
-        BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
-
-      override def calcGapToLeader(car: Car): String =
-        if standings.standings.head.equals(car) then convertTimeToMinutes(car.raceTime)
-        else
-          val gap = car.raceTime - standings.standings.head.raceTime
-          if gap > 0 then s"+${convertTimeToMinutes(gap)}"
-          else "+00:00"
 
       override def updateCurrentCarIndex(calcIndex: Int => String): Unit =
         val nextIndex = calcIndex(currentCarIndex)
