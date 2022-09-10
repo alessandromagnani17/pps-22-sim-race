@@ -15,15 +15,14 @@ import javax.swing.*
 
 trait CarSelectionPanel extends JPanel:
 
-  /**  Method that updates the car displayed */
+  /** Method that updates the car displayed */
   def updateDisplayedCar(): Unit
 
 object CarSelectionPanel:
   def apply(controller: ControllerModule.Controller): CarSelectionPanel =
     CarSelectionPanelImpl(controller)
 
-  private class CarSelectionPanelImpl(controller: ControllerModule.Controller)
-      extends CarSelectionPanel:
+  private class CarSelectionPanelImpl(controller: ControllerModule.Controller) extends CarSelectionPanel:
     self =>
 
     private val carSelectedLabel = createLabel(
@@ -40,7 +39,12 @@ object CarSelectionPanel:
       "/arrows/arrow-bottom.png",
       e => if (e - 1) < 0 then (NUM_CARS - 1).toString else (e - 1).toString
     )
-    private val labelImage = createLabel(Dimension(SELECTION_PANEL_WIDTH, CAR_IMAGE_HEIGHT), SwingConstants.CENTER, SwingConstants.CENTER, () => Right(ImageLoader.load("/cars/0-soft.png")))
+    private val labelImage = createLabel(
+      Dimension(SELECTION_PANEL_WIDTH, CAR_IMAGE_HEIGHT),
+      SwingConstants.CENTER,
+      SwingConstants.CENTER,
+      () => Right(ImageLoader.load("/cars/0-soft.png"))
+    )
     private val carSelectionPanel = createPanelAndAddAllComponents()
 
     carSelectionPanel foreach (e => self.add(e))
@@ -72,7 +76,7 @@ object CarSelectionPanel:
         _ <- button.addActionListener { e =>
           controller.updateCurrentCarIndex(calcIndex)
           updateDisplayedCar()
-          controller.updateParametersPanel()
+          controller.updateParametersPanel
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${CAR_NAMES(controller.currentCarIndex)}"))
         }
       yield button

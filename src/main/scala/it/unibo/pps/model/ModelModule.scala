@@ -31,7 +31,7 @@ object ModelModule:
     def standings: Standings
     def fastestLap: Int
     def fastestCar: String
-    def getLastSnapshot(): Snapshot
+    def getLastSnapshot: Snapshot
 
     /** Initializes simulation history */
     def initSnapshot: Unit
@@ -42,7 +42,7 @@ object ModelModule:
     def fastestLap_=(lap: Int): Unit
     def fastestCar_=(carName: String): Unit
     def setS(standings: Standings): Unit
-    def createStandings(): Unit
+    def createStandings: Unit
 
     /** Adds one snapshot to the history
       * @param snapshot
@@ -112,7 +112,7 @@ object ModelModule:
       override def standings: Standings = _standings
       override def fastestLap: Int = _fastestLap
       override def fastestCar: String = _fastestCar
-      override def getLastSnapshot(): Snapshot = history.last
+      override def getLastSnapshot: Snapshot = history.last
       override def addSnapshot(snapshot: Snapshot): Unit =
         history = history :+ snapshot
         historySubject.onNext(history)
@@ -130,6 +130,6 @@ object ModelModule:
 
       override def fastestCar_=(carName: String): Unit = _fastestCar = carName
 
-      override def createStandings(): Unit = _standings = Standings(startingPositions)
+      override def createStandings: Unit = _standings = Standings(startingPositions)
 
   trait Interface extends Provider with Component

@@ -17,7 +17,7 @@ class TestTrack extends AnyFlatSpec with Matchers:
     val t = Track()
     val sector = Straight(1, Direction.Forward, RenderStraightParams((0, 0), (0, 0), (0, 0), (0, 0), 0))
     t.addSector(sector)
-    assert(t.sectors.size > 0)
+    t.sectors.size should be > 0
   }
 
   "With track loader you" should "create a base track" in {

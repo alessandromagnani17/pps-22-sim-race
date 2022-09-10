@@ -51,14 +51,14 @@ class Gui(controller: ControllerModule.Controller):
     yield fr
 
   /** Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel(): Unit = mainPanel.updateParametersPanel()
+  def updateParametersPanel: Unit = mainPanel.updateParametersPanel()
 
   /** Method that updates the car displayed */
-  def updateDisplayedCar(): Unit =
+  def updateDisplayedCar: Unit =
     mainPanel.updateDisplayedCar()
 
   /** Method that updates the displayed standings */
-  def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
+  def updateDisplayedStandings: Unit = _simulationPanel.updateDisplayedStandings()
 
   /** Method that updates the fastest lap icon
     * @param carName
@@ -67,7 +67,7 @@ class Gui(controller: ControllerModule.Controller):
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
 
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
-  def setFinalReportEnabled(): Unit =
+  def setFinalReportEnabled: Unit =
     _simulationPanel.setFinalReportEnabled()
 
   /** Method that displays the simulation panel
@@ -101,7 +101,7 @@ class Gui(controller: ControllerModule.Controller):
   }
 
   /** Method that displays the starting positions panel */
-  def displayStartingPositionsPanel(): Unit = SwingUtilities.invokeLater { () =>
+  def displayStartingPositionsPanel: Unit = SwingUtilities.invokeLater { () =>
     lazy val p = for
       fr <- startingPositionsFrame
       _ <- fr.getContentPane().removeAll()
@@ -112,7 +112,7 @@ class Gui(controller: ControllerModule.Controller):
   }
 
   /** Method that displays the end race panel */
-  def displayEndRacePanel(): Unit = SwingUtilities.invokeLater { () =>
+  def displayEndRacePanel: Unit = SwingUtilities.invokeLater { () =>
     val _endRacePanel = EndRacePanel(controller)
     lazy val p = for
       fr <- frame

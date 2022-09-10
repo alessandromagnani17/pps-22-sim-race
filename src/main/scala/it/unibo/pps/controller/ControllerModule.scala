@@ -98,19 +98,19 @@ object ControllerModule:
     def setSkills(skills: Int): Unit
 
     /** Method that displays the SimulationPanel */
-    def displaySimulationPanel(): Unit
+    def displaySimulationPanel: Unit
 
     /** Method that displays the StartingPositionsPanel */
-    def displayStartingPositionsPanel(): Unit
+    def displayStartingPositionsPanel: Unit
 
     /** Method that displays the EndRacePanel */
-    def displayEndRacePanel(): Unit
+    def displayEndRacePanel: Unit
 
     /** Method that updates the displayed parameters when the car displayed is changed */
-    def updateParametersPanel(): Unit
+    def updateParametersPanel: Unit
 
     /** Method that updates the car displayed */
-    def updateDisplayedCar(): Unit
+    def updateDisplayedCar: Unit
 
     /** Method that inverts the starting positions of two cars
       * @param prevIndex
@@ -121,7 +121,7 @@ object ControllerModule:
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
 
     /** Registers necessary callbacks for reactive charts */
-    def registerReactiveChartCallback(): Unit
+    def registerReactiveChartCallback: Unit
 
     /** Returns a time converted in minutes/seconds format from virtual time
       * @param time
@@ -200,10 +200,10 @@ object ControllerModule:
       override def setSkills(skills: Int): Unit = context.model.cars(context.model.currentCarIndex).driver.skills =
         skills
 
-      override def displaySimulationPanel(): Unit =
-        context.model.createStandings()
+      override def displaySimulationPanel: Unit =
+        context.model.createStandings
         context.model.initSnapshot
-        context.view.updateDisplayedStandings()
+        context.view.updateDisplayedStandings
         context.view.displaySimulationPanel(
           context.model.track,
           context.model.cars,
@@ -211,17 +211,17 @@ object ControllerModule:
           context.model.totalLaps
         )
 
-      override def displayStartingPositionsPanel(): Unit =
-        context.view.displayStartingPositionsPanel()
+      override def displayStartingPositionsPanel: Unit =
+        context.view.displayStartingPositionsPanel
 
-      override def displayEndRacePanel(): Unit =
-        context.view.displayEndRacePanel()
+      override def displayEndRacePanel: Unit =
+        context.view.displayEndRacePanel
 
-      override def updateParametersPanel(): Unit =
-        context.view.updateParametersPanel()
+      override def updateParametersPanel: Unit =
+        context.view.updateParametersPanel
 
-      override def updateDisplayedCar(): Unit =
-        context.view.updateDisplayedCar()
+      override def updateDisplayedCar: Unit =
+        context.view.updateDisplayedCar
 
       override def startNewSimulation: Unit =
         context.model.resetModel
@@ -239,7 +239,7 @@ object ControllerModule:
           context.model.startingPositions(nextIndex).renderCarParams.position
         context.model.startingPositions(nextIndex).renderCarParams.position = position
 
-      override def registerReactiveChartCallback(): Unit =
+      override def registerReactiveChartCallback: Unit =
         val onNext = (l: List[Snapshot]) =>
           context.view.updateCharts(l)
           Ack.Continue

@@ -23,7 +23,7 @@ import javax.swing.*
 
 trait ParamsSelectionPanel extends JPanel:
 
-  /**  Method that updates the displayed parameters when the car displayed is changed */
+  /** Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit
 
 object ParamsSelectionPanel:
@@ -114,7 +114,7 @@ object ParamsSelectionPanel:
                   controller.setPath(
                     s"/cars/${controller.currentCarIndex}-${controller.currentCar.tyre.toString.toLowerCase}.png"
                   )
-                  controller.updateDisplayedCar()
+                  controller.updateDisplayedCar
                 case _ => f.setBackground(BUTTON_NOT_SELECTED_COLOR)
             })
           )

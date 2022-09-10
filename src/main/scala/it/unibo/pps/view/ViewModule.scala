@@ -7,40 +7,40 @@ import it.unibo.pps.view.ViewConstants.*
 object ViewModule:
   trait View:
 
-    /**  Method that updates the car displayed */
-    def updateDisplayedCar(): Unit
+    /** Method that updates the car displayed */
+    def updateDisplayedCar: Unit
 
-    /**  Method that updates the displayed standings */
-    def updateDisplayedStandings(): Unit
-    
+    /** Method that updates the displayed standings */
+    def updateDisplayedStandings: Unit
+
     /** Method that displays the starting positions panel */
-    def displayStartingPositionsPanel(): Unit
+    def displayStartingPositionsPanel: Unit
 
     /** Method that updates the displayed parameters when the car displayed is changed */
-    def updateParametersPanel(): Unit
+    def updateParametersPanel: Unit
 
     /** Method that displays the simulation panel
-     *   @param track
-     *   The track to be rendered before the display of the simulation panel
-     */
+      * @param track
+      *   The track to be rendered before the display of the simulation panel
+      */
     def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit
 
     def resetView: Unit
 
     /** Method that displays the end race panel */
-    def displayEndRacePanel(): Unit
-    
-    def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
+    def displayEndRacePanel: Unit
+
+    def updateRender(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
 
     def updateCharts(l: List[Snapshot]): Unit
 
     /** Method that sets enabled the final report button that if pressed, display the end race panel */
-    def setFinalReportEnabled(): Unit
+    def setFinalReportEnabled: Unit
 
-    /**  Method that updates the fastest lap icon
-     * @param carName
-     *   The name of the car that has made the fastest lap
-     */
+    /** Method that updates the fastest lap icon
+      * @param carName
+      *   The name of the car that has made the fastest lap
+      */
     def updateFastestLapIcon(carName: String): Unit
 
   trait Provider:
@@ -53,10 +53,10 @@ object ViewModule:
     class ViewImpl extends View:
       val gui = new Gui(context.controller)
 
-      override def updateDisplayedCar(): Unit =
-        gui.updateDisplayedCar()
+      override def updateDisplayedCar: Unit =
+        gui.updateDisplayedCar
 
-      override def updateDisplayedStandings(): Unit = gui.updateDisplayedStandings()
+      override def updateDisplayedStandings: Unit = gui.updateDisplayedStandings
 
       override def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit =
         gui.displaySimulationPanel(track, car, actualLap, totalLap)
@@ -64,23 +64,23 @@ object ViewModule:
       override def resetView: Unit =
         gui.reset
 
-      override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit = //TODO render snapshot
+      override def updateRender(cars: List[Car], actualLap: Int, totalLaps: Int): Unit =
         gui.simulationPanel.render(cars, actualLap, totalLaps)
 
-      override def displayStartingPositionsPanel(): Unit =
-        gui.displayStartingPositionsPanel()
+      override def displayStartingPositionsPanel: Unit =
+        gui.displayStartingPositionsPanel
 
-      override def displayEndRacePanel(): Unit =
-        gui.displayEndRacePanel()
+      override def displayEndRacePanel: Unit =
+        gui.displayEndRacePanel
 
-      override def updateParametersPanel(): Unit =
-        gui.updateParametersPanel()
+      override def updateParametersPanel: Unit =
+        gui.updateParametersPanel
 
       override def updateCharts(l: List[Snapshot]): Unit =
         gui.simulationPanel.updateCharts(l.last)
 
-      override def setFinalReportEnabled(): Unit =
-        gui.setFinalReportEnabled()
+      override def setFinalReportEnabled: Unit =
+        gui.setFinalReportEnabled
 
       override def updateFastestLapIcon(carName: String): Unit =
         gui.updateFastestLapIcon(carName)

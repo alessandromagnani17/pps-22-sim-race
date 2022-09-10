@@ -97,7 +97,7 @@ object SimulationPanel:
         sp <- new JScrollPane(p)
         _ <- sp.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED)
         _ <- sp.setPreferredSize(new Dimension(CHART_PANEL_WIDTH, CHART_PANEL_HEIGHT))
-        _ <- controller.registerReactiveChartCallback()
+        _ <- controller.registerReactiveChartCallback
       yield sp
 
     private lazy val standingsComponents = createStandingsComponent()
@@ -112,7 +112,7 @@ object SimulationPanel:
       btn <- JButton("Final report")
       _ <- btn.setEnabled(false)
       _ <- btn.addActionListener { e =>
-        controller.displayEndRacePanel()
+        controller.displayEndRacePanel
       }
     yield btn
 

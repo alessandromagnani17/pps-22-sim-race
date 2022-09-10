@@ -3,7 +3,22 @@ package it.unibo.pps.engine
 import monix.execution.Scheduler.Implicits.global
 import alice.tuprolog.{Term, Theory}
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Direction, ModelModule, Phase, RenderCarParams, RenderParams, RenderStraightParams, RenderTurnParams, Sector, Snapshot, Standings, Straight, Turn, Tyre}
+import it.unibo.pps.model.{
+  Car,
+  Direction,
+  ModelModule,
+  Phase,
+  RenderCarParams,
+  RenderParams,
+  RenderStraightParams,
+  RenderTurnParams,
+  Sector,
+  Snapshot,
+  Standings,
+  Straight,
+  Turn,
+  Tyre
+}
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -84,7 +99,7 @@ object SimulationEngineModule:
           _ <- io(
             if carsArrived == NUM_CARS then
               controller.notifyStop
-              context.view.setFinalReportEnabled()
+              context.view.setFinalReportEnabled
           )
         yield ()
 
@@ -94,7 +109,7 @@ object SimulationEngineModule:
 
       private def moveCars: Task[Unit] =
         for
-          lastSnap <- io(context.model.getLastSnapshot())
+          lastSnap <- io(context.model.getLastSnapshot)
           newSnap <- computeNewSnapshot(lastSnap)
           _ <- io(context.model.addSnapshot(newSnap))
         yield ()
@@ -210,10 +225,10 @@ object SimulationEngineModule:
 
       private def updateStandings: Task[Unit] =
         for
-          lastSnap <- io(context.model.getLastSnapshot())
+          lastSnap <- io(context.model.getLastSnapshot)
           newStandings = calcNewStandings(lastSnap)
           _ <- io(context.model.setS(newStandings))
-          _ <- io(context.view.updateDisplayedStandings())
+          _ <- io(context.view.updateDisplayedStandings)
         yield ()
 
       private def calcNewStandings(snap: Snapshot): Standings =
@@ -237,8 +252,10 @@ object SimulationEngineModule:
 
       private def calcStraightStandings(cars: (Sector, List[Car])): List[Car] =
         cars._1.direction match
-          case Direction.Forward => sortCars(cars._2, (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
-          case Direction.Backward => sortCars(cars._2, (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
+          case Direction.Forward =>
+            sortCars(cars._2, (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
+          case Direction.Backward =>
+            sortCars(cars._2, (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
 
       private def calcTurnStandings(cars: (Sector, List[Car])): List[Car] =
         val topTurnCars: List[Car] = calcTopTurnStandings(cars._2)
@@ -250,25 +267,36 @@ object SimulationEngineModule:
           case Direction.Backward => topTurnCars ++ centerTurnCars ++ bottomTurnCars
 
       private def calcTopTurnStandings(cars: List[Car]): List[Car] =
-        sortCars(cars.filter(c => c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit),
-          (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1)
+        sortCars(
+          cars.filter(c =>
+            c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit
+          ),
+          (c1, c2) => c1.renderCarParams.position._1 > c2.renderCarParams.position._1
+        )
 
       private def calcBottomTurnStandings(cars: List[Car]): List[Car] =
-        sortCars(cars.filter(c => c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit),
-          (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1)
+        sortCars(
+          cars.filter(c =>
+            c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit
+          ),
+          (c1, c2) => c1.renderCarParams.position._1 < c2.renderCarParams.position._1
+        )
 
       private def calcCenterTurnStandings(cars: List[Car], direction: Direction): List[Car] =
         val filteredCars: List[Car] = cars.filter(c =>
           c.renderCarParams.position._2 >= c.actualSector.renderParams.asInstanceOf[RenderTurnParams].topLimit &&
-          c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit)
+            c.renderCarParams.position._2 < c.actualSector.renderParams.asInstanceOf[RenderTurnParams].bottomLimit
+        )
         direction match
-          case Direction.Forward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
-          case Direction.Backward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
+          case Direction.Forward =>
+            sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
+          case Direction.Backward =>
+            sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
 
       private def updateView: Task[Unit] =
         for
-          cars <- io(context.model.getLastSnapshot().cars)
-          _ <- io(context.view.updateCars(cars, context.model.actualLap, context.model.totalLaps))
+          cars <- io(context.model.getLastSnapshot.cars)
+          _ <- io(context.view.updateRender(cars, context.model.actualLap, context.model.totalLaps))
         yield ()
 
   trait Interface extends Provider with Component:

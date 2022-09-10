@@ -15,8 +15,7 @@ object StartSimulationPanel:
   def apply(controller: ControllerModule.Controller): StartSimulationPanel =
     StartSimulationPanelImpl(controller)
 
-  private class StartSimulationPanelImpl(controller: ControllerModule.Controller)
-      extends StartSimulationPanel:
+  private class StartSimulationPanelImpl(controller: ControllerModule.Controller) extends StartSimulationPanel:
     self =>
     private val lapsLabel =
       createLabel("Select laps:", Dimension(LAPS_LABEL_WIDTH, LAPS_LABEL_HEIGHT), SwingConstants.LEFT)
@@ -30,11 +29,11 @@ object StartSimulationPanel:
       )
     private val startingPositionsButton = createButton(
       "Set up the Starting Positions",
-      () => controller.displayStartingPositionsPanel()
+      () => controller.displayStartingPositionsPanel
     )
     private val startButton = createButton(
       "Start Simulation",
-      () => controller.displaySimulationPanel()
+      () => controller.displaySimulationPanel
     )
     private val startSimulationPanel = createPanelAndAddAllComponents()
 
