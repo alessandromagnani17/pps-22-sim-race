@@ -236,9 +236,9 @@ object SimulationEngineModule:
 
       private def calcTurnStandings(cars: (Sector, List[Car])): List[Car] =
         // TODO COSTANTI IN SIMULATIONCONSTANT O VIEWCONSTANT ????
-        val topTurnCars: List[Car] = calcTopTurnStandings(cars._2.filter(_.renderCarParams.position._2 < 175))
-        val centerTurnCars: List[Car] = calcCenterTurnStandings(cars._2.filter( c => c.renderCarParams.position._2 >= 175 && c.renderCarParams.position._2 < 390), cars._1.direction)
-        val bottomTurnCars: List[Car] = calcBottomTurnStandings(cars._2.filter(_.renderCarParams.position._2 >= 390))
+        val topTurnCars: List[Car] = calcTopTurnStandings(cars._2.filter(_.renderCarParams.position._2 < TOP_TURN_LIMIT))
+        val centerTurnCars: List[Car] = calcCenterTurnStandings(cars._2.filter( c => c.renderCarParams.position._2 >= TOP_TURN_LIMIT && c.renderCarParams.position._2 < BOTTOM_TURN_LIMIT), cars._1.direction)
+        val bottomTurnCars: List[Car] = calcBottomTurnStandings(cars._2.filter(_.renderCarParams.position._2 >= BOTTOM_TURN_LIMIT))
 
         cars._1.direction match
           case Direction.Forward => bottomTurnCars ++ centerTurnCars ++ topTurnCars

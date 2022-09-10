@@ -74,7 +74,7 @@ object SimulationPanel:
         _ <- controller.registerReactiveChartCallback()
       yield sp
 
-    private lazy val standingsMap = createPositions()
+    private lazy val standingsComponents = createStandingsComponent()
 
     private lazy val standings =
       for
@@ -115,7 +115,7 @@ object SimulationPanel:
       _ <- mainPanel.setPreferredSize(Dimension(CANVAS_WIDTH, (FRAME_HEIGHT * 0.9).toInt))
       _ <- buttonsPanel.addAll(List(startButton, stopButton, incVelocityButton, decVelocityButton, reportButton))
       _ <- mainPanel.addAll(List(cnv, s))
-      _ <- standingsMap.foreach(e => addToPanel(e, s))
+      _ <- standingsComponents.foreach(e => addToPanel(e, s))
       _ <- self.addAll(List(mainPanel, scrollPanel, buttonsPanel))
     yield ()
     p.runAsyncAndForget
@@ -162,33 +162,33 @@ object SimulationPanel:
     override def updateCharts(snapshot: Snapshot): Unit =
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
-    override def updateDisplayedStandings(): Unit =
+    override def updateDisplayedStandings(): Unit = // TODO PROVARE A CAMBIARE
       var index = 0
-      standingsMap.foreach(e =>
+      standingsComponents.foreach(e =>
         val car = controller.standings._standings(index)
-        e._2.foreach(f => f.setText(car.name))
-        e._3.foreach(f => f.setBackground(car.renderCarParams.color))
-        e._4.foreach(f =>
+        e.name.foreach(f => f.setText(car.name))
+        e.color.foreach(f => f.setBackground(car.renderCarParams.color))
+        e.miniature.foreach(f =>
           f.setIcon(
             ImageLoader.load(
               s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(car.name)).get._1}.png"
             )
           )
         )
-        e._5.foreach(f => f.setText(car.tyre.toString))
-        e._6.foreach(f => f.setText(controller.calcCarGap(car)))
-        e._7.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
-        e._8.foreach(f =>
+        e.tyres.foreach(f => f.setText(car.tyre.toString))
+        e.raceTime.foreach(f => f.setText(controller.calcCarGap(car)))
+        e.lapTime.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
+        e.fastestLap.foreach(f =>
           f.setText(controller.convertTimeToMinutes(car.fastestLap))
         )
         index = index + 1
       )
 
     override def updateFastestLapIcon(carName: String): Unit =
-      standingsMap.foreach(e =>
-        e._2.foreach(f =>
-          if f.getText.equals(carName) then e._9.foreach(c => c.setVisible(true))
-          else e._9.foreach(c => c.setVisible(false))
+      standingsComponents.foreach(e =>
+        e.name.foreach(f =>
+          if f.getText.equals(carName) then e.fastestLapIcon.foreach(c => c.setVisible(true))
+          else e.fastestLapIcon.foreach(c => c.setVisible(false))
         )
       )
 
@@ -211,17 +211,7 @@ object SimulationPanel:
       yield jb
 
     private def addToPanel(
-        elem: (
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel],
-                Task[JLabel]
-        ),
+        elem: StandingsComponent,
         mainPanel: JPanel
     ): Task[Unit] =
       val start = 0
@@ -229,15 +219,15 @@ object SimulationPanel:
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))
         _ <- panel.setPreferredSize(Dimension(CANVAS_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
         _ <- panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        pos <- elem._1
-        name <- elem._2
-        color <- elem._3
-        img <- elem._4
-        tyre <- elem._5
-        raceTime <- elem._6
-        lapTime <- elem._7
-        fastestTime <- elem._8
-        fastestLapIcon <- elem._9
+        pos <- elem.position
+        name <- elem.name
+        color <- elem.color
+        miniature <- elem.miniature
+        tyre <- elem.tyres
+        raceTime <- elem.raceTime
+        lapTime <- elem.lapTime
+        fastestLap <- elem.fastestLap
+        fastestLapIcon <- elem.fastestLapIcon
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         _ <- paddingLabel.setPreferredSize(Dimension(PADDING_LABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT))
@@ -245,7 +235,7 @@ object SimulationPanel:
         _ <- color.setBackground(CarColors.getColor(name.getText))
         _ <- color.setOpaque(true)
         _ <- fastestLapIcon.setVisible(false)
-        _ <- panel.addAll(List(pos, name, color, paddingLabel, img, paddingLabel1, tyre, raceTime, lapTime, fastestTime, fastestLapIcon))
+        _ <- panel.addAll(List(pos, name, color, paddingLabel, miniature, paddingLabel1, tyre, raceTime, lapTime, fastestLap, fastestLapIcon))
         _ <- mainPanel.add(panel)
       yield ()
       p.runAsyncAndForget
@@ -254,6 +244,25 @@ object SimulationPanel:
       for
         car <- controller.startingPositions
       yield (
+        createLabel(
+          Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
+          () => Left((controller.startingPositions.indexOf(car) + 1).toString)
+        ),
+        createLabel(Option(Dimension(STANDINGS_NAME_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.name)),
+        createLabel(Option(Dimension(STANDINGS_COLOR_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left("")),
+        createLabel(Option.empty, () => Right(ImageLoader.load(s"/cars/miniatures/${controller.startingPositions.indexOf(car)}.png"))),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.tyre.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.raceTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.lapTime.toString)),
+        createLabel(Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)), () => Left(car.fastestLap.toString)),
+        createLabel(Option.empty, () => Right(ImageLoader.load("/fastest-lap-logo.png")))
+      )
+
+    private def createStandingsComponent(): List[StandingsComponent] =
+      for
+        car <- controller.startingPositions
+      yield
+        StandingsComponent(
         createLabel(
           Option(Dimension(STANDINGS_SUBLABEL_WIDTH, STANDINGS_SUBPANEL_HEIGHT)),
           () => Left((controller.startingPositions.indexOf(car) + 1).toString)
