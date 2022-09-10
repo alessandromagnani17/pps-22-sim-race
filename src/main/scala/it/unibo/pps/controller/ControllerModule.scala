@@ -128,6 +128,8 @@ object ControllerModule:
     /** Returns the cars of the simulation */
     def cars: List[Car]
 
+    def updateCurrentCarIndex(calcIndex: Int => String): Unit
+
   trait Provider:
     val controller: Controller
 
@@ -244,6 +246,11 @@ object ControllerModule:
           else "+0:00"
 
       override def cars: List[Car] = context.model.cars
+
+      override def updateCurrentCarIndex(calcIndex: Int => String): Unit =
+        val nextIndex = calcIndex(currentCarIndex)
+        currentCarIndex = nextIndex.toInt
+        currentCar.path = s"/cars/$nextIndex-${currentCar.tyre.toString.toLowerCase}.png"
 
   trait Interface extends Provider with Component:
     self: Requirements =>

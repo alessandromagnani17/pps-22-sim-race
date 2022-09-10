@@ -70,9 +70,7 @@ object CarSelectionPanel:
         _ <- button.setBackground(BUTTON_NOT_SELECTED_COLOR)
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener { e =>
-          val nextIndex = calcIndex(controller.currentCarIndex)
-          controller.currentCarIndex = nextIndex.toInt
-          controller.currentCar.path = s"/cars/$nextIndex-${controller.currentCar.tyre.toString.toLowerCase}.png"
+          controller.updateCurrentCarIndex(calcIndex)
           updateDisplayedCar()
           controller.updateParametersPanel()
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${CAR_NAMES(controller.currentCarIndex)}"))
