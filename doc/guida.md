@@ -36,5 +36,5 @@ In questa fase sarà possibile;
 - Passare alla schermata con un report finale con il tasto `final report` (questo sarà disponibile solo quando la simulazione è terminata).
 
 <div align="center">
-<img src="./imgs/finalreport.png" />
+<img src="./imgs/final_report.png" />
 </div>
