@@ -29,13 +29,13 @@ trait Movements:
     * @param phase
     *   Represents the different phases of the sector
     */
-  def updateVelocityStraight(car: Car, time: Int, phase: Phase): Task[Int]
+  def updateVelocityOnStraight(car: Car, time: Int, phase: Phase): Task[Int]
 
   /** Computes new turn velocity
     * @param car
     *   The car to be updated to
     */
-  def updateVelocityTurn(car: Car): Task[Int]
+  def updateVelocityOnTurn(car: Car): Task[Int]
 
   /** Computes the new position in the straight when the phase is acceleration
     * @param car
@@ -43,7 +43,7 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
+  def updatePositionOnStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
 
   /** Computes the new position in the straight when the phase is deceleration
     * @param car
@@ -51,7 +51,7 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
+  def updatePositionOnStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]]
 
   /** Computes the new turn position
     * @param car
@@ -59,22 +59,22 @@ trait Movements:
     * @param time
     *   Virtual time
     */
-  def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]]
+  def updatePositionOnTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]]
 
 object Movements:
   def apply(): Movements = new MovementsImpl()
 
   private class MovementsImpl() extends Movements:
 
-    override def updateVelocityStraight(car: Car, time: Int, phase: Phase): Task[Int] = phase match
+    override def updateVelocityOnStraight(car: Car, time: Int, phase: Phase): Task[Int] = phase match
       case Phase.Acceleration => updateVelocityStraightAcceleration(car, time)
       case Phase.Deceleration => updateVelocityStraightDeceleration(car, time)
       case Phase.Ended => io(car.actualSpeed)
 
-    override def updateVelocityTurn(car: Car): Task[Int] =
+    override def updateVelocityOnTurn(car: Car): Task[Int] =
       io((car.actualSpeed * (0.94 + (car.driver.skills / 100))).toInt)
 
-    override def updatePositionStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
+    override def updatePositionOnStraightAcceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
@@ -83,14 +83,14 @@ object Movements:
         newP <- newPositionStraight(x, velocity, time, acceleration, direction)
       yield (newP, car.renderCarParams.position._2)
 
-    override def updatePositionStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
+    override def updatePositionOnStraightDeceleration(car: Car, time: Int): Task[Point2D[Int, Int]] =
       for
         x <- io(car.renderCarParams.position._1)
         direction <- io(car.actualSector.direction)
         newP <- newPositionStraight(x, car.actualSpeed, time, 1, direction)
       yield (newP, car.renderCarParams.position._2)
 
-    override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]] =
+    override def updatePositionOnTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Task[Point2D[Int, Int]] =
       d match
         case RenderTurnParams(center, pExternal, pInternal, _, _, endX, _, _) =>
           for

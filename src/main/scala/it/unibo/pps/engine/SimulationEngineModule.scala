@@ -157,11 +157,11 @@ object SimulationEngineModule:
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
           movementsManager
-            .updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
+            .updateVelocityOnStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
             .runSyncUnsafe()
         val onTurn = () =>
           movementsManager
-            .updateVelocityTurn(car)
+            .updateVelocityOnTurn(car)
             .runSyncUnsafe()
         updateParameter(car.actualSector, onStraight, onTurn)
 
@@ -171,11 +171,11 @@ object SimulationEngineModule:
       private def straightMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
-            val p = movementsManager.updatePositionStraightAcceleration(car, sectorTimes(car.name))
+            val p = movementsManager.updatePositionOnStraightAcceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             p
           case Phase.Deceleration =>
-            val p = movementsManager.updatePositionStraightDeceleration(car, sectorTimes(car.name))
+            val p = movementsManager.updatePositionOnStraightDeceleration(car, sectorTimes(car.name))
             sectorTimes(car.name) = sectorTimes(car.name) + 1
             checkEndStraight(car, p)
           case Phase.Ended =>
@@ -193,7 +193,7 @@ object SimulationEngineModule:
       private def turnMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
-            val p = movementsManager.updatePositionTurn(
+            val p = movementsManager.updatePositionOnTurn(
               car,
               sectorTimes(car.name),
               car.actualSpeed,
