@@ -25,13 +25,13 @@ object StartingPositionsPanel:
       SwingConstants.CENTER,
       () => Left("Sets the order of the starting grid: ")
     )
-    private val positionPanel = createPanel()
-    private val startingPositionsComponents = createStartingPositionsComponents()
-    private val startingPositionsPanel = createPanelAndAddAllComponents()
+    private val positionPanel = createPanel
+    private val startingPositionsComponents = createStartingPositionsComponents
+    private val startingPositionsPanel = createPanelAndAddAllComponents
 
     startingPositionsPanel foreach (e => self.add(e))
 
-    private def createStartingPositionsComponents(): List[StartingPositionsComponents] =
+    private def createStartingPositionsComponents: List[StartingPositionsComponents] =
       for car <- controller.cars
       yield StartingPositionsComponents(
         createLabel(
@@ -101,13 +101,13 @@ object StartingPositionsPanel:
     private def updateImage(label: JLabel, img: String): Task[Unit] =
       label.setIcon(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(img)).get._1}.png"))
 
-    private def createPanel(): Task[JPanel] =
+    private def createPanel: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(STARTING_POS_PANEL_WIDTH, STARTING_POS_SUBPANEL_HEIGHT))
       yield panel
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(STARTING_POS_PANEL_WIDTH, STARTING_POS_PANEL_HEIGHT))
