@@ -19,6 +19,7 @@ trait SpeedManager:
     */
   def increaseSpeed: Unit
 
+  /** Resets simulation speed when a new simulation is started */
   def reset: Unit
 
 object SpeedManager:

@@ -54,6 +54,7 @@ object SimulationEngineModule:
     /** Increases simulation speed */
     def increaseSpeed: Unit
 
+    /** Resets engine paramters when a new simulation is started */
     def resetEngine: Unit
 
   trait Provider:
@@ -68,7 +69,7 @@ object SimulationEngineModule:
       private val speedManager = SpeedManager()
       private val movementsManager = Movements()
       private var sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
-      private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
+      private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272)) //TODO
       private var carsArrived = 0
 
       private def getFinalPositions(car: Car): Point2D[Int, Int] =
