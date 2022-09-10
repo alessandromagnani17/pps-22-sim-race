@@ -20,10 +20,10 @@ import it.unibo.pps.view.Constants.MainPanelConstants.*
 trait MainPanel extends JPanel:
 
   /**  Method that updates the car displayed */
-  def updateDisplayedCar(): Unit
+  def updateDisplayedCar: Unit
 
   /**  Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel(): Unit
+  def updateParametersPanel: Unit
 
 
 object MainPanel:
@@ -40,10 +40,10 @@ object MainPanel:
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(): Unit =
+    def updateDisplayedCar: Unit =
       carSelectionPanel.updateDisplayedCar()
 
-    def updateParametersPanel(): Unit =
+    def updateParametersPanel: Unit =
       paramsSelectionPanel.updateParametersPanel()
 
     private def createMainPanelAndAddAllComponents(): Task[JPanel] =

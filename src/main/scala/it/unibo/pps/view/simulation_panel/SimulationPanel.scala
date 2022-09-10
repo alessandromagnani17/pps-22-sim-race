@@ -56,10 +56,10 @@ trait SimulationPanel extends JPanel:
   def renderTrack(track: Track): Unit
 
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
-  def setFinalReportEnabled(): Unit
+  def setFinalReportEnabled: Unit
 
   /** Method that updates the displayed standings */
-  def updateDisplayedStandings(): Unit
+  def updateDisplayedStandings: Unit
 
   /** Updates all the charts
     * @param snapshot
@@ -85,7 +85,7 @@ object SimulationPanel:
         _ <- cnv.setVisible(true)
       yield cnv
 
-    private val charts = createCharts()
+    private val charts = createCharts
 
     private lazy val chartsPanel =
       for
@@ -100,7 +100,7 @@ object SimulationPanel:
         _ <- controller.registerReactiveChartCallback
       yield sp
 
-    private lazy val standingsComponents = createStandingsComponent()
+    private lazy val standingsComponents = createStandingsComponent
 
     private lazy val standings =
       for
@@ -158,7 +158,7 @@ object SimulationPanel:
       p.runSyncUnsafe()
     }
 
-    override def setFinalReportEnabled(): Unit =
+    override def setFinalReportEnabled: Unit =
       val p = for
         reportButton <- reportButton
         _ <- reportButton.setEnabled(true)
@@ -188,7 +188,7 @@ object SimulationPanel:
     override def updateCharts(snapshot: Snapshot): Unit =
       charts.foreach(c => c.foreach(chart => matchChart(chart, snapshot)))
 
-    override def updateDisplayedStandings(): Unit = // TODO PROVARE A CAMBIARE
+    override def updateDisplayedStandings: Unit = // TODO PROVARE A CAMBIARE
       standingsComponents.zipWithIndex.foreach((e, i) =>
         val car = controller.standings.standings(i)
         e.name.foreach(f => f.setText(car.name))
@@ -214,7 +214,7 @@ object SimulationPanel:
         )
       )
 
-    private def createCharts(): List[LineChart] =
+    private def createCharts: List[LineChart] =
       val chartVel = LineChart("Velocity", "Virtual Time", "Velocity (km/h)")
       val chartFuel = LineChart("Fuel", "Virtual Time", "Fuel (l)")
       val chartTyres = LineChart("Degradation", "Lap", "Degradation (%)")
@@ -262,7 +262,7 @@ object SimulationPanel:
       yield ()
       p.runAsyncAndForget
 
-    private def createStandingsComponent(): List[StandingsComponents] =
+    private def createStandingsComponent: List[StandingsComponents] =
       for car <- controller.startingPositions
       yield StandingsComponents(
         createLabel(
