@@ -8,7 +8,7 @@ import monix.eval.Task
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
-import it.unibo.pps.model.factor.CarFactorsManager
+import it.unibo.pps.model.factor.CarFactors
 import scala.{Tuple2 => Point2D}
 
 object Converter:
@@ -145,7 +145,7 @@ object Movements:
         v <- io((vel + car.acceleration * time).toInt)
         v <- io(Converter.ms2kmh(v).toInt)
         v <- io(if v > car.maxSpeed then car.maxSpeed else v)
-        d <- io(CarFactorsManager.totalDamage(v, car.fuel, (car.tyre, car.actualLap), car.degradation))
+        d <- io(CarFactors.totalDamage(v, car.fuel, (car.tyre, car.actualLap), car.degradation))
         v <- io(v - d)
       yield v
 

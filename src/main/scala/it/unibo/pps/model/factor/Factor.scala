@@ -29,7 +29,7 @@ class DegradationFactor extends Factor:
   override def damage(velocity: Int, degradation: E): Int = ((1 - degradation) / 10.0) * velocity
 
 /** Represents the sum of all the factors */
-object CarFactorsManager:
+object CarFactors:
 
   private val fuelFactor = FuelFactor()
   private val tyreFactor = TyreFactor()
