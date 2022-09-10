@@ -156,7 +156,7 @@ Sempre cooperando con Domini, ho poi sviluppato le classi relative alla sezione 
 - `Movements`;
 
 In autonomia, ho poi lavorato sui seguenti aspetti:
-- Costruzione della struttura della pista, disegnato nella classe `Enviroment`;
+- Costruzione della struttura della pista, all'interno della classe `Enviroment`;
 - Meccanismo per la gestione del consumo di carburante, utilizzato nella classe `SimulationEngineModule`.
 
 #### Alessandro Magnani
