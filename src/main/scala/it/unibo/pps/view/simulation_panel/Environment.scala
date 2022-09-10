@@ -45,13 +45,13 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
 
     def sketcher(e: Sector) = e match
-      case s: Straight => drawStraigth(s, g)
+      case s: Straight => drawStraight(s, g)
       case t: Turn => drawTurn(t, g)
 
     _track.sectors.foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
-  private def drawStraigth(s: Straight, g: Graphics): Unit = s.renderParams match {
+  private def drawStraight(s: Straight, g: Graphics): Unit = s.renderParams match {
     case RenderStraightParams(p0External, p1External, p0Internal, p1Internal, _) =>
       g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
