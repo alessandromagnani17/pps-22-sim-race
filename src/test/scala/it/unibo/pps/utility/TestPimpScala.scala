@@ -6,14 +6,14 @@ import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 class TestPimpScala extends AnyFlatSpec with Matchers:
 
-  "test euclidean distance" should "work" in {
+  "Euclidean distance of two horizontally aligned points" should "be the difference of the x" in {
     (0, 0) euclideanDistance (10, 0) shouldBe 10
   }
 
-  "test euclidean distance" should "work2" in {
-    (0, 0) euclideanDistance (0, 0) shouldBe 0
+  "Euclidean distance of two vertically aligned points" should "be the difference of the y" in {
+    (0, 0) euclideanDistance (0, 10) shouldBe 10
   }
 
-  "test euclidean distance" should "work4" in {
-    (1, 2) euclideanDistance (17, 54) shouldBe 54
+  "Euclidean distance of two overlapping points" should "be zero" in {
+    (54, 54) euclideanDistance (54, 54) shouldBe 0
   }
