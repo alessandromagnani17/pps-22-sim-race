@@ -12,7 +12,11 @@ import it.unibo.pps.model.factor.CarFactors
 import scala.{Tuple2 => Point2D}
 
 object Converter:
+
+  /** Converts velocity from km/h to m/s */
   def kmh2ms(vel: Double): Double = vel / 3.6
+
+  /** Converts velocity from m/s to km/h */
   def ms2kmh(vel: Double): Double = vel * 3.6
 
 trait Movements:
