@@ -21,6 +21,9 @@ object ModelModule:
 
     /** The initial cars */
     def cars: List[Car]
+
+    def resetModel: Unit
+
     def startingPositions: List[Car]
     def currentCarIndex: Int
     def actualLap: Int
@@ -70,14 +73,13 @@ object ModelModule:
       private val _track = TrackLoader("/prolog/basetrack.pl").load
       private var _cars: List[Car] = CarsLoader("/prolog/cars.pl", track).load
 
-      //private var _standings: Standings = Standings(Map.from(cars.zipWithIndex.map { case (k, v) => (v, k) }))
       private var _standings: Standings = Standings(_cars)
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
       private var _startingPositions: List[Car] = _cars
       private var _actualLap = 1
-      private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
-      private var _totalLaps = 1
+      private var historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+      private var _totalLaps = 15
       private var _fastestLap = 0
       private var _fastestCar = ""
 
@@ -90,6 +92,19 @@ object ModelModule:
 
       override def currentCarIndex: Int = _currentCarIndex
       override def cars: List[Car] = _cars
+
+      override def resetModel: Unit =
+        history = List.empty
+        historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+        _fastestLap = 0
+        _fastestCar = ""
+        _actualLap = 1
+        _cars = CarsLoader("/prolog/cars.pl", track).load
+        _startingPositions = _cars
+        _standings = Standings(_cars)
+        _currentCarIndex = 0
+        _totalLaps = 15
+
       override def startingPositions: List[Car] = _startingPositions
       override def track: Track = _track
       override def actualLap: Int = _actualLap

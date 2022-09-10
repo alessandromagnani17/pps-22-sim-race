@@ -49,6 +49,11 @@ object EndRacePanel:
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)
+        restartP <- JPanel()
+        restartButton <- JButton("Start a new simulation!")
+        _ <- restartButton.addActionListener(e => controller.startNewSimulation)
+        _ <- restartP.add(restartButton)
+        _ <- panel.add(restartP)
       yield panel
 
     private def addToPanel(car: Car, panel: JPanel): Unit =

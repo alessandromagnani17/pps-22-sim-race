@@ -17,9 +17,9 @@ class Gui(controller: ControllerModule.Controller):
 
   import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
-  private val mainPanel = MainPanel(controller)
-  private val _simulationPanel = SimulationPanel(controller)
-  private val startingPositionsPanel = StartingPositionsPanel(controller)
+  private var mainPanel = MainPanel(controller)
+  private var _simulationPanel: SimulationPanel = SimulationPanel(controller)
+  private var startingPositionsPanel = StartingPositionsPanel(controller)
   private val frame = createFrame("sim-race", FRAME_WIDTH, FRAME_HEIGHT, WindowConstants.EXIT_ON_CLOSE)
   private val startingPositionsFrame =
     createFrame(
@@ -61,12 +61,27 @@ class Gui(controller: ControllerModule.Controller):
   def setFinalReportEnabled(): Unit =
     _simulationPanel.setFinalReportEnabled()
 
-  def displaySimulationPanel(track: Track, standings: Standings): Unit = SwingUtilities.invokeLater { () =>
+  def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit =
+    SwingUtilities.invokeLater { () =>
+      lazy val p = for
+        fr <- frame
+        _ <- _simulationPanel.renderTrack(track)
+        _ <- _simulationPanel.render(car, actualLap, totalLap)
+        _ <- fr.getContentPane().removeAll()
+        _ <- fr.getContentPane().add(_simulationPanel)
+        _ <- fr.revalidate()
+      yield ()
+      p.runSyncUnsafe()
+    }
+
+  def reset: Unit = SwingUtilities.invokeLater { () =>
+    startingPositionsPanel = StartingPositionsPanel(controller)
+    mainPanel = MainPanel(controller)
+    _simulationPanel = SimulationPanel(controller)
     lazy val p = for
       fr <- frame
-      _ <- _simulationPanel.renderTrack(track)
       _ <- fr.getContentPane().removeAll()
-      _ <- fr.getContentPane().add(_simulationPanel)
+      _ <- fr.getContentPane().add(mainPanel)
       _ <- fr.revalidate()
     yield ()
     p.runSyncUnsafe()

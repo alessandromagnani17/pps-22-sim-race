@@ -26,6 +26,9 @@ object ControllerModule:
 
     /** Increases simulation speed */
     def notifyIncreaseSpeed: Unit
+
+    def startNewSimulation: Unit
+
     def startingPositions: List[Car]
     def currentCar: Car
     def currentCarIndex: Int
@@ -118,12 +121,17 @@ object ControllerModule:
         context.model.createStandings()
         context.model.initSnapshot
         context.view.updateDisplayedStandings()
-        context.view.displaySimulationPanel(context.model.track, context.model.standings)
-        context.view.updateCars(
-          context.model.standings.standings,
+        context.view.displaySimulationPanel(
+          context.model.track,
+          context.model.cars,
           context.model.actualLap,
           context.model.totalLaps
         )
+      /*context.view.updateCars(
+          context.model.standings.standings,
+          context.model.actualLap,
+          context.model.totalLaps
+        )*/
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
@@ -136,6 +144,11 @@ object ControllerModule:
 
       override def updateDisplayedCar(): Unit =
         context.view.updateDisplayedCar()
+
+      override def startNewSimulation: Unit =
+        context.model.resetModel
+        context.view.resetView
+        context.simulationEngine.resetEngine
 
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
         val car: Car = context.model.startingPositions(prevIndex)

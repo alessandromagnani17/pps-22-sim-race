@@ -53,6 +53,8 @@ object SimulationEngineModule:
     /** Increases simulation speed */
     def increaseSpeed: Unit
 
+    def resetEngine: Unit
+
   trait Provider:
     val simulationEngine: SimulationEngine
 
@@ -64,9 +66,14 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = Movements()
-      private val sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
+      private var sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
+
+      override def resetEngine: Unit =
+        sectorTimes = HashMap.from(context.model.cars.map(_.name -> 0))
+        carsArrived = 0
+        speedManager.reset
 
       override def decreaseSpeed: Unit =
         speedManager.decreaseSpeed

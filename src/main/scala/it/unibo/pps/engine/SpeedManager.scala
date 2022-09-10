@@ -19,6 +19,8 @@ trait SpeedManager:
     */
   def increaseSpeed: Unit
 
+  def reset: Unit
+
 object SpeedManager:
   def apply(): SpeedManager = new SpeedManagerImpl()
 
@@ -37,3 +39,5 @@ object SpeedManager:
       case LOW_SPEED => _speed = DEFAULT_SPEED
       case DEFAULT_SPEED => _speed = HIGH_SPEED
       case _ =>
+
+    override def reset: Unit = _speed = DEFAULT_SPEED
