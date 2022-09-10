@@ -20,13 +20,8 @@ class TestTrack extends AnyFlatSpec with Matchers:
     assert(t.sectors.size > 0)
   }
 
-
-  /*"With track Builder you" should "create a base track" in {
-    val track = TrackBuilder().createBaseTrack()
-=======
   "With track loader you" should "create a base track" in {
     val track = TrackLoader("/prolog/basetrack.pl").load
->>>>>>> 2f6051a278c2660274cc8de109d014b9265a7d66
     track.sectors.size shouldBe 4
     track.sectors
       .filter(s =>
@@ -44,9 +39,6 @@ class TestTrack extends AnyFlatSpec with Matchers:
         }
       )
       .size shouldBe 2
-<<<<<<< HEAD
-  }
-=======
   }
 
   "Next sector" should "return the next sector" in {
@@ -62,4 +54,3 @@ class TestTrack extends AnyFlatSpec with Matchers:
     val nextSector = track.nextSector(sector)
     nextSector.id shouldBe 1
   }
->>>>>>> 2f6051a278c2660274cc8de109d014b9265a7d66*/

@@ -32,26 +32,31 @@ object StartingPositionsPanel:
     startingPositionsPanel foreach (e => self.add(e))
 
     private def createStartingPositionsComponents(): List[StartingPositionsComponents] =
-      for
-        car <- controller.cars
-      yield
-        StartingPositionsComponents(
-          createLabel(Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${controller.cars.indexOf(car) + 1}. ")),
-          createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${car.name}")),
-          createLabel(
-            Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
-            SwingConstants.CENTER,
-            () => Right(ImageLoader.load(s"/cars/miniatures/${controller.cars.indexOf(car)}.png")),
-          ),
-          if car.equals(controller.cars.head) then
-            createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-          else
-            createButton(controller.cars.indexOf(car), "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
-          if car.equals(controller.cars.last) then
-            createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
-          else
-            createButton(controller.cars.indexOf(car), "/arrows/arrow-bottom.png", e => if e == (NUM_CARS - 1) then e else e + 1)
-        )
+      for car <- controller.cars
+      yield StartingPositionsComponents(
+        createLabel(
+          Dimension(CAR_POS_WIDTH, CAR_POS_HEIGHT),
+          SwingConstants.LEFT,
+          () => Left(s"${controller.cars.indexOf(car) + 1}. ")
+        ),
+        createLabel(Dimension(CAR_NAME_WIDTH, CAR_POS_HEIGHT), SwingConstants.LEFT, () => Left(s"${car.name}")),
+        createLabel(
+          Dimension(CAR_MINIATURE_WIDTH, CAR_MINIATURE_HEIGHT),
+          SwingConstants.CENTER,
+          () => Right(ImageLoader.load(s"/cars/miniatures/${controller.cars.indexOf(car)}.png"))
+        ),
+        if car.equals(controller.cars.head) then
+          createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+        else createButton(controller.cars.indexOf(car), "/arrows/arrow-up.png", e => if e == 0 then e else e - 1),
+        if car.equals(controller.cars.last) then
+          createButton(controller.cars.indexOf(car), "/arrows/blank_background.png", e => if e == 0 then e else e - 1)
+        else
+          createButton(
+            controller.cars.indexOf(car),
+            "/arrows/arrow-bottom.png",
+            e => if e == (NUM_CARS - 1) then e else e + 1
+          )
+      )
 
     private def createLabel(dim: Dimension, horizontal: Int, f: () => Either[String, ImageIcon]): Task[JLabel] =
       for
@@ -127,7 +132,7 @@ object StartingPositionsPanel:
         downButton <- elem.downButton
         blank <- JLabel(ImageLoader.load("/arrows/blank_background.png"))
         _ <- panel.addAll(List(pos, name, img))
-        _ <- if pos.getText.equals(s"${NUM_CARS}. ") then panel.add(blank)
+        _ <- if pos.getText.equals(s"$NUM_CARS. ") then panel.add(blank)
         _ <- panel.addAll(List(upButton, downButton))
         _ <- if pos.getText.equals("1. ") then panel.add(blank)
         _ <- posPanel.add(panel)

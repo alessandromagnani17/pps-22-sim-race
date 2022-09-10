@@ -31,108 +31,108 @@ object ControllerModule:
 
     def startingPositions: List[Car]
 
-    /**  Returns the current car displayed in CarSelectionPanel */
+    /** Returns the current car displayed in CarSelectionPanel */
     def currentCar: Car
 
-    /**  Returns the index of the current car displayed in CarSelectionPanel */
+    /** Returns the index of the current car displayed in CarSelectionPanel */
     def currentCarIndex: Int
 
-    /**  Returns the standings */
+    /** Returns the standings */
     def standings: Standings
 
-    /**  Returns the number of laps */
+    /** Returns the number of laps */
     def totalLaps: Int
 
-    /**  Returns the fastest lap of the race */
+    /** Returns the fastest lap of the race */
     def fastestLap: Int
 
-    /**  Returns the car that has made the fastest lap */
+    /** Returns the car that has made the fastest lap */
     def fastestCar: String
 
-    /**  Method that updates the current car index
-     * @param index
-     *   The new current car index
-     */
+    /** Method that updates the current car index
+      * @param index
+      *   The new current car index
+      */
     def currentCarIndex_=(index: Int): Unit
 
-    /**  Method that updates the number of laps
-     * @param lap
-     *   The new number of laps
-     * */
+    /** Method that updates the number of laps
+      * @param lap
+      *   The new number of laps
+      */
     def totalLaps_=(lap: Int): Unit
 
-    /**  Method that updates the fastest lap
-     * @param lap
-     *   The new fastest lap
-     * */
+    /** Method that updates the fastest lap
+      * @param lap
+      *   The new fastest lap
+      */
     def fastestLap_=(lap: Int): Unit
 
-    /**  Method that updates the car that has made the fastest lap
-     * @param carName
-     *   The name of the car
-     * */
+    /** Method that updates the car that has made the fastest lap
+      * @param carName
+      *   The name of the car
+      */
     def fastestCar_=(carName: String): Unit
 
-    /**  Method that updates the path of the car displayed in CarSelectionPanel after a tyre's type modification
-     * @param path
-     *   The new path
-     * */
+    /** Method that updates the path of the car displayed in CarSelectionPanel after a tyre's type modification
+      * @param path
+      *   The new path
+      */
     def setPath(path: String): Unit
 
-    /**  Method that updates the type of the tyres of the displayed car
-     * @param tyre
-     *   The new tyres type
-     * */
+    /** Method that updates the type of the tyres of the displayed car
+      * @param tyre
+      *   The new tyres type
+      */
     def setTyre(tyre: Tyre): Unit
 
-    /**  Method that updates the maximum speed of the car displayed in CarSelectionPanel
-     * @param speed
-     *   The new maximum speed
-     * */
+    /** Method that updates the maximum speed of the car displayed in CarSelectionPanel
+      * @param speed
+      *   The new maximum speed
+      */
     def setMaxSpeed(speed: Int): Unit
 
-    /**  Method that updates the skills of the car displayed in CarSelectionPanel
-     * @param skills
-     *   The new skills
-     * */
+    /** Method that updates the skills of the car displayed in CarSelectionPanel
+      * @param skills
+      *   The new skills
+      */
     def setSkills(skills: Int): Unit
 
-    /**  Method that displays the SimulationPanel */
+    /** Method that displays the SimulationPanel */
     def displaySimulationPanel(): Unit
 
-    /**  Method that displays the StartingPositionsPanel */
+    /** Method that displays the StartingPositionsPanel */
     def displayStartingPositionsPanel(): Unit
 
-    /**  Method that displays the EndRacePanel */
+    /** Method that displays the EndRacePanel */
     def displayEndRacePanel(): Unit
 
-    /**  Method that updates the displayed parameters when the car displayed is changed */
+    /** Method that updates the displayed parameters when the car displayed is changed */
     def updateParametersPanel(): Unit
 
-    /**  Method that updates the car displayed */
+    /** Method that updates the car displayed */
     def updateDisplayedCar(): Unit
 
-    /**  Method that inverts the starting positions of two cars
-     * @param prevIndex
-     *  The index of the previous car
-     * @param nextIndex
-     *  The index of the next car
-     */
+    /** Method that inverts the starting positions of two cars
+      * @param prevIndex
+      *   The index of the previous car
+      * @param nextIndex
+      *   The index of the next car
+      */
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
 
     /** Registers necessary callbacks for reactive charts */
     def registerReactiveChartCallback(): Unit
 
-    /**  Returns a time converted in minutes/seconds format from virtual time
-     * @param time
-     *  The virtual time to be converted
-     */
+    /** Returns a time converted in minutes/seconds format from virtual time
+      * @param time
+      *   The virtual time to be converted
+      */
     def convertTimeToMinutes(time: Int): String
 
-    /**  Returns the gap from the leader car or the converted race time
-     * @param car
-     *  The car on which to calculate the gap
-     * */
+    /** Returns the gap from the leader car or the converted race time
+      * @param car
+      *   The car on which to calculate the gap
+      */
     def calcGapToLeader(car: Car): String
 
     /** Returns the cars of the simulation */
@@ -210,11 +210,6 @@ object ControllerModule:
           context.model.actualLap,
           context.model.totalLaps
         )
-      /*context.view.updateCars(
-          context.model.standings.standings,
-          context.model.actualLap,
-          context.model.totalLaps
-        )*/
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()

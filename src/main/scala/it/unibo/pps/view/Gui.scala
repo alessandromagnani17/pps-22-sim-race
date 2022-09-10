@@ -53,17 +53,17 @@ class Gui(controller: ControllerModule.Controller):
   /** Method that updates the displayed parameters when the car displayed is changed */
   def updateParametersPanel(): Unit = mainPanel.updateParametersPanel()
 
-  /**  Method that updates the car displayed */
+  /** Method that updates the car displayed */
   def updateDisplayedCar(): Unit =
     mainPanel.updateDisplayedCar()
 
-  /**  Method that updates the displayed standings */
+  /** Method that updates the displayed standings */
   def updateDisplayedStandings(): Unit = _simulationPanel.updateDisplayedStandings()
 
-  /**  Method that updates the fastest lap icon
-   * @param carName
-   *   The name of the car that has made the fastest lap
-   */
+  /** Method that updates the fastest lap icon
+    * @param carName
+    *   The name of the car that has made the fastest lap
+    */
   def updateFastestLapIcon(carName: String): Unit = _simulationPanel.updateFastestLapIcon(carName)
 
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
@@ -71,9 +71,9 @@ class Gui(controller: ControllerModule.Controller):
     _simulationPanel.setFinalReportEnabled()
 
   /** Method that displays the simulation panel
-   *   @param track
-   *   The track to be rendered before the display of the simulation panel
-   */
+    * @param track
+    *   The track to be rendered before the display of the simulation panel
+    */
   def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit =
     SwingUtilities.invokeLater { () =>
       lazy val p = for
@@ -104,6 +104,7 @@ class Gui(controller: ControllerModule.Controller):
   def displayStartingPositionsPanel(): Unit = SwingUtilities.invokeLater { () =>
     lazy val p = for
       fr <- startingPositionsFrame
+      _ <- fr.getContentPane().removeAll()
       _ <- fr.getContentPane().add(startingPositionsPanel)
       _ <- fr.revalidate()
     yield ()
@@ -121,6 +122,6 @@ class Gui(controller: ControllerModule.Controller):
     yield ()
     p.runSyncUnsafe()
   }
-  
+
   /** Returns the initial list of cars */
   def getInitialList: List[String] = controller.cars.map(_.name)
