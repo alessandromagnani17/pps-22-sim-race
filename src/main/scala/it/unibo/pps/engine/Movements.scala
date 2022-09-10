@@ -51,7 +51,7 @@ object Movements:
       yield (newP, car.renderCarParams.position._2)
 
     override def updatePositionTurn(car: Car, time: Int, velocity: Double, d: RenderParams): Tuple2[Int, Int] = d match
-      case RenderTurnParams(center, p, _, _, _, endX) =>
+      case RenderTurnParams(center, p, _, _, _, endX, _, _) =>
         for
           x <- io(car.renderCarParams.position._1)
           teta_t <- io(0.5 * car.acceleration * (time ** 2))
@@ -85,7 +85,7 @@ object Movements:
 
     private def newPositionStraight(x: Int, velocity: Double, time: Int, acceleration: Double, direction: Int): Int =
       val v = Converter.kmh2ms(velocity)
-      (x + ((v * time + 0.5 * acceleration * (time ** 2)) / 160) * direction).toInt
+      (x + ((v * time + 0.5 * acceleration * (time ** 2)) / 60) * direction).toInt
 
     private def updateVelocityStraightAcceleration(car: Car, time: Int): Int =
       val vel = Converter.kmh2ms(car.actualSpeed)

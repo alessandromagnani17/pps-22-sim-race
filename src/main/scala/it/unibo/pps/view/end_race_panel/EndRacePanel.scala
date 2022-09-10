@@ -8,6 +8,7 @@ import it.unibo.pps.view.end_race_panel.EndRacePanel
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
+import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 
 import java.awt.{BorderLayout, Color, Dimension, FlowLayout}
 import javax.swing.*
@@ -23,7 +24,7 @@ object EndRacePanel:
 
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
-
+    
     private val standingsPanel = createStandingsPanel()
     private val mainPanel = createPanelAndAddAllComponents()
 
@@ -61,7 +62,7 @@ object EndRacePanel:
         tyre <- JLabel(car.tyre.toString)
         degradation <- JLabel(s"${(car.degradation * 100).toInt}%")
         fuel <- JLabel(s"${car.fuel.toInt} / ${MAX_FUEL}L")
-        time <- JLabel(controller.calcCarGap(car))
+        time <- JLabel(controller.calcGapToLeader(car))
         fastestLap <- JLabel(controller.convertTimeToMinutes(car.fastestLap))
         fastestLapIcon <- JLabel(ImageLoader.load("/fastest-lap-logo.png"))
         paddingLabel <- JLabel()

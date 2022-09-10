@@ -119,11 +119,11 @@ object ControllerModule:
      */
     def convertTimeToMinutes(time: Int): String
 
-    /**  Returns the gap from the first car or the converted race time
+    /**  Returns the gap from the leader car or the converted race time
      * @param car
      *  The car on which to calculate the gap
      * */
-    def calcCarGap(car: Car): String
+    def calcGapToLeader(car: Car): String
 
     /** Returns the cars of the simulation */
     def cars: List[Car]
@@ -236,7 +236,7 @@ object ControllerModule:
         val seconds: Double = time % 60
         BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
 
-      override def calcCarGap(car: Car): String =
+      override def calcGapToLeader(car: Car): String =
         if standings._standings.head.equals(car) then convertTimeToMinutes(car.raceTime)
         else
           val gap = car.raceTime - standings._standings.head.raceTime

@@ -8,7 +8,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
-import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track, TrackBuilder}
+import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 
 import java.awt.event.{ActionEvent, ActionListener}
@@ -176,11 +176,9 @@ object SimulationPanel:
           )
         )
         e.tyres.foreach(f => f.setText(car.tyre.toString))
-        e.raceTime.foreach(f => f.setText(controller.calcCarGap(car)))
+        e.raceTime.foreach(f => f.setText(controller.calcGapToLeader(car)))
         e.lapTime.foreach(f => f.setText(controller.convertTimeToMinutes(car.lapTime)))
-        e.fastestLap.foreach(f =>
-          f.setText(controller.convertTimeToMinutes(car.fastestLap))
-        )
+        e.fastestLap.foreach(f => f.setText(controller.convertTimeToMinutes(car.fastestLap)))
         index = index + 1
       )
 
