@@ -135,6 +135,7 @@ Nello sviluppo del progetto, inizialmente, mi sono occupato insieme a Matteucci 
 
 Successivamente, sempre in collaborazione con Matteucci, sono passato allo sviluppo della parte del `SimulationEngine` legata al movimento delle macchine durante la simulazione. Questo comprende le classi:
 - `SimulationEngineModule`;
+- `SpeedManager`
 - `Movements`, per questa classe ho collaborato anche con Montanari per la gestione delle curve.
 
 
