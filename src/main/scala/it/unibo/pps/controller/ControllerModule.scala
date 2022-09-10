@@ -7,7 +7,6 @@ import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import monix.eval.Task
-
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map
@@ -15,12 +14,21 @@ import scala.math.BigDecimal
 
 object ControllerModule:
   trait Controller:
-    def notifyStart(): Unit
-    def notifyStop(): Unit
-    def notifyDecreaseSpeed(): Unit
-    def notifyIncreaseSpeed(): Unit
 
-    /** Returns the initial starting positions */
+    /** Starts the simulation */
+    def notifyStart: Unit
+
+    /** Stops the simulation */
+    def notifyStop: Unit
+
+    /** Decreases simulation speed */
+    def notifyDecreaseSpeed: Unit
+
+    /** Increases simulation speed */
+    def notifyIncreaseSpeed: Unit
+
+    def startNewSimulation: Unit
+
     def startingPositions: List[Car]
 
     /**  Returns the current car displayed in CarSelectionPanel */
@@ -111,6 +119,8 @@ object ControllerModule:
      *  The index of the next car
      */
     def invertPosition(prevIndex: Int, nextIndex: Int): Unit
+
+    /** Registers necessary callbacks for reactive charts */
     def registerReactiveChartCallback(): Unit
 
     /**  Returns a time converted in minutes/seconds format from virtual time
@@ -141,25 +151,23 @@ object ControllerModule:
 
       private var stopFuture: Option[Cancelable] = None
 
-      override def notifyStart(): Unit = stopFuture = Some(
-        context.simulationEngine
-          .simulationStep()
-          .loopForever
+      override def notifyStart: Unit = stopFuture = Some(
+        context.simulationEngine.simulationStep.loopForever
           .runAsync {
             case Left(exp) => global.reportFailure(exp)
             case _ =>
           }
       )
 
-      override def notifyStop(): Unit =
+      override def notifyStop: Unit =
         stopFuture --> (_.cancel())
         stopFuture = None
 
-      override def notifyDecreaseSpeed(): Unit =
-        context.simulationEngine.decreaseSpeed()
+      override def notifyDecreaseSpeed: Unit =
+        context.simulationEngine.decreaseSpeed
 
-      override def notifyIncreaseSpeed(): Unit =
-        context.simulationEngine.increaseSpeed()
+      override def notifyIncreaseSpeed: Unit =
+        context.simulationEngine.increaseSpeed
 
       override def startingPositions: List[Car] = context.model.startingPositions
 
@@ -174,7 +182,7 @@ object ControllerModule:
       override def fastestLap: Int = context.model.fastestLap
 
       override def fastestCar: String = context.model.fastestCar
-      
+
       override def currentCarIndex_=(index: Int): Unit = context.model.currentCarIndex = index
 
       override def totalLaps_=(lap: Int): Unit = context.model.totalLaps_(lap)
@@ -194,14 +202,19 @@ object ControllerModule:
 
       override def displaySimulationPanel(): Unit =
         context.model.createStandings()
-        context.model.initSnapshot()
+        context.model.initSnapshot
         context.view.updateDisplayedStandings()
-        context.view.displaySimulationPanel(context.model.track)
-        context.view.updateCars(
-          context.model.standings._standings,
+        context.view.displaySimulationPanel(
+          context.model.track,
+          context.model.cars,
           context.model.actualLap,
           context.model.totalLaps
         )
+      /*context.view.updateCars(
+          context.model.standings.standings,
+          context.model.actualLap,
+          context.model.totalLaps
+        )*/
 
       override def displayStartingPositionsPanel(): Unit =
         context.view.displayStartingPositionsPanel()
@@ -215,9 +228,15 @@ object ControllerModule:
       override def updateDisplayedCar(): Unit =
         context.view.updateDisplayedCar()
 
+      override def startNewSimulation: Unit =
+        context.model.resetModel
+        context.view.resetView
+        context.simulationEngine.resetEngine
+
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
         val car: Car = context.model.startingPositions(prevIndex)
-        context.model.startingPositions = context.model.startingPositions.updated(prevIndex, context.model.startingPositions(nextIndex))
+        context.model.startingPositions =
+          context.model.startingPositions.updated(prevIndex, context.model.startingPositions(nextIndex))
         context.model.startingPositions = context.model.startingPositions.updated(nextIndex, car)
 
         val position = context.model.startingPositions(prevIndex).renderCarParams.position
@@ -239,11 +258,11 @@ object ControllerModule:
         BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
 
       override def calcGapToLeader(car: Car): String =
-        if standings._standings.head.equals(car) then convertTimeToMinutes(car.raceTime)
+        if standings.standings.head.equals(car) then convertTimeToMinutes(car.raceTime)
         else
-          val gap = car.raceTime - standings._standings.head.raceTime
+          val gap = car.raceTime - standings.standings.head.raceTime
           if gap > 0 then s"+${convertTimeToMinutes(gap)}"
-          else "+0:00"
+          else "+00:00"
 
       override def cars: List[Car] = context.model.cars
 

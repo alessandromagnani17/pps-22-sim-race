@@ -45,17 +45,22 @@ object EndRacePanel:
         _ <- titleLabel.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- titleLabel.setHorizontalAlignment(SwingConstants.CENTER)
         standingsPanel <- standingsPanel
-        _ <- controller.standings._standings.foreach(car => addToPanel(car, standingsPanel))
+        _ <- controller.standings.standings.foreach(car => addToPanel(car, standingsPanel))
         _ <- panel.add(titleLabel)
         _ <- panel.add(standingsPanel)
         _ <- panel.setVisible(true)
+        restartP <- JPanel()
+        restartButton <- JButton("Start a new simulation!")
+        _ <- restartButton.addActionListener(e => controller.startNewSimulation)
+        _ <- restartP.add(restartButton)
+        _ <- panel.add(restartP)
       yield panel
 
     private def addToPanel(car: Car, panel: JPanel): Unit =
       val p = for
         p <- JPanel()
         _ <- p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK))
-        position <- JLabel((controller.standings._standings.indexOf(car) + 1).toString)
+        position <- JLabel((controller.standings.standings.indexOf(car) + 1).toString)
         name <- JLabel(car.name)
         color <- JLabel()
         img <- JLabel(ImageLoader.load(s"/cars/miniatures/${CAR_NAMES.find(_._2.equals(car.name)).get._1}.png"))
@@ -84,7 +89,10 @@ object EndRacePanel:
         _ <-
           if controller.fastestCar.equals(car.name) then fastestLapIcon.setVisible(true)
           else fastestLapIcon.setVisible(false)
-        _ <- p.addAll(List(position, name, color, paddingLabel, img, paddingLabel1, tyre, degradation, fuel, time, fastestLap, fastestLapIcon))
+        _ <- p.addAll(
+          List(position, name, color, paddingLabel, img, paddingLabel1, tyre, degradation, fuel, time, fastestLap,
+            fastestLapIcon)
+        )
         _ <- panel.add(p)
       yield ()
       p.runSyncUnsafe()

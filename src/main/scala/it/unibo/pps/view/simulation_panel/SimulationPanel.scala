@@ -2,27 +2,49 @@ package it.unibo.pps.view.simulation_panel
 
 import it.unibo.pps.controller.ControllerModule
 
-import java.awt.{BorderLayout, Color, Component, Dimension, FlowLayout, Graphics, GridBagConstraints, GridBagLayout, GridLayout}
-import javax.swing.{BorderFactory, BoxLayout, ImageIcon, JButton, JComponent, JLabel, JList, JPanel, JScrollPane, JTable, JTextArea, SwingConstants, SwingUtilities, WindowConstants}
+import java.awt.{
+  BorderLayout,
+  Color,
+  Component,
+  Dimension,
+  FlowLayout,
+  Graphics,
+  GridBagConstraints,
+  GridBagLayout,
+  GridLayout
+}
+import javax.swing.{
+  BorderFactory,
+  BoxLayout,
+  ImageIcon,
+  JButton,
+  JComponent,
+  JLabel,
+  JList,
+  JPanel,
+  JScrollPane,
+  JTable,
+  JTextArea,
+  SwingConstants,
+  SwingUtilities,
+  WindowConstants
+}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.view.charts.LineChart
 import org.jfree.chart.ChartPanel
 import it.unibo.pps.model.{Car, CarColors, Sector, Snapshot, Standings, Track}
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
-
 import java.awt.event.{ActionEvent, ActionListener}
 import scala.concurrent.duration.FiniteDuration
 import it.unibo.pps.view.Constants.SimulationPanelConstants.*
 import it.unibo.pps.view.main_panel.ImageLoader
-
 import concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.collection.mutable.Map
 import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-
 import scala.math.BigDecimal
 
 trait SimulationPanel extends JPanel:
@@ -38,6 +60,11 @@ trait SimulationPanel extends JPanel:
 
   /**  Method that updates the displayed standings */
   def updateDisplayedStandings(): Unit
+
+  /** Updates all the charts
+    * @param snapshot
+    *   Last snapshot of the simulation
+    */
   def updateCharts(snapshot: Snapshot): Unit
 
   /**  Method that updates the fastest lap icon */
@@ -48,8 +75,7 @@ object SimulationPanel:
   def apply(controller: ControllerModule.Controller): SimulationPanel =
     new SimulationPanelImpl(controller)
 
-  private class SimulationPanelImpl(controller: ControllerModule.Controller)
-      extends SimulationPanel:
+  private class SimulationPanelImpl(controller: ControllerModule.Controller) extends SimulationPanel:
     self =>
 
     private lazy val canvas =
@@ -97,16 +123,16 @@ object SimulationPanel:
         "Start",
         e =>
           e.getSource.asInstanceOf[JButton].setEnabled(false)
-          controller.notifyStart()
+          controller.notifyStart
       )
       stopButton <- createButton(
         "Stop",
         e =>
           startButton.setEnabled(true)
-          controller.notifyStop()
+          controller.notifyStop
       )
-      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed())
-      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed())
+      incVelocityButton <- createButton("+ Velocity", e => controller.notifyIncreaseSpeed)
+      decVelocityButton <- createButton("- Velocity", e => controller.notifyDecreaseSpeed)
       reportButton <- reportButton
       s <- standings
       buttonsPanel = new JPanel()
@@ -165,7 +191,7 @@ object SimulationPanel:
     override def updateDisplayedStandings(): Unit = // TODO PROVARE A CAMBIARE
       var index = 0
       standingsComponents.foreach(e =>
-        val car = controller.standings._standings(index)
+        val car = controller.standings.standings(index)
         e.name.foreach(f => f.setText(car.name))
         e.color.foreach(f => f.setBackground(car.renderCarParams.color))
         e.miniature.foreach(f =>
@@ -208,10 +234,7 @@ object SimulationPanel:
         _ <- jb.addActionListener(listener)
       yield jb
 
-    private def addToPanel(
-                            elem: StandingsComponents,
-                            mainPanel: JPanel
-    ): Task[Unit] =
+    private def addToPanel(elem: StandingsComponents, mainPanel: JPanel): Task[Unit] =
       val start = 0
       val p = for
         panel <- JPanel(FlowLayout(FlowLayout.LEFT))

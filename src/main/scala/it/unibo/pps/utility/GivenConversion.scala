@@ -1,6 +1,6 @@
 package it.unibo.pps.utility
 
-import it.unibo.pps.model.{Car, Snapshot}
+import it.unibo.pps.model.{Car, Direction, Snapshot}
 import alice.tuprolog.{Term, Theory}
 import monix.eval.Task
 
@@ -19,16 +19,7 @@ object GivenConversion:
     given Conversion[Double, Task[Double]] = Task(_)
 
   object GuiConversion extends CommonConversion:
-    given Conversion[JFrame, Task[JFrame]] = Task(_)
-    given Conversion[JPanel, Task[JPanel]] = Task(_)
-    given Conversion[JLabel, Task[JLabel]] = Task(_)
-    given Conversion[JButton, Task[JButton]] = Task(_)
-    given Conversion[JComboBox[String], Task[JComboBox[String]]] = Task(_)
-    given Conversion[Component, Task[Component]] = Task(_)
-    given Conversion[BufferedImage, Task[BufferedImage]] = Task(_)
-    given Conversion[GridBagConstraints, Task[GridBagConstraints]] = Task(_)
-    given Conversion[Environment, Task[Environment]] = Task(_)
-    given Conversion[JScrollPane, Task[JScrollPane]] = Task(_)
+    given Component2Task[E <: Component]: Conversion[E, Task[E]] = Task(_)
     given Conversion[LineChart, Task[LineChart]] = Task(_)
     given Conversion[ChartPanel, Task[ChartPanel]] = Task(_)
     given Iterable2Task[E]: Conversion[Iterable[E], Task[Iterable[E]]] = Task(_)
@@ -43,3 +34,12 @@ object GivenConversion:
     given Conversion[Seq[_], Term] = _.mkString("[", ",", "]")
     given Conversion[String, Theory] = Theory.parseLazilyWithStandardOperators(_)
     given Conversion[String, Int] = Integer.parseInt(_)
+
+  object DirectionGivenConversion:
+    given Conversion[Direction, Int] = _ match
+      case Direction.Forward => 1
+      case Direction.Backward => -1
+
+    given Conversion[String, Direction] = _.toInt match
+      case d if d == 1 => Direction.Forward
+      case d if d == -1 => Direction.Backward

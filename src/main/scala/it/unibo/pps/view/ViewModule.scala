@@ -23,12 +23,15 @@ object ViewModule:
      *   @param track
      *   The track to be rendered before the display of the simulation panel
      */
-    def displaySimulationPanel(track: Track): Unit
+    def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit
+
+    def resetView: Unit
 
     /** Method that displays the end race panel */
     def displayEndRacePanel(): Unit
     
     def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
+
     def updateCharts(l: List[Snapshot]): Unit
 
     /** Method that sets enabled the final report button that if pressed, display the end race panel */
@@ -55,10 +58,13 @@ object ViewModule:
 
       override def updateDisplayedStandings(): Unit = gui.updateDisplayedStandings()
 
-      override def displaySimulationPanel(track: Track): Unit =
-        gui.displaySimulationPanel(track)
+      override def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit =
+        gui.displaySimulationPanel(track, car, actualLap, totalLap)
 
-      override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit =
+      override def resetView: Unit =
+        gui.reset
+
+      override def updateCars(cars: List[Car], actualLap: Int, totalLaps: Int): Unit = //TODO render snapshot
         gui.simulationPanel.render(cars, actualLap, totalLaps)
 
       override def displayStartingPositionsPanel(): Unit =

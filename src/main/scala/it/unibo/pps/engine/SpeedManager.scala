@@ -11,13 +11,15 @@ trait SpeedManager:
     *
     * If the speed is already at the minimum value it does nothing
     */
-  def decreaseSpeed(): Unit
+  def decreaseSpeed: Unit
 
   /** Method that increases the actual simulation speed
     *
     * If the speed is already at the maximum value it does nothing
     */
-  def increaseSpeed(): Unit
+  def increaseSpeed: Unit
+
+  def reset: Unit
 
 object SpeedManager:
   def apply(): SpeedManager = new SpeedManagerImpl()
@@ -28,12 +30,14 @@ object SpeedManager:
 
     override def speed: Double = _speed
 
-    override def decreaseSpeed(): Unit = _speed match
+    override def decreaseSpeed: Unit = _speed match
       case HIGH_SPEED => _speed = DEFAULT_SPEED
       case DEFAULT_SPEED => _speed = LOW_SPEED
       case _ =>
 
-    override def increaseSpeed(): Unit = _speed match
+    override def increaseSpeed: Unit = _speed match
       case LOW_SPEED => _speed = DEFAULT_SPEED
       case DEFAULT_SPEED => _speed = HIGH_SPEED
       case _ =>
+
+    override def reset: Unit = _speed = DEFAULT_SPEED

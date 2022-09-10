@@ -11,12 +11,19 @@ import monix.execution.{Ack, Cancelable}
 
 import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
-import it.unibo.pps.model.loader.{CarsLd, TrackLoader}
+import it.unibo.pps.model.loader.{CarsLoader, TrackLoader}
 
 object ModelModule:
   trait Model:
+
+    /** The current track */
     def track: Track
+
+    /** The initial cars */
     def cars: List[Car]
+
+    def resetModel: Unit
+
     def startingPositions: List[Car]
     def currentCarIndex: Int
     def actualLap: Int
@@ -25,7 +32,9 @@ object ModelModule:
     def fastestLap: Int
     def fastestCar: String
     def getLastSnapshot(): Snapshot
-    def initSnapshot(): Unit
+
+    /** Initializes simulation history */
+    def initSnapshot: Unit
     def currentCarIndex_=(index: Int): Unit
     def startingPositions_=(startingPos: List[Car]): Unit
     def actualLap_=(lap: Int): Unit
@@ -34,7 +43,21 @@ object ModelModule:
     def fastestCar_=(carName: String): Unit
     def setS(standings: Standings): Unit
     def createStandings(): Unit
+
+    /** Adds one snapshot to the history
+      * @param snapshot
+      *   Simulation snapshot
+      */
     def addSnapshot(snapshot: Snapshot): Unit
+
+    /** Registers the given callbacks to the history
+      * @param onNext
+      *   Callback to be executed when history is updated
+      * @param onError
+      *   Callback to be executed when an error occurs
+      * @params
+      *   onComplete Callback to be executed when the stream is closed
+      */
     def registerCallbackHistory(
         onNext: List[Snapshot] => Future[Ack],
         onError: Throwable => Unit,
@@ -48,18 +71,15 @@ object ModelModule:
     class ModelImpl extends Model:
 
       private val _track = TrackLoader("/prolog/basetrack.pl").load
-      private var _cars: List[Car] = CarsLd("/prolog/cars.pl", track).load
+      private var _cars: List[Car] = CarsLoader("/prolog/cars.pl", track).load
 
-      /*TODO - togliere i campi _cars e _stading da fuori e farli vivere solo nella history */
-
-      //private var _standings: Standings = Standings(Map.from(cars.zipWithIndex.map { case (k, v) => (v, k) }))
       private var _standings: Standings = Standings(_cars)
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
       private var _startingPositions: List[Car] = _cars
       private var _actualLap = 1
-      private val historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
-      private var _totalLaps = 1
+      private var historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+      private var _totalLaps = 15
       private var _fastestLap = 0
       private var _fastestCar = ""
 
@@ -72,6 +92,19 @@ object ModelModule:
 
       override def currentCarIndex: Int = _currentCarIndex
       override def cars: List[Car] = _cars
+
+      override def resetModel: Unit =
+        history = List.empty
+        historySubject = ConcurrentSubject[List[Snapshot]](MulticastStrategy.publish)
+        _fastestLap = 0
+        _fastestCar = ""
+        _actualLap = 1
+        _cars = CarsLoader("/prolog/cars.pl", track).load
+        _startingPositions = _cars
+        _standings = Standings(_cars)
+        _currentCarIndex = 0
+        _totalLaps = 15
+
       override def startingPositions: List[Car] = _startingPositions
       override def track: Track = _track
       override def actualLap: Int = _actualLap
@@ -88,7 +121,7 @@ object ModelModule:
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
       override def setS(standings: Standings): Unit = _standings = standings
 
-      override def initSnapshot(): Unit =
+      override def initSnapshot: Unit =
         addSnapshot(Snapshot(_cars, 0))
 
       override def totalLaps_(lap: Int): Unit = _totalLaps = lap

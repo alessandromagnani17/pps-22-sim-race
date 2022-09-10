@@ -12,7 +12,7 @@ package object engine:
 
   val computeRadius = (d: RenderParams, position: Tuple2[Int, Int]) =>
     d match
-      case RenderTurnParams(center, _, _, _, _, _) => center euclideanDistance position
+      case RenderTurnParams(center, _, _, _, _, _, _, _) => center euclideanDistance position
 
   val angleBetweenPoints = (a: Tuple2[Int, Int], b: Tuple2[Int, Int], radius: Int) =>
     val distance = a euclideanDistance b

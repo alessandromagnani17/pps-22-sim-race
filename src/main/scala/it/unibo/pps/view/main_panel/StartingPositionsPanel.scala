@@ -17,8 +17,7 @@ object StartingPositionsPanel:
   def apply(controller: ControllerModule.Controller): StartingPositionsPanel =
     StartingPositionsPanelImpl(controller)
 
-  private class StartingPositionsPanelImpl(controller: ControllerModule.Controller)
-      extends StartingPositionsPanel:
+  private class StartingPositionsPanelImpl(controller: ControllerModule.Controller) extends StartingPositionsPanel:
     self =>
 
     private val topLabel = createLabel(

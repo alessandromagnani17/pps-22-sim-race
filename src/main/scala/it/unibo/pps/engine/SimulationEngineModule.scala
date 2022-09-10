@@ -7,7 +7,7 @@ import it.unibo.pps.model.{Car, Direction, ModelModule, Phase, RenderCarParams, 
 import it.unibo.pps.view.ViewModule
 import monix.eval.Task
 import monix.execution.Scheduler
-
+import scala.{Tuple2 => Point2D}
 import scala.io.StdIn.readLine
 import concurrent.duration.{Duration, DurationDouble, DurationInt, FiniteDuration}
 import scala.language.postfixOps
@@ -16,20 +16,30 @@ import it.unibo.pps.prolog.Scala2P
 import it.unibo.pps.utility.monadic.*
 import it.unibo.pps.utility.GivenConversion.ModelConversion
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_Task
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
 import it.unibo.pps.view.ViewConstants.*
-
 import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
 
 object SimulationEngineModule:
   trait SimulationEngine:
-    def simulationStep(): Task[Unit]
-    def decreaseSpeed(): Unit
-    def increaseSpeed(): Unit
+
+    /** Represents one simulation step
+      * @return
+      *   [[Task]]
+      */
+    def simulationStep: Task[Unit]
+
+    /** Decreases simulation speed */
+    def decreaseSpeed: Unit
+
+    /** Increases simulation speed */
+    def increaseSpeed: Unit
+
+    def resetEngine: Unit
 
   trait Provider:
     val simulationEngine: SimulationEngine
@@ -42,33 +52,38 @@ object SimulationEngineModule:
 
       private val speedManager = SpeedManager()
       private val movementsManager = Movements()
-      private val sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
+      private var sectorTimes: HashMap[String, Int] = HashMap.from(context.model.cars.map(_.name -> 0))
       private val finalPositions = List((633, 272), (533, 272), (433, 272), (333, 272))
       private var carsArrived = 0
 
-      private def getFinalPositions(car: Car): (Int, Int) =
-        finalPositions(context.model.standings._standings.indexOf(car))
+      private def getFinalPositions(car: Car): Point2D[Int, Int] =
+        finalPositions(context.model.standings.standings.indexOf(car))
 
-      override def decreaseSpeed(): Unit =
-        speedManager.decreaseSpeed()
+      override def resetEngine: Unit =
+        sectorTimes = HashMap.from(context.model.cars.map(_.name -> 0))
+        carsArrived = 0
+        speedManager.reset
 
-      override def increaseSpeed(): Unit =
-        speedManager.increaseSpeed()
+      override def decreaseSpeed: Unit =
+        speedManager.decreaseSpeed
 
-      override def simulationStep(): Task[Unit] =
+      override def increaseSpeed: Unit =
+        speedManager.increaseSpeed
+
+      override def simulationStep: Task[Unit] =
         for
-          _ <- moveCars()
-          _ <- updateStandings()
-          _ <- updateView()
+          _ <- moveCars
+          _ <- updateStandings
+          _ <- updateView
           _ <- waitFor(speedManager.speed)
-          _ <- checkEnd()
+          _ <- checkEnd
         yield ()
 
-      private def checkEnd(): Task[Unit] =
+      private def checkEnd: Task[Unit] =
         for
           _ <- io(
             if carsArrived == NUM_CARS then
-              controller.notifyStop()
+              controller.notifyStop
               context.view.setFinalReportEnabled()
           )
         yield ()
@@ -77,7 +92,7 @@ object SimulationEngineModule:
         val time = BASE_TIME * simulationSpeed
         Task.sleep(time millis)
 
-      private def moveCars(): Task[Unit] =
+      private def moveCars: Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
           newSnap <- computeNewSnapshot(lastSnap)
@@ -113,27 +128,32 @@ object SimulationEngineModule:
         case s: Straight => onStraight()
         case t: Turn => onTurn()
 
-      private def updateFuel(car: Car, newPosition: Tuple2[Int, Int]): Double =
+      private def updateFuel(car: Car, newPosition: Point2D[Int, Int]): Double =
         val onStraight = () =>
           val oldPosition = car.renderCarParams.position
-          car.fuel - Math.abs(oldPosition._1 - newPosition._1) * 0.0015
+          car.fuel - Car.decreaseFuel(Math.abs(oldPosition._1 - newPosition._1))
         val onTurn = () =>
           val r = computeRadius(car.actualSector.renderParams, car.renderCarParams.position)
           val teta = angleBetweenPoints(car.renderCarParams.position, newPosition, r)
           val l = circularArc(teta, r)
-          car.fuel - l * 0.0015
+          car.fuel - Car.decreaseFuel(l)
         updateParameter(car.actualSector, onStraight, onTurn)
 
       private def updateVelocity(car: Car, time: Int): Int =
         val onStraight = () =>
-          movementsManager.updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
-        val onTurn = () => movementsManager.updateVelocityTurn(car)
+          movementsManager
+            .updateVelocityStraight(car, time, car.actualSector.phase(car.renderCarParams.position))
+            .runSyncUnsafe()
+        val onTurn = () =>
+          movementsManager
+            .updateVelocityTurn(car)
+            .runSyncUnsafe()
         updateParameter(car.actualSector, onStraight, onTurn)
 
-      private def updatePosition(car: Car, time: Int): Tuple2[Int, Int] =
+      private def updatePosition(car: Car, time: Int): Point2D[Int, Int] =
         updateParameter(car.actualSector, () => straightMovement(car, time), () => turnMovement(car, time))
 
-      private def straightMovement(car: Car, time: Int): Tuple2[Int, Int] =
+      private def straightMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.updatePositionStraightAcceleration(car, sectorTimes(car.name))
@@ -148,14 +168,14 @@ object SimulationEngineModule:
             car.actualSector = context.model.track.nextSector(car.actualSector)
             turnMovement(car, time)
 
-      private def checkEndStraight(car: Car, p: Tuple2[Int, Int]): Tuple2[Int, Int] =
+      private def checkEndStraight(car: Car, p: Point2D[Int, Int]): Point2D[Int, Int] =
         car.actualSector.renderParams match
           case RenderStraightParams(_, _, _, _, endX) =>
             val d = (p._1 - endX) * car.actualSector.direction
             if d >= 0 then (endX, p._2)
             else p
 
-      private def turnMovement(car: Car, time: Int): Tuple2[Int, Int] =
+      private def turnMovement(car: Car, time: Int): Point2D[Int, Int] =
         car.actualSector.phase(car.renderCarParams.position) match
           case Phase.Acceleration =>
             val p = movementsManager.updatePositionTurn(
@@ -188,7 +208,7 @@ object SimulationEngineModule:
           car.raceTime = time
           carsArrived = carsArrived + 1
 
-      private def updateStandings(): Task[Unit] =
+      private def updateStandings: Task[Unit] =
         for
           lastSnap <- io(context.model.getLastSnapshot())
           newStandings = calcNewStandings(lastSnap)
@@ -245,7 +265,7 @@ object SimulationEngineModule:
           case Direction.Forward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 > c2.renderCarParams.position._2)
           case Direction.Backward => sortCars(filteredCars, (c1, c2) => c1.renderCarParams.position._2 < c2.renderCarParams.position._2)
 
-      private def updateView(): Task[Unit] =
+      private def updateView: Task[Unit] =
         for
           cars <- io(context.model.getLastSnapshot().cars)
           _ <- io(context.view.updateCars(cars, context.model.actualLap, context.model.totalLaps))

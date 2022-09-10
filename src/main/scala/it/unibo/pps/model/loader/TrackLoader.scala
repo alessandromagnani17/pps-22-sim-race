@@ -10,13 +10,18 @@ import it.unibo.pps.model.{
   Turn
 }
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.given
+import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 
 class TrackLoader(theory: String) extends Loader:
 
   private val engine = Scala2P.createEngine(theory)
 
   override type E = Track
+
+  /** Loads the track from the relative prolog file
+    * @return
+    *   [[Track]]
+    */
   override def load: Track =
     val track = Track()
     loadStraights().foreach(track.addSector(_))
