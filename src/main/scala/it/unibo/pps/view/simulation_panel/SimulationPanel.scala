@@ -22,7 +22,7 @@ import scala.language.postfixOps
 import scala.language.implicitConversions
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
-import it.unibo.pps.utility.Utility
+import it.unibo.pps.utility.UtilityFunctions
 
 import scala.math.BigDecimal
 
@@ -180,9 +180,9 @@ object SimulationPanel:
           )
         )
         e.tyres.foreach(f => f.setText(car.tyre.toString))
-        e.raceTime.foreach(f => f.setText(Utility.calcGapToLeader(car, controller.standings)))
-        e.lapTime.foreach(f => f.setText(Utility.convertTimeToMinutes(car.lapTime)))
-        e.fastestLap.foreach(f => f.setText(Utility.convertTimeToMinutes(car.fastestLap)))
+        e.raceTime.foreach(f => f.setText(UtilityFunctions.calcGapToLeader(car, controller.standings)))
+        e.lapTime.foreach(f => f.setText(UtilityFunctions.convertTimeToMinutes(car.lapTime)))
+        e.fastestLap.foreach(f => f.setText(UtilityFunctions.convertTimeToMinutes(car.fastestLap)))
       )
 
     override def updateFastestLapIcon(carName: String): Unit =

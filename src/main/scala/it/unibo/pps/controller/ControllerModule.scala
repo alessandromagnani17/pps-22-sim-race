@@ -6,7 +6,7 @@ import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
-import it.unibo.pps.utility.Utility
+import it.unibo.pps.utility.UtilityFunctions
 import monix.eval.Task
 
 import java.awt.Color

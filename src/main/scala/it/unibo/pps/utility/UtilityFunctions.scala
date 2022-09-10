@@ -4,7 +4,7 @@ import it.unibo.pps.model.{Car, Standings}
 
 import scala.math.BigDecimal
 
-object Utility:
+object UtilityFunctions:
 
   /** Returns a time converted in minutes/seconds format from virtual time
    * @param time
