@@ -1,6 +1,7 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
+import it.unibo.pps.model.car.Car
 import it.unibo.pps.view.main_panel.MainPanel
 import it.unibo.pps.view.main_panel.StartingPositionsPanel
 import it.unibo.pps.view.simulation_panel.SimulationPanel
@@ -9,7 +10,8 @@ import monix.eval.Task
 import java.awt.{Color, Component, Toolkit}
 import javax.swing.{JFrame, JTable, SwingUtilities, WindowConstants}
 import monix.execution.Scheduler.Implicits.global
-import it.unibo.pps.model.{Car, Driver, Standings, Track, Tyre}
+import it.unibo.pps.model.Standings
+import it.unibo.pps.model.track.Track
 import it.unibo.pps.view.Constants.GuiConstants.*
 import it.unibo.pps.view.end_race_panel.EndRacePanel
 
@@ -51,14 +53,14 @@ class Gui(controller: ControllerModule.Controller):
     yield fr
 
   /** Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel: Unit = mainPanel.updateParametersPanel()
+  def updateParametersPanel: Unit = mainPanel.updateParametersPanel
 
   /** Method that updates the car displayed */
   def updateDisplayedCar: Unit =
-    mainPanel.updateDisplayedCar()
+    mainPanel.updateDisplayedCar
 
   /** Method that updates the displayed standings */
-  def updateDisplayedStandings: Unit = _simulationPanel.updateDisplayedStandings()
+  def updateDisplayedStandings: Unit = _simulationPanel.updateDisplayedStandings
 
   /** Method that updates the fastest lap icon
     * @param carName
@@ -68,7 +70,7 @@ class Gui(controller: ControllerModule.Controller):
 
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
   def setFinalReportEnabled: Unit =
-    _simulationPanel.setFinalReportEnabled()
+    _simulationPanel.setFinalReportEnabled
 
   /** Method that displays the simulation panel
     * @param track

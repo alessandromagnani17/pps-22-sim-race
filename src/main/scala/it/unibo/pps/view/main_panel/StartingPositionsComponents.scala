@@ -4,7 +4,19 @@ import monix.eval.Task
 
 import javax.swing.{JButton, JLabel}
 
-case class StartingPositionsComponents (
+/** Represents the components of the standings in the starting positions panel
+  * @param position
+  *   The actual starting grid position
+  * @param name
+  *   The name of the car
+  * @param miniature
+  *   The image of the car
+  * @param upButton
+  *   The up button
+  * @param downButton
+  *   The down button
+  */
+case class StartingPositionsComponents(
     val position: Task[JLabel],
     val name: Task[JLabel],
     val miniature: Task[JLabel],

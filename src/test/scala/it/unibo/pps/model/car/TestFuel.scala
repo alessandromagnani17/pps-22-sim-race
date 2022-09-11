@@ -1,4 +1,4 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.car
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

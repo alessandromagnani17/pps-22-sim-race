@@ -1,14 +1,12 @@
 package it.unibo.pps.view.main_panel
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
 import it.unibo.pps.utility.GivenConversion.GuiConversion.given
 import it.unibo.pps.view.main_panel.{CarSelectionPanel, MainPanel, ParamsSelectionPanel, StartSimulationPanel}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import it.unibo.pps.utility.PimpScala.RichJPanel.*
-
-
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
 import java.awt.image.BufferedImage
 import java.awt.*
@@ -19,12 +17,11 @@ import it.unibo.pps.view.Constants.MainPanelConstants.*
 
 trait MainPanel extends JPanel:
 
-  /**  Method that updates the car displayed */
-  def updateDisplayedCar(): Unit
+  /** Method that updates the car displayed */
+  def updateDisplayedCar: Unit
 
-  /**  Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel(): Unit
-
+  /** Method that updates the displayed parameters when the car displayed is changed */
+  def updateParametersPanel: Unit
 
 object MainPanel:
   def apply(controller: ControllerModule.Controller): MainPanel =
@@ -33,20 +30,20 @@ object MainPanel:
   private class MainPanelImpl(controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
-    private val carSelectionPanel = CarSelectionPanel(controller)
-    private val paramsSelectionPanel = ParamsSelectionPanel(controller)
-    private val startSimulationPanel = StartSimulationPanel(controller)
-    private val mainPanel = createMainPanelAndAddAllComponents()
+    private lazy val carSelectionPanel = CarSelectionPanel(controller)
+    private lazy val paramsSelectionPanel = ParamsSelectionPanel(controller)
+    private lazy val startSimulationPanel = StartSimulationPanel(controller)
+    private lazy val mainPanel = createMainPanelAndAddAllComponents
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(): Unit =
-      carSelectionPanel.updateDisplayedCar()
+    def updateDisplayedCar: Unit =
+      carSelectionPanel.updateDisplayedCar
 
-    def updateParametersPanel(): Unit =
-      paramsSelectionPanel.updateParametersPanel()
+    def updateParametersPanel: Unit =
+      paramsSelectionPanel.updateParametersPanel
 
-    private def createMainPanelAndAddAllComponents(): Task[JPanel] =
+    private def createMainPanelAndAddAllComponents: Task[JPanel] =
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))

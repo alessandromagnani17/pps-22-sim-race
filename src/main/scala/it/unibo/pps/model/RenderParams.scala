@@ -1,6 +1,6 @@
 package it.unibo.pps.model
 
-import it.unibo.pps.model.Direction
+import it.unibo.pps.model.track.Direction
 
 import java.awt.Color
 import scala.Tuple2 as Point2d

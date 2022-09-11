@@ -42,12 +42,12 @@ object LineChart:
     new LineChartImpl(title, xLabel, yLabel)
 
   private class LineChartImpl(_title: String, xLabel: String, yLabel: String) extends LineChart:
-    private val chart = createChart()
+    private val chart = createChart
     private var series: HashMap[String, XYSeries] = HashMap.empty
 
     override def addValue(x: Double, y: Double, seriesName: String): Unit =
       series ?--> (seriesName, _.add(x, y))
-      chart.getXYPlot.setDataset(mkDataset())
+      chart.getXYPlot.setDataset(mkDataset)
 
     override def wrapToPanel: ChartPanel = ChartPanel(chart)
 
@@ -64,12 +64,12 @@ object LineChart:
           }
         )
 
-    private def mkDataset(): XYSeriesCollection =
+    private def mkDataset: XYSeriesCollection =
       val dataset = XYSeriesCollection()
       series.foreach((_, s) => dataset.addSeries(s))
       dataset
 
-    private def createChart(): JFreeChart =
+    private def createChart: JFreeChart =
       ChartFactory.createXYLineChart(
         _title,
         xLabel,

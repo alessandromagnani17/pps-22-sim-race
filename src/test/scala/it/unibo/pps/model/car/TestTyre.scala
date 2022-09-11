@@ -1,5 +1,6 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.car
 
+import it.unibo.pps.model.car.Tyre
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -12,17 +13,13 @@ class TestTyre extends AnyFlatSpec with Matchers:
   }
 
   "Tyre degradation of SOFT tyre for each lap" should "be lower than HARD tyre" in {
-    for lap <- 1 to 30 do
-      Tyre.degradation(Tyre.SOFT, lap) should be <= Tyre.degradation(Tyre.HARD, lap)
+    for lap <- 1 to 30 do Tyre.degradation(Tyre.SOFT, lap) should be <= Tyre.degradation(Tyre.HARD, lap)
   }
 
   "Tyre degradation of SOFT tyre for each lap" should "be lower than MEDIUM tyre" in {
-    for lap <- 1 to 30 do
-      Tyre.degradation(Tyre.SOFT, lap) should be <= Tyre.degradation(Tyre.MEDIUM, lap)
+    for lap <- 1 to 30 do Tyre.degradation(Tyre.SOFT, lap) should be <= Tyre.degradation(Tyre.MEDIUM, lap)
   }
 
   "Tyre degradation of MEDIUM tyre for each lap" should "be lower than HARD tyre" in {
-    for lap <- 1 to 30 do
-      Tyre.degradation(Tyre.MEDIUM, lap) should be <= Tyre.degradation(Tyre.HARD, lap)
+    for lap <- 1 to 30 do Tyre.degradation(Tyre.MEDIUM, lap) should be <= Tyre.degradation(Tyre.HARD, lap)
   }
-

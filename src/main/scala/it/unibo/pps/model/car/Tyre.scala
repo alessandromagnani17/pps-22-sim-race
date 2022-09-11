@@ -1,11 +1,9 @@
-package it.unibo.pps.model
-
-import it.unibo.pps.model.Tyre.{HARD, MEDIUM, SOFT}
+package it.unibo.pps.model.car
 
 given Conversion[Tyre, Double] = _ match
-  case HARD => 4.0
-  case MEDIUM => 3.0
-  case SOFT => 2.0
+  case Tyre.HARD => 4.0
+  case Tyre.MEDIUM => 3.0
+  case Tyre.SOFT => 2.0
 
 enum Tyre:
   case HARD

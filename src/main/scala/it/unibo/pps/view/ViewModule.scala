@@ -1,7 +1,9 @@
 package it.unibo.pps.view
 
 import it.unibo.pps.controller.ControllerModule
-import it.unibo.pps.model.{Car, Snapshot, Standings, Track, Tyre}
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.Track
+import it.unibo.pps.model.{Snapshot, Standings}
 
 object ViewModule:
   trait View:
@@ -21,16 +23,32 @@ object ViewModule:
     /** Method that displays the simulation panel
       * @param track
       *   The track to be rendered before the display of the simulation panel
+      * @param car
+      *   The actual cars list
+      * @param actualLap
+      *   The actual lap
+      * @param totalLap
+      *   Total laps of the race
       */
     def displaySimulationPanel(track: Track, car: List[Car], actualLap: Int, totalLap: Int): Unit
 
+    /** Resets view paramters when a new simulation is started */
     def resetView: Unit
 
     /** Method that displays the end race panel */
     def displayEndRacePanel: Unit
 
+    /** Updates the canvas
+      * @param cars
+      *   The actual cars list
+      * @param actualLap
+      *   The actual lap
+      * @param totalLaps
+      *   Total laps of the race
+      */
     def updateRender(cars: List[Car], actualLap: Int, totalLaps: Int): Unit
 
+    /** Updates charts when a new snapshot is added to the history */
     def updateCharts(l: List[Snapshot]): Unit
 
     /** Method that sets enabled the final report button that if pressed, display the end race panel */

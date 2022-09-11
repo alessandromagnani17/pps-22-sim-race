@@ -1,6 +1,7 @@
 package it.unibo.pps.model.factor
 
-import it.unibo.pps.model.Tyre
+import it.unibo.pps.model.car.Tyre
+
 given Conversion[Double, Int] = _.toInt
 
 /** Represents a generic factor that may affect car velocity */
@@ -29,7 +30,7 @@ class DegradationFactor extends Factor:
   override def damage(velocity: Int, degradation: E): Int = ((1 - degradation) / 10.0) * velocity
 
 /** Represents the sum of all the factors */
-object CarFactorsManager:
+object CarFactors:
 
   private val fuelFactor = FuelFactor()
   private val tyreFactor = TyreFactor()

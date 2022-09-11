@@ -1,23 +1,37 @@
-package it.unibo.pps.model
+package it.unibo.pps.model.track
 
-import scala.{Tuple2 => Point2d}
-import it.unibo.pps.utility.PimpScala.RichInt.*
-import it.unibo.pps.model.RenderTurnParams
+import it.unibo.pps.model.*
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
+import it.unibo.pps.utility.PimpScala.RichInt.*
+import scala.{Tuple2 => Point2d}
 
+/** The direction of the sector */
 enum Direction:
   case Forward
   case Backward
 
+/** Represents the various phases of a sector indicating the actions that the pilot can carry out */
 enum Phase:
   case Acceleration
   case Deceleration
   case Ended
 
+/** A generic sector of the track */
 sealed trait Sector:
+
+  /** Returns the id of the sector */
   def id: Int
+
+  /** Returns the render parameters of the sector */
   def renderParams: RenderParams
+
+  /** Returns the direction of the sector */
   def direction: Direction
+
+  /** Computes the phase given the car position
+    * @param p
+    *   The car position
+    */
   def phase(p: (Int, Int)): Phase
 
 case class Straight(_id: Int, _direction: Direction, _drawingParams: RenderStraightParams) extends Sector:

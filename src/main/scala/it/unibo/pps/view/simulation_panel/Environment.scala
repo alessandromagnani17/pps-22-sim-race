@@ -1,6 +1,9 @@
 package it.unibo.pps.view.simulation_panel
 
-import it.unibo.pps.model.{Car, RenderStraightParams, RenderTurnParams, Sector, Straight, Track, Turn}
+import it.unibo.pps.model.car.Car
+import it.unibo.pps.model.track.{Sector, Straight, Track, Turn}
+import it.unibo.pps.model.{RenderStraightParams, RenderTurnParams}
+
 import java.awt.{Color, Dimension, Graphics}
 import javax.swing.JPanel
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
@@ -30,10 +33,10 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
     g.drawString(s"LAP: ${ if _actualLap > _totalLaps then _totalLaps else _actualLap} / $_totalLaps", 449, 60)
     if _actualLap >= _totalLaps + 1 then
-      g.drawString("4° ", 303, 283)
-      g.drawString("3° ", 403, 283)
-      g.drawString("2° ", 503, 283)
-      g.drawString("1° ", 603, 283)
+      _track.finalPositions.zipWithIndex.foreach(
+        (position, index) =>
+          g.drawString(s"${index + 1}°", position._1 - 30, position._2 + 11)
+      )
 
     g.drawLine(200, 113, 200, 170)
 
@@ -42,31 +45,31 @@ class Environment(val w: Int, val h: Int) extends JPanel:
     g.setColor(Color.BLACK)
 
     def sketcher(e: Sector) = e match
-      case s: Straight => drawStraigth(s, g)
+      case s: Straight => drawStraight(s, g)
       case t: Turn => drawTurn(t, g)
 
     _track.sectors.foreach(sketcher(_))
     g.drawRect(0, 0, w, h)
 
-  private def drawStraigth(s: Straight, g: Graphics): Unit = s.renderParams match {
+  private def drawStraight(s: Straight, g: Graphics): Unit = s.renderParams match
     case RenderStraightParams(p0External, p1External, p0Internal, p1Internal, _) =>
       g.drawLine(p0External._1, p0External._2, p1External._1, p1External._2)
       g.drawLine(p0Internal._1, p0Internal._2, p1Internal._1, p1Internal._2)
-  }
 
-  private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match {
+
+  private def drawTurn(t: Turn, g: Graphics): Unit = t.renderParams match
     case RenderTurnParams(center, startPointE, startPointI, endPointE, endPointI, _, _, _) =>
       val externalRadius = center euclideanDistance startPointE
       val internalRadius = center euclideanDistance startPointI
       drawSingleTurn(externalRadius, center, 2 * externalRadius, t.direction, g)
       drawSingleTurn(internalRadius, center, 2 * internalRadius, t.direction, g)
-  }
+
 
   private def drawSingleTurn(radius: Int, center: Point2d[Int, Int], diameter: Int, direction: Int, g: Graphics): Unit =
-    center match {
+    center match
       case Point2d(x, y) =>
         g.drawArc(x - radius, y - radius, diameter, diameter, TURN_START_ANGLE, TURN_END_ANGLE * direction)
-    }
+
 
   private def drawCar(position: Point2d[Int, Int], color: Color, g: Graphics): Unit =
     g.setColor(color)
