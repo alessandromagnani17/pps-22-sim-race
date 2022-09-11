@@ -232,6 +232,14 @@ object ControllerModule:
         context.view.resetView
         context.simulationEngine.resetEngine
 
+      override def registerReactiveChartCallback: Unit =
+        val onNext = (l: List[Snapshot]) =>
+          context.view.updateCharts(l)
+          Ack.Continue
+        val onError = (t: Throwable) => ()
+        val onComplete = () => ()
+        context.model.registerCallbackHistory(onNext, onError, onComplete)
+
       override def invertPosition(prevIndex: Int, nextIndex: Int): Unit =
         val car: Car = context.model.startingPositions(prevIndex)
         context.model.startingPositions =
@@ -242,14 +250,6 @@ object ControllerModule:
         context.model.startingPositions(prevIndex).renderCarParams.position =
           context.model.startingPositions(nextIndex).renderCarParams.position
         context.model.startingPositions(nextIndex).renderCarParams.position = position
-
-      override def registerReactiveChartCallback: Unit =
-        val onNext = (l: List[Snapshot]) =>
-          context.view.updateCharts(l)
-          Ack.Continue
-        val onError = (t: Throwable) => ()
-        val onComplete = () => ()
-        context.model.registerCallbackHistory(onNext, onError, onComplete)
 
       override def convertTimeToMinutes(time: Int): String =
         val minutes: Int = time / 60
