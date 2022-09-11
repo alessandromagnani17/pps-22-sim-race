@@ -173,6 +173,7 @@ Successivamente, sempre cooperando con Montanari, ho implementato il numero di g
 - `SimulationPanel`
 - `Standings`
 - `SimulationEngineModule`
+- `UtilityFunctions`
 
 Infine, sempre in collaborazione con Montanari, mi sono occupato del report finale della gara. Classi relative:
 - `EndRacePanel`
@@ -199,6 +200,7 @@ Classi relative:
 - `SimulationPanel`
 - `Standings`
 - `SimulationEngineModule`
+- `UtilityFunctions`
 
 Infine, sempre in collaborazione con Magnani, mi sono occupato della realizzazione del report finale della gara.
 Classi relative:
