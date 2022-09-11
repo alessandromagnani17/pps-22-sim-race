@@ -114,27 +114,6 @@ object Movements:
             position <- io(checkEnd(np, endX, direction))
           yield position
 
-    private def checkTurnBounds(
-        p: Point2D[Int, Int],
-        center: Point2D[Int, Int],
-        rExternal: Int,
-        rInternal: Int,
-        direction: Int
-    ): Point2D[Int, Int] =
-      var dx = (p._1 + 12, p._2) euclideanDistance center
-      var dy = (p._1, p._2 + 12) euclideanDistance center
-      if dx - rExternal < 0 && direction == 1 then dx = rExternal
-      if dy - rExternal < 0 && direction == 1 then dy = rExternal
-      if (dx >= rExternal || dy >= rExternal) && direction == 1 then (p._1 - (dx - rExternal), p._2 - (dy - rExternal))
-      else if (dx <= rInternal || dy <= rInternal) && direction == -1 then
-        (p._1 + (dx - rInternal), p._2 + (dy - rInternal))
-      else p
-
-    private def checkEnd(p: Point2D[Int, Int], end: Int, direction: Int): Point2D[Int, Int] =
-      if direction == 1 then if p._1 < end then (end - 1, p._2) else p
-      else if p._1 > end then (end + 1, p._2)
-      else p
-
     private def newPositionStraight(
         x: Int,
         velocity: Double,
@@ -159,3 +138,24 @@ object Movements:
 
     private def updateVelocityStraightDeceleration(car: Car, time: Int): Task[Int] =
       io((car.actualSpeed * STRAIGHT_VELOCITY_REDUCTION_FACTOR).toInt)
+
+    private def checkTurnBounds(
+        p: Point2D[Int, Int],
+        center: Point2D[Int, Int],
+        rExternal: Int,
+        rInternal: Int,
+        direction: Int
+    ): Point2D[Int, Int] =
+      var dx = (p._1 + 12, p._2) euclideanDistance center
+      var dy = (p._1, p._2 + 12) euclideanDistance center
+      if dx - rExternal < 0 && direction == 1 then dx = rExternal
+      if dy - rExternal < 0 && direction == 1 then dy = rExternal
+      if (dx >= rExternal || dy >= rExternal) && direction == 1 then (p._1 - (dx - rExternal), p._2 - (dy - rExternal))
+      else if (dx <= rInternal || dy <= rInternal) && direction == -1 then
+        (p._1 + (dx - rInternal), p._2 + (dy - rInternal))
+      else p
+
+    private def checkEnd(p: Point2D[Int, Int], end: Int, direction: Int): Point2D[Int, Int] =
+      if direction == 1 then if p._1 < end then (end - 1, p._2) else p
+      else if p._1 > end then (end + 1, p._2)
+      else p
