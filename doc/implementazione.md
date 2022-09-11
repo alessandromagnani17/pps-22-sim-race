@@ -154,6 +154,7 @@ Inizialmente ho collaborato insieme a Domini per realizzare la schermata per vis
 
 Sempre cooperando con Domini, ho poi sviluppato le classi relative alla sezione `SimulationEngine`, che mira a gestire il movimento delle macchine durante la simulazione. Questa parte è composta dalle seguenti classi:
 - `SimulationEngineModule`;
+- `SpeedManager`;
 - `Movements`;
 
 In autonomia, ho poi lavorato sui seguenti aspetti:
