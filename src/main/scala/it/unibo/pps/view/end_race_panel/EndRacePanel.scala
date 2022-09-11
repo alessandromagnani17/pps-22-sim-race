@@ -26,8 +26,8 @@ object EndRacePanel:
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
 
-    private val standingsPanel = createStandingsPanel
-    private val mainPanel = createPanelAndAddAllComponents
+    private lazy val standingsPanel = createStandingsPanel
+    private lazy val mainPanel = createPanelAndAddAllComponents
 
     mainPanel foreach (e => self.add(e))
 
