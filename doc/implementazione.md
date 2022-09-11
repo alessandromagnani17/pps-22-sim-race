@@ -53,8 +53,9 @@ override def notifyStart: Unit = stopFuture = Some(
 ```
 
 #### Either
-Questo meccanismo è utilizzato per la gestione delle eccezioni, un valore di tipo `Either[+A, +B]` rappresenta un valore che potrebbe assumere sia tipo `A` che tipo `B`. Questo rende particolarmente comodo la gestione delle eccezioni in quanto si può usare un valore di tipo `Either[Throwable, A]`. Nel caso specifico è stato utilizzato nella classe `ControllerModule` dato che viene ritornato dal metodo `runAsync` dei Task di Monix. Una volta ottenuto un valore di questo tipo lo si può gestire con una partial function che esprime le computazioni da intraprendere nei due casi.
 
+Questo meccanismo è utilizzato per gestire valori che potrebbero essere di due tipi diversi (disgiunti). Nel progetto è stato utilizzato in diversi contesti:
+- _Controller_: per la gestione delle eccezioni si può usare un valore di tipo `Either[Throwable, A]`. Nel caso specifico è stato utilizzato dato che viene ritornato dal metodo `runAsync` dei Task di Monix. Una volta ottenuto un valore di questo tipo lo si può gestire con una partial function che esprime le computazioni da intraprendere nei due casi.
 ```scala
 context.simulationEngine
     .simulationStep
@@ -63,6 +64,15 @@ context.simulationEngine
       case Left(exp) => global.reportFailure(exp)
       case _ =>
     }
+```
+- _View_: per poter gestire agevolmente il contenuto di alcune JLabel, questo potrebbe essere sia del testo che un'immagine.
+```scala
+private def createLabel(dim: Option[Dimension], f: () => Either[String, ImageIcon]): Task[JLabel] =
+      for
+        label <- f() match
+          case Left(s: String) => JLabel(s)
+          case Right(i: ImageIcon) => JLabel(i)
+          ...
 ```
 
 #### Mixins
