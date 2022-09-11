@@ -24,27 +24,27 @@ object CarSelectionPanel:
   private class CarSelectionPanelImpl(controller: ControllerModule.Controller) extends CarSelectionPanel:
     self =>
 
-    private val carSelectedLabel = createLabel(
+    private lazy val carSelectedLabel = createLabel(
       Dimension(SELECTION_PANEL_WIDTH, CAR_SELECTED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.CENTER,
       () => Left(s"Car selected: ${CAR_NAMES(0)}")
     )
-    private val topArrowButton = createArrowButton(
+    private lazy val topArrowButton = createArrowButton(
       "/arrows/arrow-up.png",
       e => if (e + 1) == NUM_CARS then 0.toString else (e + 1).toString
     )
-    private val bottomArrowButton = createArrowButton(
+    private lazy val bottomArrowButton = createArrowButton(
       "/arrows/arrow-bottom.png",
       e => if (e - 1) < 0 then (NUM_CARS - 1).toString else (e - 1).toString
     )
-    private val labelImage = createLabel(
+    private lazy val labelImage = createLabel(
       Dimension(SELECTION_PANEL_WIDTH, CAR_IMAGE_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.CENTER,
       () => Right(ImageLoader.load("/cars/0-soft.png"))
     )
-    private val carSelectionPanel = createPanelAndAddAllComponents
+    private lazy val carSelectionPanel = createPanelAndAddAllComponents
 
     carSelectionPanel foreach (e => self.add(e))
 

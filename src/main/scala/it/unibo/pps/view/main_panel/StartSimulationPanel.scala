@@ -17,25 +17,25 @@ object StartSimulationPanel:
 
   private class StartSimulationPanelImpl(controller: ControllerModule.Controller) extends StartSimulationPanel:
     self =>
-    private val lapsLabel =
+    private lazy val lapsLabel =
       createLabel("Select laps:", Dimension(LAPS_LABEL_WIDTH, LAPS_LABEL_HEIGHT), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < MAX_LAPS, _ + 1)
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > MIN_LAPS, _ - 1)
-    private val lapsSelectedLabel =
+    private lazy val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < MAX_LAPS, _ + 1)
+    private lazy val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > MIN_LAPS, _ - 1)
+    private lazy val lapsSelectedLabel =
       createLabel(
         controller.totalLaps.toString,
         Dimension(LAPS_SELECTED_LABEL_WIDTH, LAPS_LABEL_HEIGHT),
         SwingConstants.CENTER
       )
-    private val startingPositionsButton = createButton(
+    private lazy val startingPositionsButton = createButton(
       "Set up the Starting Positions",
       () => controller.displayStartingPositionsPanel
     )
-    private val startButton = createButton(
+    private lazy val startButton = createButton(
       "Start Simulation",
       () => controller.displaySimulationPanel
     )
-    private val startSimulationPanel = createPanelAndAddAllComponents
+    private lazy val startSimulationPanel = createPanelAndAddAllComponents
 
     startSimulationPanel foreach (e => self.add(e))
 

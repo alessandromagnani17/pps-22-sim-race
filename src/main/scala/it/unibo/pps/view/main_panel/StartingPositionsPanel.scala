@@ -20,14 +20,14 @@ object StartingPositionsPanel:
   private class StartingPositionsPanelImpl(controller: ControllerModule.Controller) extends StartingPositionsPanel:
     self =>
 
-    private val topLabel = createLabel(
+    private lazy val topLabel = createLabel(
       Dimension(STARTING_POS_PANEL_WIDTH, TOP_LABEL_HEIGHT),
       SwingConstants.CENTER,
       () => Left("Sets the order of the starting grid: ")
     )
-    private val positionPanel = createPanel
-    private val startingPositionsComponents = createStartingPositionsComponents
-    private val startingPositionsPanel = createPanelAndAddAllComponents
+    private lazy val positionPanel = createPanel
+    private lazy val startingPositionsComponents = createStartingPositionsComponents
+    private lazy val startingPositionsPanel = createPanelAndAddAllComponents
 
     startingPositionsPanel foreach (e => self.add(e))
 

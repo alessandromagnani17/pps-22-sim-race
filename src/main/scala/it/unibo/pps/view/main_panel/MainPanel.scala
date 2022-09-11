@@ -30,10 +30,10 @@ object MainPanel:
   private class MainPanelImpl(controller: ControllerModule.Controller) extends MainPanel:
     self =>
 
-    private val carSelectionPanel = CarSelectionPanel(controller)
-    private val paramsSelectionPanel = ParamsSelectionPanel(controller)
-    private val startSimulationPanel = StartSimulationPanel(controller)
-    private val mainPanel = createMainPanelAndAddAllComponents
+    private lazy val carSelectionPanel = CarSelectionPanel(controller)
+    private lazy val paramsSelectionPanel = ParamsSelectionPanel(controller)
+    private lazy val startSimulationPanel = StartSimulationPanel(controller)
+    private lazy val mainPanel = createMainPanelAndAddAllComponents
 
     mainPanel foreach (p => self.add(p))
 

@@ -32,39 +32,39 @@ object ParamsSelectionPanel:
 
   private class ParamsSelectionPanelImpl(controller: ControllerModule.Controller) extends ParamsSelectionPanel:
     self =>
-    private val tyresLabel = createLabel(
+    private lazy val tyresLabel = createLabel(
       "Select tyres: ",
       Dimension(SELECTION_PANEL_WIDTH, TYRES_LABEL_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val hardTyresButton = createButton("   Hard Tyres", "/tyres/hardtyres.png", Tyre.HARD)
-    private val mediumTyresButton =
+    private lazy val hardTyresButton = createButton("   Hard Tyres", "/tyres/hardtyres.png", Tyre.HARD)
+    private lazy val mediumTyresButton =
       createButton("   Medium Tyres", "/tyres/mediumtyres.png", Tyre.MEDIUM)
-    private val softTyresButton = createButton("   Soft Tyres", "/tyres/softtyres.png", Tyre.SOFT)
-    private val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
-    private val maxSpeedLabel = createLabel(
+    private lazy val softTyresButton = createButton("   Soft Tyres", "/tyres/softtyres.png", Tyre.SOFT)
+    private lazy val tyresButtons = List(hardTyresButton, mediumTyresButton, softTyresButton)
+    private lazy val maxSpeedLabel = createLabel(
       "Select Maximum Speed (km/h):",
       Dimension(SELECTION_PANEL_WIDTH, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val speedSelectedLabel = createLabel(
+    private lazy val speedSelectedLabel = createLabel(
       CAR_MIN_SPEED.toString,
       Dimension(SPEED_SELECTED_WIDTH, TYRES_LABEL_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.CENTER
     )
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > CAR_MIN_SPEED, _ - _)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < CAR_MAX_SPEED, _ + _)
-    private val starSkillsLabel = createLabel(
+    private lazy val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > CAR_MIN_SPEED, _ - _)
+    private lazy val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < CAR_MAX_SPEED, _ + _)
+    private lazy val starSkillsLabel = createLabel(
       "Select Driver Skills:",
       Dimension(SELECTION_PANEL_WIDTH, MAX_SPEED_HEIGHT),
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starSkillsButton = createSkillsStarButtons
-    private val initialRightPanel = createPanelAndAddAllComponents
+    private lazy val starSkillsButton = createSkillsStarButtons
+    private lazy val initialRightPanel = createPanelAndAddAllComponents
 
     initialRightPanel foreach (e => self.add(e))
 

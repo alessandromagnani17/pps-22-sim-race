@@ -26,4 +26,4 @@ object UtilityFunctions:
     else
       val gap = car.raceTime - standings.standings.head.raceTime
       if gap > 0 then s"+${convertTimeToMinutes(gap)}"
-      else "+00:00"
+      else "+0:00"
