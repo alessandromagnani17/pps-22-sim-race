@@ -12,40 +12,37 @@ import javax.swing.*
 trait StartSimulationPanel extends JPanel
 
 object StartSimulationPanel:
-  def apply(width: Int, height: Int, controller: ControllerModule.Controller): StartSimulationPanel =
-    StartSimulationPanelImpl(width, height, controller)
+  def apply(controller: ControllerModule.Controller): StartSimulationPanel =
+    StartSimulationPanelImpl(controller)
 
-  private class StartSimulationPanelImpl(width: Int, height: Int, controller: ControllerModule.Controller)
-      extends StartSimulationPanel:
+  private class StartSimulationPanelImpl(controller: ControllerModule.Controller) extends StartSimulationPanel:
     self =>
-    private val lapsLabel =
+    private lazy val lapsLabel =
       createLabel("Select laps:", Dimension(LAPS_LABEL_WIDTH, LAPS_LABEL_HEIGHT), SwingConstants.LEFT)
-    private val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < MAX_LAPS, _ + 1)
-    private val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > MIN_LAPS, _ - 1)
-    private val lapsSelectedLabel =
+    private lazy val rightArrowButton = createArrowButton("/arrows/arrow-right.png", _ < MAX_LAPS, _ + 1)
+    private lazy val leftArrowButton = createArrowButton("/arrows/arrow-left.png", _ > MIN_LAPS, _ - 1)
+    private lazy val lapsSelectedLabel =
       createLabel(
         controller.totalLaps.toString,
         Dimension(LAPS_SELECTED_LABEL_WIDTH, LAPS_LABEL_HEIGHT),
         SwingConstants.CENTER
       )
-    private val startingPositionsButton = createButton(
+    private lazy val startingPositionsButton = createButton(
       "Set up the Starting Positions",
-      Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT),
-      () => controller.displayStartingPositionsPanel()
+      () => controller.displayStartingPositionsPanel
     )
-    private val startButton = createButton(
+    private lazy val startButton = createButton(
       "Start Simulation",
-      Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT),
-      () => controller.displaySimulationPanel()
+      () => controller.displaySimulationPanel
     )
-    private val startSimulationPanel = createPanelAndAddAllComponents()
+    private lazy val startSimulationPanel = createPanelAndAddAllComponents
 
     startSimulationPanel foreach (e => self.add(e))
 
-    private def createButton(text: String, dim: Dimension, action: () => Unit): Task[JButton] =
+    private def createButton(text: String, action: () => Unit): Task[JButton] =
       for
         button <- JButton(text)
-        _ <- button.setPreferredSize(dim)
+        _ <- button.setPreferredSize(Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT))
         _ <- button.addActionListener(e => action())
       yield button
 
@@ -69,10 +66,10 @@ object StartSimulationPanel:
         })
       yield button
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
-        _ <- panel.setPreferredSize(Dimension(width, height))
+        _ <- panel.setPreferredSize(Dimension(FRAME_WIDTH, START_PANEL_HEIGHT))
         _ <- panel.setLayout(FlowLayout())
         lapsLabel <- lapsLabel
         leftArrowButton <- leftArrowButton
@@ -83,9 +80,9 @@ object StartSimulationPanel:
         paddingLabel <- JLabel()
         paddingLabel1 <- JLabel()
         paddingLabel2 <- JLabel()
-        _ <- paddingLabel.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT))
-        _ <- paddingLabel1.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT))
-        _ <- paddingLabel2.setPreferredSize(Dimension(width, PADDING_LABEL_HEIGHT1))
+        _ <- paddingLabel.setPreferredSize(Dimension(FRAME_WIDTH, PADDING_LABEL_HEIGHT))
+        _ <- paddingLabel1.setPreferredSize(Dimension(FRAME_WIDTH, PADDING_LABEL_HEIGHT))
+        _ <- paddingLabel2.setPreferredSize(Dimension(FRAME_WIDTH, PADDING_LABEL_HEIGHT1))
         _ <- panel.add(paddingLabel)
         _ <- panel.add(lapsLabel)
         _ <- panel.add(leftArrowButton)

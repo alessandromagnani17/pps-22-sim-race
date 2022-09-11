@@ -1,6 +1,6 @@
 package it.unibo.pps.model
 
-import it.unibo.pps.model.Direction
+import it.unibo.pps.model.track.Direction
 
 import java.awt.Color
 import scala.Tuple2 as Point2d
@@ -44,7 +44,9 @@ case class RenderTurnParams(
     startPointI: Point2d[Int, Int],
     endPointE: Point2d[Int, Int],
     endPointI: Point2d[Int, Int],
-    endX: Int
+    endX: Int,
+    topLimit: Int,
+    bottomLimit: Int
 ) extends RenderParams
 
 /** Parames needed to render a car

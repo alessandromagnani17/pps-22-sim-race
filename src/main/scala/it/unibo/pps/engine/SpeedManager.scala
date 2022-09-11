@@ -5,37 +5,40 @@ import it.unibo.pps.engine.SimulationConstants.*
 trait SpeedManager:
 
   /** @return the actual simulation speed */
-  def _simulationSpeed: Double
+  def speed: Double
 
   /** Method that decreases the actual simulation speed
     *
     * If the speed is already at the minimum value it does nothing
     */
-  def decreaseSpeed(): Unit
+  def decreaseSpeed: Unit
 
   /** Method that increases the actual simulation speed
     *
     * If the speed is already at the maximum value it does nothing
     */
-  def increaseSpeed(): Unit
+  def increaseSpeed: Unit
+
+  /** Resets simulation speed when a new simulation is started */
+  def reset: Unit
 
 object SpeedManager:
   def apply(): SpeedManager = new SpeedManagerImpl()
 
   private class SpeedManagerImpl() extends SpeedManager:
 
-    var speed: Double = DEFAULT_SPEED
+    var _speed: Double = DEFAULT_SPEED
 
-    override def _simulationSpeed: Double = speed
+    override def speed: Double = _speed
 
-    override def decreaseSpeed(): Unit = speed match {
-      case HIGH_SPEED => speed = DEFAULT_SPEED
-      case DEFAULT_SPEED => speed = LOW_SPEED
+    override def decreaseSpeed: Unit = _speed match
+      case HIGH_SPEED => _speed = DEFAULT_SPEED
+      case DEFAULT_SPEED => _speed = LOW_SPEED
       case _ =>
-    }
 
-    override def increaseSpeed(): Unit = speed match {
-      case LOW_SPEED => speed = DEFAULT_SPEED
-      case DEFAULT_SPEED => speed = HIGH_SPEED
+    override def increaseSpeed: Unit = _speed match
+      case LOW_SPEED => _speed = DEFAULT_SPEED
+      case DEFAULT_SPEED => _speed = HIGH_SPEED
       case _ =>
-    }
+
+    override def reset: Unit = _speed = DEFAULT_SPEED

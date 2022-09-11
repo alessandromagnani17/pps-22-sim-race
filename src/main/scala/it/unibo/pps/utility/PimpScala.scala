@@ -19,7 +19,7 @@ object PimpScala:
 
   object RichOption:
     extension [A](o: Option[A])
-      /** Method that applies a consumer to the [[Option]]
+      /** Applies a consumer to the [[Option]]
         *
         * If the Option is empty it does nothing
         */
@@ -28,7 +28,7 @@ object PimpScala:
   object RichHashMap:
     import RichOption.*
     extension [A, B](h: HashMap[A, B])
-      /** Method that applies a consumer to the element of the [[HashMap]] pointed by the specified key
+      /** Aapplies a consumer to the element of the [[HashMap]] pointed by the specified key
         *
         * If the element doesn't exists it does nothing
         */
@@ -36,5 +36,6 @@ object PimpScala:
 
   object RichJPanel:
     extension (p: JPanel)
+      /* Adds all the elements in the list to the panel **/
       def addAll[E <: Component](elements: List[E]): Unit =
         elements.foreach(p.add(_))
