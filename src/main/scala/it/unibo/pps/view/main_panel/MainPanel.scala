@@ -18,10 +18,10 @@ import it.unibo.pps.view.Constants.MainPanelConstants.*
 trait MainPanel extends JPanel:
 
   /** Method that updates the car displayed */
-  def updateDisplayedCar(): Unit
+  def updateDisplayedCar: Unit
 
   /** Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel(): Unit
+  def updateParametersPanel: Unit
 
 object MainPanel:
   def apply(controller: ControllerModule.Controller): MainPanel =
@@ -33,17 +33,17 @@ object MainPanel:
     private val carSelectionPanel = CarSelectionPanel(controller)
     private val paramsSelectionPanel = ParamsSelectionPanel(controller)
     private val startSimulationPanel = StartSimulationPanel(controller)
-    private val mainPanel = createMainPanelAndAddAllComponents()
+    private val mainPanel = createMainPanelAndAddAllComponents
 
     mainPanel foreach (p => self.add(p))
 
-    def updateDisplayedCar(): Unit =
-      carSelectionPanel.updateDisplayedCar()
+    def updateDisplayedCar: Unit =
+      carSelectionPanel.updateDisplayedCar
 
-    def updateParametersPanel(): Unit =
-      paramsSelectionPanel.updateParametersPanel()
+    def updateParametersPanel: Unit =
+      paramsSelectionPanel.updateParametersPanel
 
-    private def createMainPanelAndAddAllComponents(): Task[JPanel] =
+    private def createMainPanelAndAddAllComponents: Task[JPanel] =
       for
         mainp <- JPanel()
         _ <- mainp.setPreferredSize(Dimension(FRAME_WIDTH, FRAME_HEIGHT))

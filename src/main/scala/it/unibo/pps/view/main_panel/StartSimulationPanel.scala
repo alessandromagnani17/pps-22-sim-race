@@ -35,7 +35,7 @@ object StartSimulationPanel:
       "Start Simulation",
       () => controller.displaySimulationPanel
     )
-    private val startSimulationPanel = createPanelAndAddAllComponents()
+    private val startSimulationPanel = createPanelAndAddAllComponents
 
     startSimulationPanel foreach (e => self.add(e))
 
@@ -66,7 +66,7 @@ object StartSimulationPanel:
         })
       yield button
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(FRAME_WIDTH, START_PANEL_HEIGHT))

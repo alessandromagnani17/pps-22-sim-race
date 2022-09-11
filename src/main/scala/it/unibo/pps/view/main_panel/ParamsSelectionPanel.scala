@@ -24,7 +24,7 @@ import javax.swing.*
 trait ParamsSelectionPanel extends JPanel:
 
   /** Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel(): Unit
+  def updateParametersPanel: Unit
 
 object ParamsSelectionPanel:
   def apply(controller: ControllerModule.Controller): ParamsSelectionPanel =
@@ -63,12 +63,12 @@ object ParamsSelectionPanel:
       SwingConstants.CENTER,
       SwingConstants.BOTTOM
     )
-    private val starSkillsButton = createSkillsStarButtons()
-    private val initialRightPanel = createPanelAndAddAllComponents()
+    private val starSkillsButton = createSkillsStarButtons
+    private val initialRightPanel = createPanelAndAddAllComponents
 
     initialRightPanel foreach (e => self.add(e))
 
-    def updateParametersPanel(): Unit =
+    def updateParametersPanel: Unit =
       tyresButtons.foreach(e =>
         e.foreach(b => {
           if b.getName.equals(controller.currentCar.tyre.toString) then
@@ -121,7 +121,7 @@ object ParamsSelectionPanel:
         })
       yield button
 
-    private def createSkillsStarButtons(): List[Task[JButton]] =
+    private def createSkillsStarButtons: List[Task[JButton]] =
       val buttons = for
         index <- 0 until MAX_SKILL_STARS
         button = createStarButton((index + 1).toString)
@@ -164,7 +164,7 @@ object ParamsSelectionPanel:
         _ <- label.setVerticalAlignment(vertical)
       yield label
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT))

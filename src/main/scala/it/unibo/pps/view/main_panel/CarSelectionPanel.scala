@@ -15,7 +15,7 @@ import javax.swing.*
 trait CarSelectionPanel extends JPanel:
 
   /** Method that updates the car displayed */
-  def updateDisplayedCar(): Unit
+  def updateDisplayedCar: Unit
 
 object CarSelectionPanel:
   def apply(controller: ControllerModule.Controller): CarSelectionPanel =
@@ -44,11 +44,11 @@ object CarSelectionPanel:
       SwingConstants.CENTER,
       () => Right(ImageLoader.load("/cars/0-soft.png"))
     )
-    private val carSelectionPanel = createPanelAndAddAllComponents()
+    private val carSelectionPanel = createPanelAndAddAllComponents
 
     carSelectionPanel foreach (e => self.add(e))
 
-    def updateDisplayedCar(): Unit =
+    def updateDisplayedCar: Unit =
       labelImage.foreach(e => e.setIcon(ImageLoader.load(controller.currentCar.path)))
 
     private def createLabel(
@@ -74,13 +74,13 @@ object CarSelectionPanel:
         _ <- button.setVerticalAlignment(SwingConstants.BOTTOM)
         _ <- button.addActionListener { e =>
           controller.updateCurrentCarIndex(calcIndex)
-          updateDisplayedCar()
+          updateDisplayedCar
           controller.updateParametersPanel
           carSelectedLabel.foreach(e => e.setText(s"Car selected: ${CAR_NAMES(controller.currentCarIndex)}"))
         }
       yield button
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(SELECTION_PANEL_WIDTH, SELECTION_PANEL_HEIGHT))

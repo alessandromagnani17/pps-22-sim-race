@@ -53,14 +53,14 @@ class Gui(controller: ControllerModule.Controller):
     yield fr
 
   /** Method that updates the displayed parameters when the car displayed is changed */
-  def updateParametersPanel: Unit = mainPanel.updateParametersPanel()
+  def updateParametersPanel: Unit = mainPanel.updateParametersPanel
 
   /** Method that updates the car displayed */
   def updateDisplayedCar: Unit =
-    mainPanel.updateDisplayedCar()
+    mainPanel.updateDisplayedCar
 
   /** Method that updates the displayed standings */
-  def updateDisplayedStandings: Unit = _simulationPanel.updateDisplayedStandings()
+  def updateDisplayedStandings: Unit = _simulationPanel.updateDisplayedStandings
 
   /** Method that updates the fastest lap icon
     * @param carName
@@ -70,7 +70,7 @@ class Gui(controller: ControllerModule.Controller):
 
   /** Method that sets enabled the final report button that if pressed, display the end race panel */
   def setFinalReportEnabled: Unit =
-    _simulationPanel.setFinalReportEnabled()
+    _simulationPanel.setFinalReportEnabled
 
   /** Method that displays the simulation panel
     * @param track

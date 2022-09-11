@@ -26,18 +26,18 @@ object EndRacePanel:
   private class EndRacePanelImpl(controller: ControllerModule.Controller) extends EndRacePanel:
     self =>
 
-    private val standingsPanel = createStandingsPanel()
-    private val mainPanel = createPanelAndAddAllComponents()
+    private val standingsPanel = createStandingsPanel
+    private val mainPanel = createPanelAndAddAllComponents
 
     mainPanel foreach (e => self.add(e))
 
-    private def createStandingsPanel(): Task[JPanel] =
+    private def createStandingsPanel: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setPreferredSize(Dimension(STANDINGS_PANEL_WIDTH, STANDINGS_PANEL_HEIGHT))
       yield panel
 
-    private def createPanelAndAddAllComponents(): Task[JPanel] =
+    private def createPanelAndAddAllComponents: Task[JPanel] =
       for
         panel <- JPanel()
         _ <- panel.setLayout(new BoxLayout(panel, AXIS_CHARTS_PANEL))
