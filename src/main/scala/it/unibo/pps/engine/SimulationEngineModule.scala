@@ -29,7 +29,6 @@ import it.unibo.pps.utility.GivenConversion.GuiConversion.given_Conversion_Unit_
 import it.unibo.pps.utility.GivenConversion.DirectionGivenConversion.given
 import it.unibo.pps.utility.PimpScala.RichInt.*
 import it.unibo.pps.utility.PimpScala.RichTuple2.*
-
 import scala.math.BigDecimal
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}

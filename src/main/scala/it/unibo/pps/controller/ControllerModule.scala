@@ -9,7 +9,6 @@ import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
 import it.unibo.pps.utility.UtilityFunctions
 import monix.eval.Task
-
 import java.awt.Color
 import scala.collection.mutable
 import scala.collection.mutable.Map

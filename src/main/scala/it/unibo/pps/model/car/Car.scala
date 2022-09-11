@@ -2,7 +2,6 @@ package it.unibo.pps.model.car
 
 import it.unibo.pps.model.RenderCarParams
 import it.unibo.pps.model.track.Sector
-
 import javax.swing.Icon
 
 /** Case class that represents a car
