@@ -9,3 +9,4 @@ object SimulationConstants:
   val BASE_SECTORTIME_TURN = 3
   val BASE_SECTORTIME_STRAIGHT = 55
   val STRAIGHT_VELOCITY_REDUCTION_FACTOR = 0.95
+  val CAR_NAMES = Map(0 -> "Ferrari", 1 -> "Mercedes", 2 -> "Red Bull", 3 -> "McLaren")

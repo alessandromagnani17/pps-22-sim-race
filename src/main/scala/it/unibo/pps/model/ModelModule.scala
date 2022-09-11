@@ -4,11 +4,9 @@ import it.unibo.pps.model.car.Car
 import monix.reactive.MulticastStrategy
 import monix.reactive.subjects.ConcurrentSubject
 import monix.execution.Scheduler.Implicits.global
-
 import scala.collection.mutable.Map
 import java.awt.Color
 import monix.execution.{Ack, Cancelable}
-
 import javax.management.relation.InvalidRelationTypeException
 import concurrent.{Future, Promise}
 import it.unibo.pps.model.loader.{CarsLoader, TrackLoader}
@@ -26,12 +24,25 @@ object ModelModule:
     /** Resets model paramters when a new simulation is started */
     def resetModel: Unit
 
+    /** Returns the starting positions of the race */
     def startingPositions: List[Car]
+
+    /** Returns the index of the current car displayed in CarSelectionPanel */
     def currentCarIndex: Int
+
+    /** Returns the actual number of laps */
     def actualLap: Int
+
+    /** Returns the total number of laps */
     def totalLaps: Int
+
+    /** Returns the current standings of the race */
     def standings: Standings
+
+    /** Returns the fastest lap of the race */
     def fastestLap: Int
+
+    /** Returns the name of the car that has made the fastest lap */
     def fastestCar: String
 
     /** Returns last snapshot of the simulation */
@@ -39,13 +50,50 @@ object ModelModule:
 
     /** Initializes simulation history */
     def initSnapshot: Unit
+
+    /** Method that updates the current car index
+      * @param index
+      *   The new car index
+      */
     def currentCarIndex_=(index: Int): Unit
+
+    /** Method that updates the current starting positions
+      * @param startingPos
+      *   The new starting positions
+      */
     def startingPositions_=(startingPos: List[Car]): Unit
+
+    /** Method that updates the actual number of laps
+      * @param lap
+      *   The new number of laps
+      */
     def actualLap_=(lap: Int): Unit
+
+    /** Method that updates the number of laps
+      * @param lap
+      *   The new number of laps
+      */
     def totalLaps_(lap: Int): Unit
+
+    /** Method that updates the fastest lap
+      * @param lap
+      *   The new fastest lap
+      */
     def fastestLap_=(lap: Int): Unit
+
+    /** Method that updates the car that has made the fastest lap
+      * @param carName
+      *   The name of the car
+      */
     def fastestCar_=(carName: String): Unit
-    def setS(standings: Standings): Unit
+
+    /** Method that updates the current standings of the race
+      * @param standings
+      *   The new standings
+      */
+    def standings_=(standings: Standings): Unit
+
+    /** Method that create a new [[Standings]] */
     def createStandings: Unit
 
     /** Adds one snapshot to the history
@@ -76,7 +124,6 @@ object ModelModule:
 
       private val _track = TrackLoader("/prolog/basetrack.pl").load
       private var _cars: List[Car] = CarsLoader("/prolog/cars.pl", track).load
-
       private var _standings: Standings = Standings(_cars)
       private var history: List[Snapshot] = List.empty
       private var _currentCarIndex = 0
@@ -95,6 +142,7 @@ object ModelModule:
         historySubject.subscribe(onNext, onError, onComplete)
 
       override def currentCarIndex: Int = _currentCarIndex
+
       override def cars: List[Car] = _cars
 
       override def resetModel: Unit =
@@ -110,20 +158,32 @@ object ModelModule:
         _totalLaps = 15
 
       override def startingPositions: List[Car] = _startingPositions
+
       override def track: Track = _track
+
       override def actualLap: Int = _actualLap
+
       override def totalLaps: Int = _totalLaps
+
       override def standings: Standings = _standings
+
       override def fastestLap: Int = _fastestLap
+
       override def fastestCar: String = _fastestCar
+
       override def getLastSnapshot: Snapshot = history.last
+
       override def addSnapshot(snapshot: Snapshot): Unit =
         history = history :+ snapshot
         historySubject.onNext(history)
+
       override def currentCarIndex_=(index: Int): Unit = _currentCarIndex = index
+
       override def startingPositions_=(startingPos: List[Car]): Unit = _startingPositions = startingPos
+
       override def actualLap_=(lap: Int): Unit = _actualLap = lap
-      override def setS(standings: Standings): Unit = _standings = standings
+
+      override def standings_=(standings: Standings): Unit = _standings = standings
 
       override def initSnapshot: Unit =
         addSnapshot(Snapshot(_cars, 0))

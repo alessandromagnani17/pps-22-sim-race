@@ -5,8 +5,8 @@ import it.unibo.pps.model.car.{Car, CarColors, Tyre}
 import it.unibo.pps.model.RenderCarParams
 import it.unibo.pps.model.track.Track
 import it.unibo.pps.prolog.Scala2P
-import it.unibo.pps.utility.Constants.carsInitial
 import it.unibo.pps.model.car.Driver
+import it.unibo.pps.engine.SimulationConstants.CAR_NAMES
 import java.awt.Color
 import it.unibo.pps.utility.GivenConversion.LoaderGivenConversion.given
 import it.unibo.pps.utility.GivenConversion.CarLoaderGivenConversion.given
@@ -35,7 +35,7 @@ class CarsLoader(theory: String, track: Track) extends Loader:
 
   private def mkCar(params: List[String], track: Track): Car = params match
     case List(path, name, tyre, skills, maxSpeed, acceleration, actualSector, fuel, carColor) =>
-      val position = carsInitial(name)
+      val position = CAR_NAMES.filter((_, s) => name.equals(s)).toList.head._1
       val startingPoint = track.startingGrid(position).renderParams.position
       Car(
         path,

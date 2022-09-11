@@ -7,6 +7,7 @@ import it.unibo.pps.view.ViewModule
 import monix.execution.Scheduler.Implicits.global
 import monix.execution.{Ack, Cancelable, contravariantCallback}
 import it.unibo.pps.utility.PimpScala.RichOption.*
+import it.unibo.pps.utility.UtilityFunctions
 import monix.eval.Task
 
 import java.awt.Color
@@ -32,7 +33,10 @@ object ControllerModule:
     /** Restarts the whole simulator */
     def startNewSimulation: Unit
 
-    /** Returns the current starting grid */
+    /** Returns the cars of the simulation */
+    def cars: List[Car]
+
+    /** Returns the starting positions of the race */
     def startingPositions: List[Car]
 
     /** Returns the current car displayed in CarSelectionPanel */
@@ -41,21 +45,21 @@ object ControllerModule:
     /** Returns the index of the current car displayed in CarSelectionPanel */
     def currentCarIndex: Int
 
-    /** Returns the standings */
+    /** Returns the current standings of the race */
     def standings: Standings
 
-    /** Returns the number of laps */
+    /** Returns the total number of laps */
     def totalLaps: Int
 
     /** Returns the fastest lap of the race */
     def fastestLap: Int
 
-    /** Returns the car that has made the fastest lap */
+    /** Returns the name of the car that has made the fastest lap */
     def fastestCar: String
 
     /** Method that updates the current car index
       * @param index
-      *   The new current car index
+      *   The new car index
       */
     def currentCarIndex_=(index: Int): Unit
 
@@ -127,21 +131,10 @@ object ControllerModule:
     /** Registers necessary callbacks for reactive charts */
     def registerReactiveChartCallback: Unit
 
-    /** Returns a time converted in minutes/seconds format from virtual time
-      * @param time
-      *   The virtual time to be converted
+    /** Method that updates the index of the current displayed car
+      * @param calcIndex
+      *   The strategy applied to the current index
       */
-    def convertTimeToMinutes(time: Int): String
-
-    /** Returns the gap from the leader car or the converted race time
-      * @param car
-      *   The car on which to calculate the gap
-      */
-    def calcGapToLeader(car: Car): String
-
-    /** Returns the cars of the simulation */
-    def cars: List[Car]
-
     def updateCurrentCarIndex(calcIndex: Int => String): Unit
 
   trait Provider:
@@ -172,6 +165,8 @@ object ControllerModule:
 
       override def notifyIncreaseSpeed: Unit =
         context.simulationEngine.increaseSpeed
+
+      override def cars: List[Car] = context.model.cars
 
       override def startingPositions: List[Car] = context.model.startingPositions
 
@@ -250,20 +245,6 @@ object ControllerModule:
         context.model.startingPositions(prevIndex).renderCarParams.position =
           context.model.startingPositions(nextIndex).renderCarParams.position
         context.model.startingPositions(nextIndex).renderCarParams.position = position
-
-      override def convertTimeToMinutes(time: Int): String =
-        val minutes: Int = time / 60
-        val seconds: Double = time % 60
-        BigDecimal(minutes + seconds / 100).setScale(2, BigDecimal.RoundingMode.HALF_EVEN).toString.replace(".", ":")
-
-      override def calcGapToLeader(car: Car): String =
-        if standings.standings.head.equals(car) then convertTimeToMinutes(car.raceTime)
-        else
-          val gap = car.raceTime - standings.standings.head.raceTime
-          if gap > 0 then s"+${convertTimeToMinutes(gap)}"
-          else "+00:00"
-
-      override def cars: List[Car] = context.model.cars
 
       override def updateCurrentCarIndex(calcIndex: Int => String): Unit =
         val nextIndex = calcIndex(currentCarIndex)
