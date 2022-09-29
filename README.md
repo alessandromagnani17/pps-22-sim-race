@@ -11,7 +11,7 @@ The following dependencies are required to run the application:
 - JDK version 11
 
 ## Usage
-You can find the latest `jar` for your OS inside the [Releases section](https://github.com/davidedomini/pps-22-sim-race/releases).
+You can find the latest `jar` inside the [Releases section](https://github.com/davidedomini/pps-22-sim-race/releases).
 
 To execute the application:
 ```powershell
